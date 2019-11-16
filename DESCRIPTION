@@ -11,7 +11,11 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
  data.table,
- readr
+ readr,
+ stats,
+ ggplot2,
+ RColorBrewer,
+ gridExtra
 Suggests: 
  testthat,
  Reca
