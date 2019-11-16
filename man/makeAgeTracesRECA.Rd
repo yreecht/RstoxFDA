@@ -34,3 +34,7 @@ The number of iterations of \code{\link[Reca]{eca.predict}}
   \item{kT}{Catch at age as mass in kilotonnes}
  }
 }
+\examples{
+ data(recaPrediction)
+ makeAgeTracesRECA(recaPrediction, plusGroup=13)
+}

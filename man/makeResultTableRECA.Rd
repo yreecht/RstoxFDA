@@ -43,3 +43,7 @@ parameter 'unit' supports:
   \item{kT}{Catch at age as mass in kilotonnes}
  }
 }
+\examples{
+ data(recaPrediction)
+ makeResultTableRECA(recaPrediction, plusGroup=13)
+}

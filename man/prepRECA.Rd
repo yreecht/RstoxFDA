@@ -36,7 +36,7 @@ prepRECA(samples, landings, fixedEffects, randomEffects,
 
 \item{neighbours}{list() specifying the neighbourhood-structure for the carEffect. neighbours[a] should provide a vector of neighbours to a. May be NULL of no carEffect is used.}
 
-\item{nFish}{data.table() specifying the number of fish in the part of the catch that each sample was taken from. Not alwaus needed. See details. Columns:}
+\item{nFish}{data.table() specifying the number of fish in the part of the catch that each sample was taken from. Not always needed. See details.}
 
 \item{ageError}{matrix() specifying the probability of read age (rows), given true age (columns). Row and column names specify the ages. If NULL, a unit matrix is assumed (No error in age reading).}
 
@@ -89,9 +89,63 @@ The cell definition is specified by 'landings'.
  neighbours must be symetric, so that b \%in\% neighbours[a], implies a \%in\% neighbours[b]
 
  nfish is only needed when several samples may be taken from the same catch.
- If these are stratified in any way (e.g. pre-sorting by size or sex), an estimate of strata sizes must be given (count).
+ If these are stratified in any way (e.g. pre-sorting by size or sex), an estimate of strata sizes must be given (column count), for each sample (column sampleId).
  If these are replicate samples from the same selection frame, an estimate of the total catch may be given.
 
  output GlobalParameters: While outputs AgeLength, WeightLength and Landings are complete and ready for R-ECA runs.
  This function populates the list of GlobalParameters only partially. Run parameters have to be added afterwards.
+}
+\examples{
+ data(catchsamples)
+ catchsamples$catchId <- catchsamples$LEid
+ catchsamples$sampleId <- catchsamples$SAid
+ catchsamples$date <- catchsamples$LEdate
+ catchsamples$Metier5 <- catchsamples$LEmetier5
+
+ data(landings)
+ landings$LiveWeightKG <- landings$OfficialLandingsWeight
+ landings$Metier5 <- landings$FishingActivityCategoryEuropeanLvl5
+
+ # inspect data
+ rEcaDataReport(catchsamples, landings, c("Metier5", "VDencrCode"))
+
+ # define sampling frame
+ landings <- landings[landings$Metier5 \%in\% c("GNS_DEF", "LLS_DEF", "LX_DEF", "SSC_DEF"),]
+ landings <- landings[landings$Area \%in\% c("27.2.a.2", "27.1.b"),]
+ catchsamples <- catchsamples[catchsamples$Metier5 != "OTB_DEF",]
+
+ # merge gear groups
+ landings[landings$Metier5 == "LX_DEF", "Metier5"] <- "LSS_LX_DEF"
+ landings[landings$Metier5 == "LLS_DEF", "Metier5"] <- "LSS_LX_DEF"
+ catchsamples[catchsamples$Metier5 == "LX_DEF", "Metier5"] <- "LSS_LX_DEF"
+ catchsamples[catchsamples$Metier5 == "LLS_DEF", "Metier5"] <- "LSS_LX_DEF"
+
+ # inspect data
+ rEcaDataReport(catchsamples, landings, c("Metier5", "VDencrCode"))
+
+ #attempt prepRECA, gives error
+ \dontrun{prepRECA(catchsamples,
+   landings,
+   c("Metier5"),
+   NULL,
+   quarter = landings$Quarter)}
+
+ #get catch count estimates
+ meanWeights <- stats::aggregate(list(meanW=catchsamples$Weight),
+   by=list(sampleId=catchsamples$sampleId),
+   FUN=mean)
+ #total weight is unique for sampleID, hence the FUN=mean
+ totalWeights <- stats::aggregate(list(totalW=catchsamples$SAtotalWtLive),
+   by=list(sampleId=catchsamples$sampleId),
+   FUN=mean)
+ nFish <- merge(totalWeights, meanWeights)
+ nFish$count <- nFish$totalW / nFish$meanW
+
+ #prepRECA (produce recaData as in data(recaData))
+ recaData <- prepRECA(catchsamples,
+   landings,
+   c("Metier5"),
+   NULL,
+   nFish = nFish,
+   quarter = landings$Quarter)
 }

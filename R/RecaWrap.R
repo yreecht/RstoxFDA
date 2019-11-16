@@ -442,7 +442,7 @@ getLandings <- function(landings, covariates, covariateMaps, date=NULL, month=NU
 #'  neighbours must be symetric, so that b \%in\% neighbours[a], implies a \%in\% neighbours[b]
 #'
 #'  nfish is only needed when several samples may be taken from the same catch.
-#'  If these are stratified in any way (e.g. pre-sorting by size or sex), an estimate of strata sizes must be given (count).
+#'  If these are stratified in any way (e.g. pre-sorting by size or sex), an estimate of strata sizes must be given (column count), for each sample (column sampleId).
 #'  If these are replicate samples from the same selection frame, an estimate of the total catch may be given.
 #'
 #'  output GlobalParameters: While outputs AgeLength, WeightLength and Landings are complete and ready for R-ECA runs.
@@ -467,7 +467,7 @@ getLandings <- function(landings, covariates, covariateMaps, date=NULL, month=NU
 #' @param randomEffects character() vector specifying random effects. Corresponding columns must exists samples (may also exist in landings).
 #' @param carEffect character() specifying a random effect with conditional autoregressive coefficient. Corresponding columns must exists samples (may also exist in landings).
 #' @param neighbours list() specifying the neighbourhood-structure for the carEffect. neighbours[a] should provide a vector of neighbours to a. May be NULL of no carEffect is used.
-#' @param nFish data.table() specifying the number of fish in the part of the catch that each sample was taken from. Not alwaus needed. See details. Columns:
+#' @param nFish data.table() specifying the number of fish in the part of the catch that each sample was taken from. Not always needed. See details.
 #' @param ageError matrix() specifying the probability of read age (rows), given true age (columns). Row and column names specify the ages. If NULL, a unit matrix is assumed (No error in age reading).
 #' @param minAge lowest age to include in model. If NULL, minimal age in samples is used. Age range must match any age error matrix provided (ageError)
 #' @param maxAge highest age to include in model. If NULL, maximal age in samples is used. Age range must match any age error matrix provided (ageError)
@@ -489,6 +489,59 @@ getLandings <- function(landings, covariates, covariateMaps, date=NULL, month=NU
 #'  \item{GlobalParameters}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}. see details}
 #'  \item{CovariateMaps}{Mapping of values for each covariate in landings and samples (including catchId) to integer value used in R-ECA.}
 #' }
+#' @examples
+#'  data(catchsamples)
+#'  catchsamples$catchId <- catchsamples$LEid
+#'  catchsamples$sampleId <- catchsamples$SAid
+#'  catchsamples$date <- catchsamples$LEdate
+#'  catchsamples$Metier5 <- catchsamples$LEmetier5
+#'
+#'  data(landings)
+#'  landings$LiveWeightKG <- landings$OfficialLandingsWeight
+#'  landings$Metier5 <- landings$FishingActivityCategoryEuropeanLvl5
+#'
+#'  # inspect data
+#'  rEcaDataReport(catchsamples, landings, c("Metier5", "VDencrCode"))
+#'
+#'  # define sampling frame
+#'  landings <- landings[landings$Metier5 %in% c("GNS_DEF", "LLS_DEF", "LX_DEF", "SSC_DEF"),]
+#'  landings <- landings[landings$Area %in% c("27.2.a.2", "27.1.b"),]
+#'  catchsamples <- catchsamples[catchsamples$Metier5 != "OTB_DEF",]
+#'
+#'  # merge gear groups
+#'  landings[landings$Metier5 == "LX_DEF", "Metier5"] <- "LSS_LX_DEF"
+#'  landings[landings$Metier5 == "LLS_DEF", "Metier5"] <- "LSS_LX_DEF"
+#'  catchsamples[catchsamples$Metier5 == "LX_DEF", "Metier5"] <- "LSS_LX_DEF"
+#'  catchsamples[catchsamples$Metier5 == "LLS_DEF", "Metier5"] <- "LSS_LX_DEF"
+#'
+#'  # inspect data
+#'  rEcaDataReport(catchsamples, landings, c("Metier5", "VDencrCode"))
+#'
+#'  #attempt prepRECA, gives error
+#'  \dontrun{prepRECA(catchsamples,
+#'    landings,
+#'    c("Metier5"),
+#'    NULL,
+#'    quarter = landings$Quarter)}
+#'
+#'  #get catch count estimates
+#'  meanWeights <- stats::aggregate(list(meanW=catchsamples$Weight),
+#'    by=list(sampleId=catchsamples$sampleId),
+#'    FUN=mean)
+#'  #total weight is unique for sampleID, hence the FUN=mean
+#'  totalWeights <- stats::aggregate(list(totalW=catchsamples$SAtotalWtLive),
+#'    by=list(sampleId=catchsamples$sampleId),
+#'    FUN=mean)
+#'  nFish <- merge(totalWeights, meanWeights)
+#'  nFish$count <- nFish$totalW / nFish$meanW
+#'
+#'  #prepRECA (produce recaData as in data(recaData))
+#'  recaData <- prepRECA(catchsamples,
+#'    landings,
+#'    c("Metier5"),
+#'    NULL,
+#'    nFish = nFish,
+#'    quarter = landings$Quarter)
 #' @export
 prepRECA <- function(samples, landings, fixedEffects, randomEffects, carEffect=NULL, neighbours=NULL, nFish=NULL, ageError=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, testMax=1000, date=NULL, month=NULL, quarter=NULL){
   samples <- data.table::as.data.table(samples)
@@ -819,6 +872,11 @@ renameRecaOutput <- function(ecafit, covariateMaps, careffect){
 #'  \item{prediction}{as returned by \code{\link[Reca]{eca.predict}}}
 #'  \item{covariateMaps}{list() mapping from Reca covariate encoding to values fed to \code{\link[RstoxFDA]{prepRECA}}. As on parameter 'RecaObj'}
 #' }
+#' @examples
+#'  data(recaData)
+#'
+#'  # run (produce recaPrediction as in data(recaPrediction))
+#'  \dontrun{recaPrediction <- runRECA(recaData, 500, 5000)$prediction}
 #' @export
 runRECA <- function(RecaObj, nSamples, burnin, lgamodel="log-linear", fitfile="fit", predictfile="pred", resultdir=NULL, thin=10, delta.age=0.001, seed=NULL, caa.burnin=0){
 

@@ -52,3 +52,7 @@ The number of iterations of \code{\link[Reca]{eca.predict}}
  In order to trade off readability of plots with the number of panels needed. the traces are clustered with a simple clustering algorithm
  and grouped in the same plots accordingly. Adjust clustering parameters, to get fewer or more plots.
 }
+\examples{
+ data(recaPrediction)
+ plotAgeTraces(recaPrediction, plusGroup=13, nclust = 6)
+}

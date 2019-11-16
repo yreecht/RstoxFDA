@@ -1,6 +1,6 @@
-#' Landings of Cod and Haddock
+#' Landings of Haddock
 #'
-#' Aggregated landings of Cod and Haddock by Norwegian vessels in 2018 as reported in salesnotes.
+#' Aggregated landings of Haddock by Norwegian vessels in 2018 as reported in salesnotes.
 #' Gear-codes are converted from national standard and should be considered approximate.
 #'
 #' @docType data

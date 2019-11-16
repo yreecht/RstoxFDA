@@ -33,3 +33,7 @@ parameter 'unit' supports:
   \item{kT}{Catch at age as mass in kilotonnes}
  }
 }
+\examples{
+ data(recaPrediction)
+ plotCatchAtAge(recaPrediction)
+}

@@ -9,7 +9,7 @@
 data(catchsamples)
 }
 \description{
-Norwegian port sampling for landings in 2018 of fresh whitefish north of Lat 64, covering Jig, Gillnet, Longline, and Demershal Seining.
+Norwegian port sampling for Haddock landings in 2018 of fresh whitefish north of Lat 64, covering Jig, Gillnet, Longline, and Demershal Seining.
 Sampling is implemented by a research vessel systematically sampling ports accepting fresh fish along the northern Norwegian coast.
 Landings are almost exclusively day-catches located to small areas.
 Vessels are intercepted during landing, and samples of up to 30 fish are taken stratified by gear and species.
