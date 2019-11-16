@@ -70,6 +70,12 @@ checkAllSampledCar <- function(landings, samples, fixedEffects, carEffect, neigh
 #' @param samples data.table() the samples the covariate mapping should be defined for (must contain column specified by 'covariate')
 #' @param landings data.table() the landings the covariate mapping should be defined for (may contain column specified by 'covariate')
 #' @return list() where the nth member represents the RECA covariate value 'n', so that for a covarate 'cov', the integer i is used for value a, when covariateMaps[[cov]][[i]] == a
+#' @examples
+#'  data(catchsamples)
+#'  data(landings)
+#'  catchsamples$Metier5 <- catchsamples$LEmetier5
+#'  landings$Metier5 <- landings$FishingActivityCategoryEuropeanLvl5
+#'  getCovariateMap("Metier5", catchsamples, landings)
 #' @export
 getCovariateMap <- function(covariate, samples, landings){
 
@@ -346,6 +352,13 @@ getNeighbours <- function(neighbours, covariateMap){
 #' @param month integer() vector, matching the number of rows in 'landings', month of catch (1 for January, etc.), see details.
 #' @param quarter integer() vector, vector, matching the number of rows in 'landings', quarter of catch (1 for Q1, etc.), see details.
 #' @return Landings object as required by \code{\link[Reca]{eca.predict}}
+#' @examples
+#'  data(catchsamples)
+#'  data(landings)
+#'  catchsamples$Metier5 <- catchsamples$LEmetier5
+#'  landings$Metier5 <- landings$FishingActivityCategoryEuropeanLvl5
+#'  covMap <- getCovariateMap("Metier5", catchsamples, landings)
+#'  getLandings(landings, c("Metier5"), covMap, month=landings$Month)
 #' @export
 getLandings <- function(landings, covariates, covariateMaps, date=NULL, month=NULL, quarter=NULL){
 
@@ -913,6 +926,18 @@ runRECA <- function(RecaObj, nSamples, burnin, lgamodel="log-linear", fitfile="f
 #'  \item{Nweight}{The number of fish weight measurements in the cell.}
 #'  \item{Nlength}{The number of fish length measurements in the cell.}
 #' }
+#' @examples
+#'  data(catchsamples)
+#'  catchsamples$catchId <- catchsamples$LEid
+#'  catchsamples$sampleId <- catchsamples$SAid
+#'  catchsamples$date <- catchsamples$LEdate
+#'  catchsamples$Metier5 <- catchsamples$LEmetier5
+#'
+#'  data(landings)
+#'  landings$LiveWeightKG <- landings$OfficialLandingsWeight
+#'  landings$Metier5 <- landings$FishingActivityCategoryEuropeanLvl5
+#'
+#'  rEcaDataReport(catchsamples, landings, c("Metier5", "VDencrCode"))
 #' @export
 rEcaDataReport <- function(samples, landings, covariates){
   # check mandatory columns

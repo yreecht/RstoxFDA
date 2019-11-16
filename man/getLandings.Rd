@@ -36,3 +36,11 @@ The parameters 'date', 'month', and 'quarter' are used to set the temporal resol
  Temporal resolution need not match any temporal covariate used.
  One can for example run with month, even if Quarter is a covariate in the model.
 }
+\examples{
+ data(catchsamples)
+ data(landings)
+ catchsamples$Metier5 <- catchsamples$LEmetier5
+ landings$Metier5 <- landings$FishingActivityCategoryEuropeanLvl5
+ covMap <- getCovariateMap("Metier5", catchsamples, landings)
+ getLandings(landings, c("Metier5"), covMap, month=landings$Month)
+}

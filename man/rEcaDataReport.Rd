@@ -47,3 +47,16 @@ Generates overview of samples to inform on sample availability in potential cell
  For each cell the covariates defining the cell is reported, before the total landed weight, along with the number of unique occurances of covariates not in landings (including catchId and sampleId).
  Lastly the number of fish measurements for Age, Weight and Length is reported.
 }
+\examples{
+ data(catchsamples)
+ catchsamples$catchId <- catchsamples$LEid
+ catchsamples$sampleId <- catchsamples$SAid
+ catchsamples$date <- catchsamples$LEdate
+ catchsamples$Metier5 <- catchsamples$LEmetier5
+
+ data(landings)
+ landings$LiveWeightKG <- landings$OfficialLandingsWeight
+ landings$Metier5 <- landings$FishingActivityCategoryEuropeanLvl5
+
+ rEcaDataReport(catchsamples, landings, c("Metier5", "VDencrCode"))
+}

@@ -23,3 +23,10 @@ Constructs a covariate map for R-ECA
 RECA require all covariate to be formatted as integers.
  In order to maintain connection to other formats for the covariates, they should be converted back and forth with a pre-defined covariate map
 }
+\examples{
+ data(catchsamples)
+ data(landings)
+ catchsamples$Metier5 <- catchsamples$LEmetier5
+ landings$Metier5 <- landings$FishingActivityCategoryEuropeanLvl5
+ getCovariateMap("Metier5", catchsamples, landings)
+}
