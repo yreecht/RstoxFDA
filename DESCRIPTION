@@ -16,7 +16,8 @@ Imports:
  stats,
  ggplot2,
  RColorBrewer,
- gridExtra
+ gridExtra,
+ RstoxData
 Suggests: 
  testthat,
  Reca
