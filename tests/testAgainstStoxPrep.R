@@ -26,12 +26,12 @@ landings[landings$Month %in% c("07", "08", "09"), "quarter"] <- 3
 landings[landings$Month %in% c("10", "11", "12"), "quarter"] <- 4
 
 prepRecaRobj <- RstoxFDA::prepRECA(samples, landings, c("temporal"), c("platformfactor"), minAge = 1, maxAge = 20, quarter = landings$quarter)
-prepRecaResults <- RstoxFDA::runRECA(prepRecaRobj, 400, 400, seed=42, thin=1)
+prepRecaResults <- RstoxFDA::runRECA(prepRecaRobj, 100, 100, seed=42, thin=1)
 
 stoxRobj$GlobalParameters$age.error = F
 stoxRobj$GlobalParameters$CC = F
 stoxRobj$GlobalParameters$CCerror = F
-stoxRecaResults <- RstoxFDA::runRECA(stoxRobj, 400, 400, seed=42, thin=1)
+stoxRecaResults <- RstoxFDA::runRECA(stoxRobj, 100, 100, seed=42, thin=1)
 
 tabPrep <- RstoxFDA::makeResultTableRECA(prepRecaResults$prediction)
 tabStox <- RstoxFDA::makeResultTableRECA(stoxRecaResults$prediction)
