@@ -1,0 +1,18 @@
+Package: RstoxFDA
+Type: Package
+Title: Fisheries Dependent Analysis with RstoX
+Version: 0.1.0
+Author: Edvin Fuglebakk
+Maintainer: Edvin Fuglebakk <Edvin.Fuglebakk@hi.no>
+Description: Fisheries Dependent Analysis with RstoX.
+    Support for estimation of catch at age using Reca.
+License: LGPL-3
+Encoding: UTF-8
+LazyData: true
+Imports: 
+ data.table,
+ readr
+Suggests: 
+ testthat,
+ Reca
+RoxygenNote: 6.1.1
