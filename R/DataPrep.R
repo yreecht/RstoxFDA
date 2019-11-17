@@ -4,8 +4,25 @@
 #' @param temporalType character() specify the kind of temporal category to define: "quarter", "week" or "custom"
 #' @param seasonal logical() specify whether the temporal category should be seasonal (e.g. week 1 in year x is the same category as week 1 in year y)
 #' @param FUN function(day, month) mapping a day (1-based integer()) and month (1-based integer()) to a value (character()) for the categorical variable to be defined.
+#' @examples
+#'  #get current quarter
+#'  quarter <- categoriseDate(Sys.time())
+#'
+#'  #get custom non-seasonal category
+#'  dates <- as.POSIXct(c(
+#'     "2018-01-17 21:37:29 CET",
+#'     "2019-02-28 21:37:29 CET",
+#'     "2019-12-28 21:37:29 CET"))
+#'  inDecember <- function(day, month){if(month==12){return("Yes")};return("No")}
+#'  categoriseDate(dates, temporalType = "custom", FUN=inDecember, seasonal = FALSE)
+#'
 #' @return character() a vector of values for the categorical variable, corresponding to the dates in 'date'
-getTemporalCategory <- function(date, temporalType="quarter", seasonal=T, FUN=NULL){
+#' @export
+categoriseDate <- function(date, temporalType="quarter", seasonal=T, FUN=NULL){
+
+  if (any(is.na(date))){
+    stop("NAs in date.")
+  }
 
   if (length(date) == 0){
     return(character())
@@ -42,4 +59,50 @@ getTemporalCategory <- function(date, temporalType="quarter", seasonal=T, FUN=NU
 
   return(output)
 
+}
+
+#' Convert codes.
+#' @description
+#'  Apply conversion table, perform approriate checks and return result.
+#' @details
+#'  Will stop with error if any codes can not be converted, or if any entries are NA.
+#'  Require all codes (original and converted) to be character().
+#' @param code character() with original codes
+#' @param conversionTable list() mapping code to converted code.
+#' @return character() with converted codes
+#' @examples
+#'  gearConversion <- list()
+#'  gearConversion["TBS"] <- "OTB"
+#'  gearConversion["TBN"] <- "OTB"
+#'  gearConversion["OTB"] <- "OTB"
+#'  convertCodes(c("TBS", "TBN", "OTB"), gearConversion)
+#' @export
+convertCodes <- function(code, conversionTable){
+
+  if (length(code) == 0){
+    return(character())
+  }
+
+  if (!is.character(code)){
+    stop("Codes must be character()")
+  }
+
+  if (!is.character(unlist(conversionTable))){
+    warning("Coercing converted codes to character")
+  }
+
+  if (is.null(names(conversionTable))){
+    stop("Conversion table must be indexed by character(). names(conversionTable) is NULL.")
+  }
+
+  if (any(is.na(code))){
+    stop("NAs in codes")
+  }
+
+  if (!all(code %in% names(conversionTable))){
+    missing <- code[!(code %in% names(conversionTable))]
+    stop(paste("Conversion not defined for all codes. Missing for:", paste(missing, collapse=", ")))
+  }
+
+  return(as.character(conversionTable[code]))
 }
