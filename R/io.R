@@ -16,7 +16,8 @@
 #' @return data.table with LSS landings
 #' @import data.table
 #' @import readr
-#' @export
+#' Marked noRd, anticipating move to RstoxData
+#' @noRd
 readLssFile <- function(file, encoding="latin1", guessMax = 100000){
   loc <- readr::default_locale()
   loc$decimal_mark <- ","
