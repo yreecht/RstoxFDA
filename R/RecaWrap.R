@@ -25,7 +25,6 @@ checkAllSampled <- function(landings, samples, fixedEffects){
 
 #' @noRd
 checkSamplesInFrame <- function(samples, landings, covariates){
-
   inlandings <- covariates[covariates %in% names(landings)]
 
   if (length(inlandings) == 0){
@@ -275,7 +274,6 @@ getDataMatrixWeightLength <- function(samples, nFish=NULL){
 #' order columns by constant, inlandings, notinlandings (inlandings and notinalndings sorted alphabetically)
 #' @noRd
 getCovariateMatrix <- function(samples, covariates, covariatesMapInLandings, covariatesMapRandom){
-
   samples$constant <- 1
   cols <- c("catchId", "constant", covariates)
   samples <- samples[!duplicated(samples$catchId),]
@@ -308,7 +306,16 @@ getCovariateMatrix <- function(samples, covariates, covariatesMapInLandings, cov
   }
 
   cols <- c("constant", inlandings, notinlandings)
-  return(samples[,cols,with=F])
+
+  # No idea why this is necessary
+  if (length(cols) == 1){
+    samples <- data.table::data.table(constant=samples$constant)
+  }
+  else {
+    samples <- samples[,cols,with=FALSE]
+  }
+
+  return(samples)
 }
 
 #' @param neighbours list mapping values of covariate with CAR effect to list of neighbours (symmetric)
@@ -576,7 +583,7 @@ prepRECA <- function(samples, landings, fixedEffects, randomEffects, carEffect=N
     if (!checkAllSampled(landings, samples, fixedEffects)){
       stop("Not all combinations of fixed effects are sampled for Age")
     }
-    if (!checkAllSampled(landings, samples[!is.na(samples$Weight)], fixedEffects)){
+    if (!checkAllSampled(landings, samples[!is.na(samples$Weight),], fixedEffects)){
       stop("Not all combinations of fixed effects are sampled for Weight")
     }
   }
@@ -598,10 +605,10 @@ prepRECA <- function(samples, landings, fixedEffects, randomEffects, carEffect=N
       }
     }
 
-    if (!checkAllSampledCar(landings, samples[!is.na(samples$Age)], fixedEffects, carEffect, neighbours)){
+    if (!checkAllSampledCar(landings, samples[!is.na(samples$Age),], fixedEffects, carEffect, neighbours)){
       stop("Not all combinations of fixed effects are sampled together with CAR effect or neighbours for Age")
     }
-    if (!checkAllSampledCar(landings, samples[!is.na(samples$Weight)], fixedEffects, carEffect, neighbours)){
+    if (!checkAllSampledCar(landings, samples[!is.na(samples$Weight),], fixedEffects, carEffect, neighbours)){
       stop("Not all combinations of fixed effects are sampled together with CAR effect or neighbours for Weight")
     }
 
@@ -649,7 +656,7 @@ prepRECA <- function(samples, landings, fixedEffects, randomEffects, carEffect=N
   covariateMaps$randomEffects$WeightLength <- list()
   for (f in randomEffects[!(c(randomEffects) %in% names(landings))]){
     covariateMaps$randomEffects$AgeLength[[f]] <- getCovariateMap(f, samples, landings)
-    covariateMaps$randomEffects$WeightLength[[f]] <- getCovariateMap(f, samples[!is.na(samples$Weight)], landings)
+    covariateMaps$randomEffects$WeightLength[[f]] <- getCovariateMap(f, samples[!is.na(samples$Weight),], landings)
   }
 
   if (is.null(lengthResolution)){

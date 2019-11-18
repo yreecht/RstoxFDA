@@ -1,5 +1,6 @@
-fishdata <- readRDS(system.file(package = "RstoxFDA", "testresources", "fishdata.rda"))
-landings <- readRDS(system.file(package = "RstoxFDA", "testresources", "landings.rda"))
+
+fishdata <- data.table::as.data.table(readRDS(system.file(package = "RstoxFDA", "testresources", "fishdata.rda")))
+landings <- data.table::as.data.table(readRDS(system.file(package = "RstoxFDA", "testresources", "landings.rda")))
 
 nFish <- fishdata[1000:nrow(fishdata),c("sampleId", "SAtotalWtLive", "Weight")]
 nFish$count <- nFish$SAtotalWtLive/mean(nFish$Weight, na.rm=T)
@@ -16,18 +17,18 @@ nFishAll <- unique(nFishAll)
 
 context("test prepRECA: minimal run")
 
-minRobj <- prepRECA(fishdata[1:1000], landings, NULL, NULL, NULL, month=landings$Month)
+minRobj <- prepRECA(fishdata[1:1000,], landings, NULL, NULL, NULL, month=landings$Month)
 expect_true("constant" %in% names(minRobj$AgeLength$CovariateMatrix))
 expect_true("constant" %in% names(minRobj$Landings$AgeLengthCov))
 expect_true("constant" %in% names(minRobj$WeightLength$CovariateMatrix))
 expect_true("constant" %in% names(minRobj$Landings$WeightLengthCov))
 expect_equal(max(minRobj$AgeLength$DataMatrix$samplingID), nrow(minRobj$AgeLength$CovariateMatrix))
 expect_equal(max(minRobj$WeightLength$DataMatrix$samplingID), nrow(minRobj$WeightLength$CovariateMatrix))
-expect_error(prepRECA(fishdata[1:1000], landings, c("Metier5"), c("vessel"), NULL, month=landings$Month)) #fixed effect issue
+expect_error(prepRECA(fishdata[1:1000,], landings, c("Metier5"), c("vessel"), NULL, month=landings$Month)) #fixed effect issue
 
 #check with sampled cells not in landings
-stopifnot("Q4" %in% fishdata$quarter)
-expect_error(prepRECA(fishdata[1:1000, fishdata], landings[landings$Quarter < 3,], c("quarter"), c("vessel"), NULL, month=landings[landings$Quarter < 3,][["Month"]]))
+stopifnot("Q2" %in% fishdata[1:1000,]$quarter)
+expect_error(prepRECA(fishdata[1:1000,], landings[landings$Quarter < 2,], c("quarter"), c("vessel"), NULL, month=landings[landings$Quarter < 2,][["Month"]]))
 
 minRobj <- prepRECA(fishdata, landings, NULL, NULL, NULL, month=landings$Month, nFish = nFishAll)
 expect_equal(max(minRobj$AgeLength$DataMatrix$samplingID), nrow(minRobj$AgeLength$CovariateMatrix))
@@ -134,11 +135,14 @@ expect_equal(neighboursECA$idNeighbours, c(2,3,1,1))
 
 context("test prepRECA: CAR effect simple run")
 carefftest <- fishdata[1:1000,]
+carefftest$some <- NA
 carefftestland <- landings
-dummycareff <- unique(carefftest[,c("catchId")])
-dummycareff$dummyArea <- c(rep(c("a", "b", "c"), nrow(dummycareff)/3), "a")
+dummycareff <- data.table::as.data.table(unique(carefftest[,c("catchId", "some"), with=F]))
+expect_true(data.table::is.data.table(dummycareff))
+dummycareff$dummyArea <- c(rep(c("a", "b", "c"), as.integer(round(nrow(dummycareff)/3))), "a")
 carefftest <- merge(carefftest, dummycareff, by="catchId")
 carefftestland$dummyArea <- c(rep(c("a", "b", "c"), nrow(carefftestland)/3), "a", "a")
+stopifnot("Age" %in% names(carefftest))
 RECAobj <- prepRECA(carefftest, carefftestland, NULL, c("Metier5", "vessel"), "dummyArea", neighbours = neighbours, month=landings$Month)
 expect_equal(RECAobj$AgeLength$CARNeighbours$numNeighbours, c(2,1,1))
 expect_equal(RECAobj$AgeLength$CARNeighbours$idNeighbours, c(2,3,1,1))

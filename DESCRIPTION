@@ -11,8 +11,8 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 2.10)
 Imports: 
- data.table,
  readr,
+ data.table,
  stats,
  ggplot2,
  RColorBrewer,
