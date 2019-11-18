@@ -1,4 +1,4 @@
-#' Read common categorical definition
+#' Read unified categorical definition
 #' @description
 #'  From a resource file, read a definition for a categorical variable that can unify coding systems
 #'  between formats such as NMDlanding and NMDbiotic.

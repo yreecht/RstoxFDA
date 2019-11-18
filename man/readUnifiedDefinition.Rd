@@ -2,7 +2,7 @@
 % Please edit documentation in R/StoxFunctions.R
 \name{readUnifiedDefinition}
 \alias{readUnifiedDefinition}
-\title{Read common categorical definition}
+\title{Read unified categorical definition}
 \usage{
 readUnifiedDefinition(filepath, encoding = "ascii", formats = NULL)
 }
