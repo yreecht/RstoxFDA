@@ -211,8 +211,8 @@ plotCatchAtAge <- function(prediction, unit="millions", plusGroup=NULL, credibil
 
   resTab <- makeResultTableRECA(prediction, unit, plusGroup, alpha=(1-credibility))
   resTab$order <- 1:nrow(resTab)
-  ggplot2::ggplot(resTab, ggplot2::aes(x=stats::reorder(age, order), y=total)) +
-    ggplot2::geom_errorbar(ggplot2::aes(ymin=lowerQuantile, ymax=upperQuantile), width=.1) +
+  ggplot2::ggplot(resTab, ggplot2::aes_(x=~stats::reorder(age, order), y=~total)) +
+    ggplot2::geom_errorbar(ggplot2::aes_(ymin=~lowerQuantile, ymax=~upperQuantile), width=.1) +
     ggplot2::geom_point() +
     ggplot2::xlab("Age") +
     ggplot2::ylab(paste("Total catch (", unit, ")", sep="")) +
@@ -294,10 +294,10 @@ plotAgeTraces <- function(prediction, unit="millions", plusGroup=NULL, nclust=4,
     maxy <- max(mcp[unit]) + max(mcp[unit])*.1
     if (sum(clust$cluster==i)<=catlimit){
       mcp$age <- as.factor(mcp$age)
-      plots[[plotnr]]<-ggplot2::ggplot(data=mcp, ggplot2::aes_string(x="iteration", y=unit, group="age"))+ggplot2::geom_line(data=mcp, ggplot2::aes(color=age)) + ggplot2::geom_point(data=mcp[mcp[unit] > mcp$uq | mcp[unit] < mcp$lq,], ggplot2::aes(color=age)) + ggplot2::scale_color_manual(values = agecolors) + ggplot2::ylim(0,maxy)
+      plots[[plotnr]]<-ggplot2::ggplot(data=mcp, ggplot2::aes_string(x="iteration", y=unit, group="age"))+ggplot2::geom_line(data=mcp, ggplot2::aes_(color=~age)) + ggplot2::geom_point(data=mcp[mcp[unit] > mcp$uq | mcp[unit] < mcp$lq,], ggplot2::aes_(color=~age)) + ggplot2::scale_color_manual(values = agecolors) + ggplot2::ylim(0,maxy)
     }
     else{
-      plots[[plotnr]]<-ggplot2::ggplot(data=mcp, ggplot2::aes_string(x="iteration", y=unit, group="age"))+ggplot2::geom_line(data=mcp, ggplot2::aes(color=age)) + ggplot2::geom_point(data=mcp[mcp[unit] > mcp$uq | mcp[unit] < mcp$lq,], ggplot2::aes(color=age)) + ggplot2::ylim(0,maxy)
+      plots[[plotnr]]<-ggplot2::ggplot(data=mcp, ggplot2::aes_string(x="iteration", y=unit, group="age"))+ggplot2::geom_line(data=mcp, ggplot2::aes_(color=~age)) + ggplot2::geom_point(data=mcp[mcp[unit] > mcp$uq | mcp[unit] < mcp$lq,], ggplot2::aes_(color=~age)) + ggplot2::ylim(0,maxy)
     }
 
     plotnr <- plotnr+1

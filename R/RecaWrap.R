@@ -279,7 +279,7 @@ getCovariateMatrix <- function(samples, covariates, covariatesMapInLandings, cov
   samples$constant <- 1
   cols <- c("catchId", "constant", covariates)
   samples <- samples[!duplicated(samples$catchId),]
-  samples <- samples[,..cols]
+  samples <- samples[,cols,with=F]
   stopifnot(length(samples$catchId) == length(unique(samples$catchId)))
   for (cov in covariates){
     if (length(covariatesMapInLandings) > 0 & cov %in% names(covariatesMapInLandings)){
@@ -308,7 +308,7 @@ getCovariateMatrix <- function(samples, covariates, covariatesMapInLandings, cov
   }
 
   cols <- c("constant", inlandings, notinlandings)
-  return(samples[,..cols])
+  return(samples[,cols,with=F])
 }
 
 #' @param neighbours list mapping values of covariate with CAR effect to list of neighbours (symmetric)
@@ -416,8 +416,8 @@ getLandings <- function(landings, covariates, covariateMaps, date=NULL, month=NU
   inlandings <- c("constant", inlandings, "midseason")
 
   recaLandings <- list()
-  recaLandings$AgeLengthCov <- landings[,..inlandings]
-  recaLandings$WeightLengthCov <- landings[,..inlandings]
+  recaLandings$AgeLengthCov <- landings[,inlandings,with=F]
+  recaLandings$WeightLengthCov <- landings[,inlandings,with=F]
   recaLandings$LiveWeightKG <- landings[["LiveWeightKG"]]
 
   return(recaLandings)
@@ -557,11 +557,11 @@ prepRECA <- function(samples, landings, fixedEffects, randomEffects, carEffect=N
 
   # check for NAs
   ins <- c(fixedEffects, randomEffects, carEffect, "Length")
-  if (!all(!is.na(samples[, ..ins]))){
+  if (!all(!is.na(samples[, ins, with=F]))){
     stop("NAs are only allowed for weight and age in samples")
   }
   inl <- c(fixedEffects, randomEffects, carEffect, "LiveWeightKG")[c(fixedEffects, randomEffects, carEffect, "LiveWeightKG") %in% names(landings)]
-  if(!all(!is.na(landings[, ..inl]))){
+  if(!all(!is.na(landings[, inl, with=F]))){
     stop("NAs in landings")
   }
 
