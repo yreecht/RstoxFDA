@@ -74,8 +74,6 @@ makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
 #'   \item{Definition}{The codes defining the unified code in the 'source'. Comma-separated list of codes.}
 #'  }
 #'
-#' @seealso \code{\link[RstoxData]{DataTypes}} for a list of all StoX data types.
-#'
 #' @name UnifiedVariableDefinition
 #'
 NULL

@@ -13,6 +13,3 @@ Table (\code{\link[data.table]{data.table}}) defining a unified variable for dif
   \item{Definition}{The codes defining the unified code in the 'source'. Comma-separated list of codes.}
  }
 }
-\seealso{
-\code{\link[RstoxData]{DataTypes}} for a list of all StoX data types.
-}
