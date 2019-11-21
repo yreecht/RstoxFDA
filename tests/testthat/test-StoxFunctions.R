@@ -1,8 +1,27 @@
-context("test-StoxFunctions: makeUnifiedDefinitionLookupList")
-
 regularfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
 
-parsedfile <- readTabSepFile(regularfile)
+context("test-StoxFunctions: DefineGear")
+gear <- DefineGear(resourceFilePath = regularfile)
+expect_true(data.table::is.data.table(gear))
+expect_equal(nrow(gear), 14)
+expect_equal(ncol(gear), 3)
+
+context("test-StoxFunctions: DefineGear useProcessData")
+nullgear <- DefineGear(NULL, resourceFilePath = regularfile, useProcessData = T)
+expect_true(is.null(nullgear))
+errorfile <- system.file("testresources","gearfactor_error.txt", package="RstoxFDA")
+gg <- DefineGear(gear, resourceFilePath = errorfile, useProcessData = T)
+expect_equal(nrow(gear), 14)
+expect_equal(ncol(gear), 3)
+gg <- DefineGear(gear, resourceFilePath = NULL, useProcessData = T)
+expect_equal(nrow(gear), 14)
+expect_equal(ncol(gear), 3)
+
+
+context("test-StoxFunctions: makeUnifiedDefinitionLookupList")
+regularfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
+
+parsedfile <- DefineGear(resourceFilePath = regularfile)
 
 mappings <- makeUnifiedDefinitionLookupList(parsedfile)
 expect_true("StoxLandingData" %in% names(mappings))
@@ -21,9 +40,9 @@ expect_error(makeUnifiedDefinitionLookupList(parsedfile, formats = c("StoxBiotic
 
 context("test-StoxFunctions: makeUnifiedDefinitionLookupList redefined codes")
 errorfile <- system.file("testresources","gearfactor_error.txt", package="RstoxFDA")
-parsedfile <- readTabSepFile(errorfile)
+parsedfile <- DefineGear(resourceFilePath = errorfile)
 expect_error(makeUnifiedDefinitionLookupList(parsedfile), "Codes redefined: 3714")
 
 errorfile <- system.file("testresources","gearfactor_errorkeys.txt", package="RstoxFDA")
-parsedfile <- readTabSepFile(errorfile)
+parsedfile <- DefineGear(resourceFilePath = errorfile)
 expect_error(makeUnifiedDefinitionLookupList(parsedfile), "Malformed resource file. Non-unique keys: repition in first two columns.")

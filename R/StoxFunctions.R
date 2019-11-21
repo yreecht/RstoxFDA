@@ -1,10 +1,11 @@
+
 #' read tab separated file
 #' @noRd
 readTabSepFile <- function(filepath, encoding="ascii"){
   loc <- readr::default_locale()
   loc$encoding <- encoding
   tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = "ccc")
-  return(tab)
+  return(data.table::as.data.table(tab))
 }
 
 #' Get lookup list for unified categorical definition
@@ -61,28 +62,41 @@ makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
   return(mappings)
 }
 
+#' UnifiedVariableDefinition
+#'
+#' Table (\code{\link[data.table]{data.table}}) defining a unified variable for different data formats
+#'
+#'
+#' @details
+#'  \describe{
+#'   \item{Unified variable}{Unified code}
+#'   \item{Source}{Format for which the unified variable has corresponding codes}
+#'   \item{Definition}{The codes defining the unified code in the 'source'. Comma-separated list of codes.}
+#'  }
+#'
+#' @seealso \code{\link[RstoxData]{DataTypes}} for a list of all StoX data types.
+#'
+#' @name UnifiedVariableDefinition
+#'
+NULL
+
 #' Define gear
 #' @description
 #'  Define a unified categorical variable 'Gear', and its correspondance to gear codes in
-#'  data formats \code{\link[RstoxData]{StoxBioticData} and \code{\link[RstoxData]{StoxLandingData}.
+#'  data formats \code{\link[RstoxData]{StoxBioticData}} and \code{\link[RstoxData]{StoxLandingData}}.
 #'  Definitions are read from a resource file.
 #' @details
 #'  Definitions are stored with in a tab separated file with headers. Columns defined as:
 #'  \describe{
-#'  \item{Column 1: 'UnifiedGear'}{Unified value (key)}
+#'  \item{Column 1: 'UnifiedVariable'}{Unified value (key)}
 #'  \item{Column 2: 'Source'}{The format for which the unified value is defined(key)}
 #'  \item{Column 3: 'Definition'}{A comma separated list of values, any of which will be defined as the unified value in the format.}
 #'  }
 #' @param processData data.table() as returned from this function
-#' @param resourcefile path to resource file
+#' @param resourceFilePath path to resource file
 #' @param encoding encoding of resource file
 #' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
-#' @return data.table() with columns:
-#'  \describe{
-#'   \item{Gear}{Unified gear code}
-#'   \item{StoxBioticData}{Gear code used for field 'gear' in StoxBiotic}
-#'   \item{StoxLandingData}{Gear code used for field 'gearFdir' in StoxLanding}
-#'  }
+#' @return Unified variable definition, see: \code{\link[RstoxFDA]{UnifiedVariableDefinition}}.
 DefineGear <- function(processData, resourceFilePath, encoding="latin1", useProcessData=F){
 
   if (useProcessData){
@@ -92,3 +106,24 @@ DefineGear <- function(processData, resourceFilePath, encoding="latin1", useProc
   tab <- readTabSepFile(resourceFilePath)
   return(tab)
 }
+
+#' Function specification for inclusion in StoX GUI
+#' @export
+stoxFunctionAttributes <- list(
+
+  # The format describes the actual content, such as catchabilityTable, filePath, filter, etc. These are used by StoX to choose action on these parameters.
+  # The primitive type (one of integer, double, logical, character) will be interpreted in the process property functions from the type of the function input or parameter.
+
+  # Read input biotic data:
+  DefineGear = list(
+    functionType = "processData",
+    functionCategory = "Baseline",
+    functionOutputDataType = "GearDefinition",
+    functionParameterType = list(resourceFilePath = "character"),
+    functionParameterFormat = list(resourceFilePath = "filePaths"),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
+  )
+)
