@@ -1,4 +1,13 @@
-#' Read unified categorical definition
+#' read tab separated file
+#' @noRd
+readTabSepFile <- function(filepath, encoding="ascii"){
+  loc <- readr::default_locale()
+  loc$encoding <- encoding
+  tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = "ccc")
+  return(tab)
+}
+
+#' Get lookup list for unified categorical definition
 #' @description
 #'  From a resource file, read a definition for a categorical variable that can unify coding systems
 #'  between formats such as NMDlanding and NMDbiotic.
@@ -9,19 +18,15 @@
 #'
 #'  Definitions are stored with in a tab separated file with headers. Columns defined as:
 #'  \describe{
-#'  \item{Column 1: 'CovariateID' or 'UnifiedValue'}{Unified value (key)}
-#'  \item{Column 2: 'Source' or 'Format'}{The format (key)}
-#'  \item{Column 3: 'Definition'}{A comma separated list of values, any of which will be defined as the unified value in the format.}
+#'  \item{Column 1: <name not constrained>}{Unified value (key)}
+#'  \item{Column 2: <name not constrained>}{The format (key)}
+#'  \item{Column 3: <name not constrained>}{A comma separated list of values, any of which will be defined as the unified value in the format.}
 #'  }
-#' @param filepath path to resource file
-#' @param encoding encoding of resource file
+#' @param tab parsed tab separated file
 #' @param formats the formats to extract definitions for, if NULL all formats will be extracted.
-#' @import readr
 #' @return list() with one member for each format, each a list mapping codes in that format to the unified variable.
-readUnifiedDefinition <- function(filepath, encoding="ascii", formats=NULL){
-  loc <- readr::default_locale()
-  loc$encoding <- encoding
-  tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = "ccc")
+#' @noRd
+makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
 
   if (!nrow(unique(tab[,1:2])) == nrow(tab)){
     stop("Malformed resource file. Non-unique keys: repition in first two columns.")
@@ -54,4 +59,36 @@ readUnifiedDefinition <- function(filepath, encoding="ascii", formats=NULL){
   }
 
   return(mappings)
+}
+
+#' Define gear
+#' @description
+#'  Define a unified categorical variable 'Gear', and its correspondance to gear codes in
+#'  data formats \code{\link[RstoxData]{StoxBioticData} and \code{\link[RstoxData]{StoxLandingData}.
+#'  Definitions are read from a resource file.
+#' @details
+#'  Definitions are stored with in a tab separated file with headers. Columns defined as:
+#'  \describe{
+#'  \item{Column 1: 'UnifiedGear'}{Unified value (key)}
+#'  \item{Column 2: 'Source'}{The format for which the unified value is defined(key)}
+#'  \item{Column 3: 'Definition'}{A comma separated list of values, any of which will be defined as the unified value in the format.}
+#'  }
+#' @param processData data.table() as returned from this function
+#' @param resourcefile path to resource file
+#' @param encoding encoding of resource file
+#' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
+#' @return data.table() with columns:
+#'  \describe{
+#'   \item{Gear}{Unified gear code}
+#'   \item{StoxBioticData}{Gear code used for field 'gear' in StoxBiotic}
+#'   \item{StoxLandingData}{Gear code used for field 'gearFdir' in StoxLanding}
+#'  }
+DefineGear <- function(processData, resourceFilePath, encoding="latin1", useProcessData=F){
+
+  if (useProcessData){
+    return(processData)
+  }
+
+  tab <- readTabSepFile(resourceFilePath)
+  return(tab)
 }

@@ -1,25 +1,29 @@
-context("test-StoxFunctions: readUnifiedDefinition")
+context("test-StoxFunctions: makeUnifiedDefinitionLookupList")
 
 regularfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
 
-mappings <- readUnifiedDefinition(regularfile)
-expect_true("Landing" %in% names(mappings))
+parsedfile <- readTabSepFile(regularfile)
+
+mappings <- makeUnifiedDefinitionLookupList(parsedfile)
+expect_true("StoxLandingData" %in% names(mappings))
 expect_equal(length(mappings), 2)
-expect_equal(length(unique(mappings$Landing)), 7)
-expect_equal(length(unique(mappings$Biotic)), 7)
+expect_equal(length(unique(mappings$StoxLandingData)), 7)
+expect_equal(length(unique(mappings$StoxBioticData)), 7)
 
-context("test-StoxFunctions: readUnifiedDefinition one format only")
-mappings <- readUnifiedDefinition(regularfile, formats = c("Biotic"))
+context("test-StoxFunctions: makeUnifiedDefinitionLookupList one format only")
+mappings <- makeUnifiedDefinitionLookupList(parsedfile, formats = c("StoxBioticData"))
 expect_equal(length(mappings), 1)
-expect_equal(length(unique(mappings$Biotic)), 7)
-expect_false("Landing" %in% names(mappings))
+expect_equal(length(unique(mappings$StoxBioticData)), 7)
+expect_false("StoxLandingData" %in% names(mappings))
 
-context("test-StoxFunctions: readUnifiedDefinition missing formats")
-expect_error(readUnifiedDefinition(regularfile, formats = c("Biotic", "ICESbiotic")), "Not all formats found in file. Missing: ICESbiotic")
+context("test-StoxFunctions: makeUnifiedDefinitionLookupList missing formats")
+expect_error(makeUnifiedDefinitionLookupList(parsedfile, formats = c("StoxBioticData", "ICESbiotic")), "Not all formats found in file. Missing: ICESbiotic")
 
-context("test-StoxFunctions: readUnifiedDefinition redefined codes")
+context("test-StoxFunctions: makeUnifiedDefinitionLookupList redefined codes")
 errorfile <- system.file("testresources","gearfactor_error.txt", package="RstoxFDA")
-expect_error(readUnifiedDefinition(errorfile), "Codes redefined: 3714")
+parsedfile <- readTabSepFile(errorfile)
+expect_error(makeUnifiedDefinitionLookupList(parsedfile), "Codes redefined: 3714")
 
 errorfile <- system.file("testresources","gearfactor_errorkeys.txt", package="RstoxFDA")
-expect_error(readUnifiedDefinition(errorfile), "Malformed resource file. Non-unique keys: repition in first two columns.")
+parsedfile <- readTabSepFile(errorfile)
+expect_error(makeUnifiedDefinitionLookupList(parsedfile), "Malformed resource file. Non-unique keys: repition in first two columns.")
