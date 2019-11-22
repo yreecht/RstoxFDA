@@ -54,8 +54,8 @@ Runs \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}.
  If removal is not successful a warning will be issued which includes the path to the temporary directory.
 }
 \examples{
- data(recaData)
+ data(recaDataExample)
 
  # run (produce recaPrediction as in data(recaPrediction))
- \dontrun{recaPrediction <- runRECA(recaData, 500, 5000)$prediction}
+ \dontrun{recaPrediction <- runRECA(recaDataExample, 500, 5000)$prediction}
 }

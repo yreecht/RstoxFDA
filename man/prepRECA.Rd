@@ -143,8 +143,8 @@ The cell definition is specified by 'landings'.
  nFish <- merge(totalWeights, meanWeights)
  nFish$count <- nFish$totalW / nFish$meanW
 
- #prepRECA (produce recaData as in data(recaData))
- recaData <- prepRECA(catchsamples,
+ #prepRECA (produce recaData as in data(recaDataExample))
+ recaDataExample <- prepRECA(catchsamples,
    landings,
    c("Metier5"),
    NULL,

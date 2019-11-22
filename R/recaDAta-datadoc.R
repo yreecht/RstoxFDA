@@ -4,13 +4,13 @@
 #'
 #' @docType data
 #'
-#' @usage data(recaData)
+#' @usage data(recaDataExample)
 #'
 #' @format see \code{\link[RstoxFDA]{prepRECA}}.
 #'
 #' @keywords datasets
 #'
 #' @examples
-#' data(recaData)
+#' data(recaDataExample)
 #' \dontrun{recaResult <- runRECA(recaData, 500, 5000)}
-"recaData"
+"recaDataExample"

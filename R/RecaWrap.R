@@ -543,8 +543,8 @@ getLandings <- function(landings, covariates, covariateMaps, date=NULL, month=NU
 #'  nFish <- merge(totalWeights, meanWeights)
 #'  nFish$count <- nFish$totalW / nFish$meanW
 #'
-#'  #prepRECA (produce recaData as in data(recaData))
-#'  recaData <- prepRECA(catchsamples,
+#'  #prepRECA (produce recaData as in data(recaDataExample))
+#'  recaDataExample <- prepRECA(catchsamples,
 #'    landings,
 #'    c("Metier5"),
 #'    NULL,
@@ -881,10 +881,10 @@ renameRecaOutput <- function(ecafit, covariateMaps, careffect){
 #'  \item{covariateMaps}{list() mapping from Reca covariate encoding to values fed to \code{\link[RstoxFDA]{prepRECA}}. As on parameter 'RecaObj'}
 #' }
 #' @examples
-#'  data(recaData)
+#'  data(recaDataExample)
 #'
 #'  # run (produce recaPrediction as in data(recaPrediction))
-#'  \dontrun{recaPrediction <- runRECA(recaData, 500, 5000)$prediction}
+#'  \dontrun{recaPrediction <- runRECA(recaDataExample, 500, 5000)$prediction}
 #' @export
 runRECA <- function(RecaObj, nSamples, burnin, lgamodel="log-linear", fitfile="fit", predictfile="pred", resultdir=NULL, thin=10, delta.age=0.001, seed=NULL, caa.burnin=0){
 

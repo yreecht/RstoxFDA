@@ -9,7 +9,7 @@ PrepareReca(StoxBioticData, StoxLandingData, fixedEffects, randomEffects,
   stockSplitting = F, ClassificationErrorMatrix = NULL,
   minAge = NULL, maxAge = NULL, maxLength = NULL,
   lengthResolution = NULL, temporalResolution = c("Quarter", "Month"),
-  hatchDate = 1)
+  hatchDay = 1)
 }
 \arguments{
 \item{StoxBioticData}{\code{\link[RstoxData]{StoxBioticData}} data with samples from fisheries
@@ -56,15 +56,12 @@ Not to be confused with any temporal covariate.}
 encoding the day of the year when fish is consider to transition from one age to the next.}
 }
 \value{
-\code{\link[RstoxFDA]{RecaData}}
+\code{\link[RstoxFDA]{RecaData}} Data prepared for running Reca.
 }
 \description{
-Prepare data for Reca.
-}
-\details{
 StoX-function.
  Performs data checks and data conversions,
- and stores some data-related parameters in preparation for running.
+ and stores some data-related parameters in preparation for running
  \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
  via \code{\link[RstoxFDA]{RunReca}}.
 }

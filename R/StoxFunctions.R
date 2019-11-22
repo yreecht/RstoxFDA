@@ -62,22 +62,6 @@ makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
   return(mappings)
 }
 
-#' UnifiedVariableDefinition
-#'
-#' Table (\code{\link[data.table]{data.table}}) defining a unified variable for different data formats
-#'
-#'
-#' @details
-#'  \describe{
-#'   \item{Unified variable}{Unified code}
-#'   \item{Source}{Format for which the unified variable has corresponding codes}
-#'   \item{Definition}{The codes defining the unified code in the 'source'. Comma-separated list of codes.}
-#'  }
-#'
-#' @name UnifiedVariableDefinition
-#'
-NULL
-
 #' Define gear
 #' @description
 #'  Define a unified categorical variable 'Gear', and its correspondance to gear codes in
@@ -106,10 +90,10 @@ DefineGear <- function(processData, resourceFilePath, encoding="latin1", useProc
 }
 
 #' Prepare data for Reca.
-#' @details
+#' @description
 #'  StoX-function.
 #'  Performs data checks and data conversions,
-#'  and stores some data-related parameters in preparation for running.
+#'  and stores some data-related parameters in preparation for running
 #'  \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
 #'  via \code{\link[RstoxFDA]{RunReca}}.
 #'
@@ -156,9 +140,9 @@ DefineGear <- function(processData, resourceFilePath, encoding="latin1", useProc
 #' @param hatchDay
 #'  integer(), defaults to 1 representing Jan 1st.
 #'  encoding the day of the year when fish is consider to transition from one age to the next.
-#' @return \code{\link[RstoxFDA]{RecaData}}
+#' @return \code{\link[RstoxFDA]{RecaData}} Data prepared for running Reca.
 #' @export
-PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationErrorMatrix=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, temporalResolution=c("Quarter", "Month"), hatchDate=1){
+PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationErrorMatrix=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, temporalResolution=c("Quarter", "Month"), hatchDay=1){
 
   temporalResolution <- match.arg(temporalResolution, temporalResolution)
   if (!(temporalResolution %in% c("Quarter", "Month", "Week"))){
@@ -185,8 +169,48 @@ PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEff
   warning("Get nFish")
   nFish = NULL
 
-  prepRECA(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect, neighbours=CarNeighbours, nFish=nFish, ageError=AgeErrorMatrix, minAge=minAge, maxAge=maxAge, maxLength=maxLength, lengthResolution=lengthResolution, date=NULL, month=Month, quarter=Quarter, hatchDate=hatchDate)
+  recaObject <- prepRECA(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect, neighbours=CarNeighbours, nFish=nFish, ageError=AgeErrorMatrix, minAge=minAge, maxAge=maxAge, maxLength=maxLength, lengthResolution=lengthResolution, date=NULL, month=month, quarter=quarter, hatchDay=hatchDay)
+  return(recaObject)
 }
+
+##
+# Stox Data types
+##
+
+#' RecaData
+#'
+#' Data and some data parameters prepared for running
+#' \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
+#' via \code{\link[RstoxFDA]{RunReca}}.
+#'
+#' @details
+#' \describe{
+#'  \item{AgeLength}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}}
+#'  \item{WeightLength}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}}
+#'  \item{Landings}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}}
+#'  \item{GlobalParameters}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}. see details}
+#'  \item{CovariateMaps}{Mapping of values for each covariate in landings and samples (including non-configurable catchId) to integer value used in R-ECA.}
+#' }
+#'
+#' @name RecaData
+#'
+NULL
+
+#' UnifiedVariableDefinition
+#'
+#' Table (\code{\link[data.table]{data.table}}) defining a unified variable for different data formats
+#'
+#' @details
+#'  \describe{
+#'   \item{Unified variable}{Unified code}
+#'   \item{Source}{Format for which the unified variable has corresponding codes}
+#'   \item{Definition}{The codes defining the unified code in the 'source'. Comma-separated list of codes.}
+#'  }
+#'
+#' @name UnifiedVariableDefinition
+#'
+NULL
+
 
 #' Function specification for inclusion in StoX projects
 #' @export
@@ -206,7 +230,7 @@ stoxFunctionAttributes <- list(
 
   PrepareReca = list(
     functionType = "modelData",
-    functionCategory = "Baseline",
+    functionCategory = "Analysis",
     functionOutputDataType = "RecaData",
     functionParameterType = list(StoxBioticData = "character",
                                  StoxLandingData = "character",
