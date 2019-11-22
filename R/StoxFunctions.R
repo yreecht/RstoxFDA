@@ -166,7 +166,7 @@ PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEff
     stop(paste("Temporal resolution", temporalResolution, "not supported"))
   }
 
-  warning("Get nFish")
+  warning("Get nFish for each sample with delprøve.")
   nFish = NULL
 
   recaObject <- prepRECA(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect, neighbours=CarNeighbours, nFish=nFish, ageError=AgeErrorMatrix, minAge=minAge, maxAge=maxAge, maxLength=maxLength, lengthResolution=lengthResolution, date=NULL, month=month, quarter=quarter, hatchDay=hatchDay)
