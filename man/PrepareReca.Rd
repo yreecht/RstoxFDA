@@ -5,11 +5,11 @@
 \title{Prepare data for Reca.}
 \usage{
 PrepareReca(StoxBioticData, StoxLandingData, fixedEffects, randomEffects,
-  carEffect = NULL, CarNeighbours = NULL, AgeErrorMatrix = NULL,
-  stockSplitting = F, ClassificationErrorMatrix = NULL,
-  minAge = NULL, maxAge = NULL, maxLength = NULL,
-  lengthResolution = NULL, temporalResolution = c("Quarter", "Month"),
-  hatchDay = 1)
+  continousEffects = NULL, carEffect = NULL, CarNeighbours = NULL,
+  AgeErrorMatrix = NULL, stockSplitting = F,
+  ClassificationErrorMatrix = NULL, minAge = NULL, maxAge = NULL,
+  maxLength = NULL, lengthResolution = NULL,
+  temporalResolution = c("Quarter", "Month"), hatchDay = 1)
 }
 \arguments{
 \item{StoxBioticData}{\code{\link[RstoxData]{StoxBioticData}} data with samples from fisheries
@@ -20,7 +20,9 @@ and approriate columns appended for identifying corresponding samples}
 
 \item{fixedEffects}{character() vector identifying column names that should be treated as fixed effects}
 
-\item{randomEffects}{character() vector identifying column names that should be treated as fixed effects}
+\item{randomEffects}{character() vector identifying column names that should be treated as random effects}
+
+\item{continousEffects}{character() vector identifying column names that should be treated as continous effect}
 
 \item{carEffect}{character(), optional, identifying the column name that should be treated as CAR-effect
 (conditional autoregressive effect)}

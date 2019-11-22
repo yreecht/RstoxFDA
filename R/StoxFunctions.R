@@ -106,7 +106,9 @@ DefineGear <- function(processData, resourceFilePath, encoding="latin1", useProc
 #' @param fixedEffects
 #'  character() vector identifying column names that should be treated as fixed effects
 #' @param randomEffects
-#'  character() vector identifying column names that should be treated as fixed effects
+#'  character() vector identifying column names that should be treated as random effects
+#' @param continousEffects
+#'  character() vector identifying column names that should be treated as continous effect
 #' @param carEffect
 #'  character(), optional, identifying the column name that should be treated as CAR-effect
 #'  (conditional autoregressive effect)
@@ -142,11 +144,15 @@ DefineGear <- function(processData, resourceFilePath, encoding="latin1", useProc
 #'  encoding the day of the year when fish is consider to transition from one age to the next.
 #' @return \code{\link[RstoxFDA]{RecaData}} Data prepared for running Reca.
 #' @export
-PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationErrorMatrix=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, temporalResolution=c("Quarter", "Month"), hatchDay=1){
+PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, continousEffects=NULL, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationErrorMatrix=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, temporalResolution=c("Quarter", "Month"), hatchDay=1){
 
   temporalResolution <- match.arg(temporalResolution, temporalResolution)
   if (!(temporalResolution %in% c("Quarter", "Month", "Week"))){
     stop(paste("Temporal resolution", temporalResolution, "not supported"))
+  }
+
+  if (length(continousEffects) != 0){
+    stop("Data preparation for continous effect is not yet implemented.")
   }
 
   if (stockSplitting){
@@ -236,6 +242,7 @@ stoxFunctionAttributes <- list(
                                  StoxLandingData = "character",
                                  fixedEffects = "character",
                                  randomEffects = "character",
+                                 continousEffects = "character",
                                  carEffect = "character",
                                  CarNeighbours = "character",
                                  AgeErrorMatrix = "character",
@@ -249,7 +256,8 @@ stoxFunctionAttributes <- list(
                                  hatchDay = "integer"),
     functionParameterFormat = list(
                                    fixedEffects = "vector",
-                                   randomEffects = "vector"
+                                   randomEffects = "vector",
+                                   continousEffects = "vector"
                                    ),
     functionArgumentHierarchy = list(),
     functionAlias = list(),
