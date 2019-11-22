@@ -104,6 +104,19 @@ expect_error(DefineAgeErrorMatrix(resourceFilePath = ageerorfile),"Malformed res
 
 
 
+context("test-StoxFunctions: DefineClassificationError")
+classerorfile <- system.file("testresources","classificationError.txt", package="RstoxFDA")
+classerror <- DefineClassificationError(resourceFilePath = classerorfile)
+expect_true(data.table::is.data.table(classerror))
+expect_equal(nrow(classerror), 1)
+expect_equal(ncol(classerror), 8)
+
+context("test-StoxFunctions: DefineClassificationError useProcessdata")
+classNULL <- DefineClassificationError(NULL, resourceFilePath = classerorfile, useProcessData = T)
+expect_true(is.null(classNULL))
+
+
+
 context("test-StoxFunctions: PrepReca")
 fail("Need data formats StoxBioticData and StoxLandingData in order to test.")
 

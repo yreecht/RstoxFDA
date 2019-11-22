@@ -105,13 +105,14 @@ makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
 #' @param encoding encoding of resource file
 #' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
 #' @return Unified variable definition, see: \code{\link[RstoxFDA]{UnifiedVariableDefinition}}.
+#' @export
 DefineGear <- function(processData, resourceFilePath, encoding="UTF-8", useProcessData=F){
 
   if (useProcessData){
     return(processData)
   }
 
-  tab <- readTabSepFile(resourceFilePath, col_types = "ccc", col_names = c("UnifiedVariable", "Source", "Definition"))
+  tab <- readTabSepFile(resourceFilePath, col_types = "ccc", col_names = c("UnifiedVariable", "Source", "Definition"), encoding = encoding)
 
   if (!nrow(unique(tab[,1:2])) == nrow(tab)){
     stop("Malformed resource file. Non-unique keys: repition in first two columns.")
@@ -138,12 +139,13 @@ DefineGear <- function(processData, resourceFilePath, encoding="UTF-8", useProce
 #' @param encoding encoding of resource file
 #' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
 #' @return Area Neighbour Definition, see: \code{\link[RstoxFDA]{CarNeighbours}}.
+#' @export
 DefineCarNeighbours <- function(processData, resourceFilePath, encoding="UTF-8", useProcessData=F){
   if (useProcessData){
     return(processData)
   }
 
-  tab <- readTabSepFile(resourceFilePath, col_types = "cc", col_names = c("CarValue", "Neighbours"))
+  tab <- readTabSepFile(resourceFilePath, col_types = "cc", col_names = c("CarValue", "Neighbours"), encoding = encoding)
 
   checkSymmetry(tab)
 
@@ -169,6 +171,7 @@ DefineCarNeighbours <- function(processData, resourceFilePath, encoding="UTF-8",
 #' @param encoding encoding of resource file
 #' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
 #' @return Age Error Matrix, see: \code{\link[RstoxFDA]{AgeErrorMatrix}}.
+#' @export
 DefineAgeErrorMatrix <- function(processData, resourceFilePath, encoding="UTF-8", useProcessData=F){
 
   if (useProcessData){
@@ -176,11 +179,11 @@ DefineAgeErrorMatrix <- function(processData, resourceFilePath, encoding="UTF-8"
   }
 
   stream <- file(resourceFilePath, open="r")
-  matrixNoHeader <- read.delim(stream, sep="\t", header=F)
+  matrixNoHeader <- read.delim(stream, sep="\t", header=F, encoding = encoding)
   close(stream)
 
   stream <- file(resourceFilePath, open="r")
-  matrix <- read.delim(stream, sep="\t", header=T, row.names = 1)
+  matrix <- read.delim(stream, sep="\t", header=T, row.names = 1, encoding = encoding)
   close(stream)
 
   coln <- as.character(matrixNoHeader[1,2:ncol(matrixNoHeader)])
@@ -198,6 +201,47 @@ DefineAgeErrorMatrix <- function(processData, resourceFilePath, encoding="UTF-8"
   }
 
   return(dt)
+}
+
+#' Define Classification Error (for stock splitting)
+#' @description
+#'  StoX function.
+#'  Defines probabilities for misclassifying when determining stock membership of a specimen.
+#' @details
+#'  Definitions are read from a tab separated file with headers. Columns defined as:
+#'  \describe{
+#'   \item{Column 1 : ptype1.CC}{Probability of classifying a type 1 specimen as type 1.}
+#'   \item{Column 2: ptype1.S}{Probability of classifying a type 5 specimen as type 1.}
+#'   \item{Column 3: ptype2.CC}{Probability of classifying a type 2 specimen as type 2.}
+#'   \item{Column 4: ptype2.S}{Probability of classifying a type 4 specimen as type 2.}
+#'   \item{Column 5: ptype4.CC}{Probability of classifying a type 2 specimen as type 4.}
+#'   \item{Column 6: ptype4.S}{Probability of classifying a type 4 specimen as type 4.}
+#'   \item{Column 7: ptype5.CC}{Probability of classifying a type 1 specimen as type 5.}
+#'   \item{Column 8: ptype5.S}{Probability of classifying a type 5 specimen as type 5.}
+#'  }
+#'  see \code{\link[RstoxFDA]{ClassificationError}} for further explanation on the coding system.
+#' @param processData data.table() as returned from this function
+#' @param resourceFilePath path to resource file
+#' @param encoding encoding of resource file
+#' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
+#' @return Classification Error Matrix, see: \code{\link[RstoxFDA]{ClassificationError}}.
+#' @export
+DefineClassificationError<- function(processData, resourceFilePath, encoding="UTF-8", useProcessData=F){
+
+  if (useProcessData){
+    return(processData)
+  }
+
+  tab <- readTabSepFile(resourceFilePath,
+                        col_types = "dddddddd",
+                        col_names = c("ptype1.CC", "ptype1.S", "ptype2.CC", "ptype2.S", "ptype4.CC", "ptype4.S", "ptype5.CC", "ptype5.S"),
+                        encoding = encoding)
+
+  if (nrow((tab)) != 1){
+    stop("Malformed resource file: contains more than one row.")
+  }
+
+  return(tab)
 }
 
 #' Prepare data for Reca.
@@ -231,8 +275,8 @@ DefineAgeErrorMatrix <- function(processData, resourceFilePath, encoding="UTF-8"
 #'  If not provided age errors will not be modelled.
 #' @param stockSplitting
 #'  logical(), default FALSE, whether to run estimates for separate stocks in the data (coastal cod-analysis)
-#' @param ClassificationErrorMatrix
-#'  \code{\link[RstoxFDA]{ClassificationErrorMatrix}}, optional,
+#' @param ClassificationError
+#'  \code{\link[RstoxFDA]{ClassificationError}}, optional,
 #'  specifies the probability of misclassifying stock for an individual Used in conjunction with 'stockSplitting'. If not provided classification errors will not be modelled.
 #' @param minAge
 #'  integer(), optional, must match dimensions of any 'AgeErrorMatrix'.
@@ -255,7 +299,7 @@ DefineAgeErrorMatrix <- function(processData, resourceFilePath, encoding="UTF-8"
 #'  encoding the day of the year when fish is consider to transition from one age to the next.
 #' @return \code{\link[RstoxFDA]{RecaData}} Data prepared for running Reca.
 #' @export
-PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, continousEffects=NULL, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationErrorMatrix=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, temporalResolution=c("Quarter", "Month"), hatchDay=1){
+PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, continousEffects=NULL, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationError=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, temporalResolution=c("Quarter", "Month"), hatchDay=1){
 
   temporalResolution <- match.arg(temporalResolution, temporalResolution)
   if (!(temporalResolution %in% c("Quarter", "Month", "Week"))){
@@ -363,6 +407,36 @@ NULL
 #'
 NULL
 
+#' Stock classification error (ClassificationError)
+#'
+#' Table (\code{\link[data.table]{data.table}})
+#' defining probabilities of misclassifying stock membership of a fish (e.g. from otholith).
+#'
+#' The stock classification system is designed for coastal and atlantic cod as they are determined at IMR.
+#' The two stock of interest are classified by code 1, and 5.
+#' Code 2 signifies the same as code 1, but indicate less certainty.
+#' Code 4 signifies the same as code 5, but indicate less certainty.
+#'
+#' The classification error specifies the probability of misclassifying between some of these classifications.
+#'
+#' @details
+#'  \describe{
+#'   \item{ptype1.CC}{numeric() [0,1]. Probability of classifying a type 1 specimen as type 1.}
+#'   \item{ptype1.S}{numeric() [0,1]. Probability of classifying a type 5 specimen as type 1.}
+#'   \item{ptype2.CC}{numeric() [0,1]. Probability of classifying a type 2 specimen as type 2.}
+#'   \item{ptype2.S}{numeric() [0,1]. Probability of classifying a type 4 specimen as type 2.}
+#'   \item{ptype4.CC}{numeric() [0,1]. Probability of classifying a type 2 specimen as type 4.}
+#'   \item{ptype4.S}{numeric() [0,1]. Probability of classifying a type 4 specimen as type 4.}
+#'   \item{ptype5.CC}{numeric() [0,1]. Probability of classifying a type 1 specimen as type 5.}
+#'   \item{ptype5.S}{numeric() [0,1]. Probability of classifying a type 5 specimen as type 5.}
+#'  }
+#'
+#'  The data table contains only one row
+#'
+#' @name ClassificationError
+#'
+NULL
+
 #' Function specification for inclusion in StoX projects
 #' @export
 stoxFunctionAttributes <- list(
@@ -403,6 +477,18 @@ stoxFunctionAttributes <- list(
     functionParameterValueAilas = list()
   ),
 
+  DefineClassificationError  = list(
+    functionType = "processData",
+    functionCategory = "Baseline",
+    functionOutputDataType = "ClassificationError",
+    functionParameterType = list(resourceFilePath = "character"),
+    functionParameterFormat = list(resourceFilePath = "filePaths"),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
+  ),
+
   PrepareReca = list(
     functionType = "modelData",
     functionCategory = "Analysis",
@@ -416,7 +502,7 @@ stoxFunctionAttributes <- list(
                                  CarNeighbours = "character",
                                  AgeErrorMatrix = "character",
                                  stockSplitting = "logical",
-                                 ClassificationErrorMatrix = "character",
+                                 ClassificationError = "character",
                                  minAge = "integer",
                                  maxAge = "integer",
                                  maxLength = "numeric",

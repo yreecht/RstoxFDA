@@ -7,7 +7,7 @@
 PrepareReca(StoxBioticData, StoxLandingData, fixedEffects, randomEffects,
   continousEffects = NULL, carEffect = NULL, CarNeighbours = NULL,
   AgeErrorMatrix = NULL, stockSplitting = F,
-  ClassificationErrorMatrix = NULL, minAge = NULL, maxAge = NULL,
+  ClassificationError = NULL, minAge = NULL, maxAge = NULL,
   maxLength = NULL, lengthResolution = NULL,
   temporalResolution = c("Quarter", "Month"), hatchDay = 1)
 }
@@ -35,7 +35,7 @@ If not provided age errors will not be modelled.}
 
 \item{stockSplitting}{logical(), default FALSE, whether to run estimates for separate stocks in the data (coastal cod-analysis)}
 
-\item{ClassificationErrorMatrix}{\code{\link[RstoxFDA]{ClassificationErrorMatrix}}, optional,
+\item{ClassificationError}{\code{\link[RstoxFDA]{ClassificationError}}, optional,
 specifies the probability of misclassifying stock for an individual Used in conjunction with 'stockSplitting'. If not provided classification errors will not be modelled.}
 
 \item{minAge}{integer(), optional, must match dimensions of any 'AgeErrorMatrix'.

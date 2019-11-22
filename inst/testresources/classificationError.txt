@@ -1,0 +1,2 @@
+ptype1.CC	ptype1.S	ptype2.CC	ptype2.S	ptype4.CC	ptype4.S	ptype5.CC	ptype5.S
+.8	.2	.6	.4	.4	.6	.2	.8
