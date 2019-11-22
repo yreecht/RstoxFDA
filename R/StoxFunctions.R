@@ -1,7 +1,7 @@
 
 #' read tab separated file
 #' @noRd
-readTabSepFile <- function(filepath, encoding="ascii", col_types = "c", col_names = NULL){
+readTabSepFile <- function(filepath, encoding="ascii", col_types = NULL, col_names = NULL){
   loc <- readr::default_locale()
   loc$encoding <- encoding
   tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = col_types)
@@ -155,6 +155,51 @@ DefineCarNeighbours <- function(processData, resourceFilePath, encoding="UTF-8",
   return(tab)
 }
 
+#' Define Age Error Matrix
+#' @description
+#'  StoX function.
+#'  Defines probabilities for misreading ages.
+#' @details
+#'  Definitions are read from a tab separated file with headers and row names in first column.
+#'  All row and column names should be integers.
+#'  The matrix encodes the probability of observing an age (rows), given true age (columns).
+#'  Columns must sum to 1.
+#' @param processData data.table() as returned from this function
+#' @param resourceFilePath path to resource file
+#' @param encoding encoding of resource file
+#' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
+#' @return Age Error Matrix, see: \code{\link[RstoxFDA]{AgeErrorMatrix}}.
+DefineAgeErrorMatrix <- function(processData, resourceFilePath, encoding="UTF-8", useProcessData=F){
+
+  if (useProcessData){
+    return(processData)
+  }
+
+  stream <- file(resourceFilePath, open="r")
+  matrixNoHeader <- read.delim(stream, sep="\t", header=F)
+  close(stream)
+
+  stream <- file(resourceFilePath, open="r")
+  matrix <- read.delim(stream, sep="\t", header=T, row.names = 1)
+  close(stream)
+
+  coln <- as.character(matrixNoHeader[1,2:ncol(matrixNoHeader)])
+  dt <- data.table(matrix)
+
+  colnames(dt) <- coln
+  dt$ReadAge <- rownames(matrix)
+
+  if (!all(colSums(matrix) == 1)){
+    stop("Malformed resource file. Columns must sum to 1.")
+  }
+
+  if (any(matrix < 0) | any(matrix > 1)){
+    stop("Malformed resource file. All probabilities must be in >=0 and <=1.")
+  }
+
+  return(dt)
+}
+
 #' Prepare data for Reca.
 #' @description
 #'  StoX-function.
@@ -301,6 +346,23 @@ NULL
 #'
 NULL
 
+#' Age Error Matrix (AgeErrorMatrix)
+#'
+#' Table (\code{\link[data.table]{data.table}})
+#' defining probabilities of misreading age.
+#'
+#' @details
+#'  \describe{
+#'   \item{columns 1..n}{numeric() [0,1]. Probability of reading read age, given that true age is as column name.}
+#'   \item{ReadAge}{The read age.}
+#'  }
+#'
+#'  Columns sum to 1.
+#'
+#' @name AgeErrorMatrix
+#'
+NULL
+
 #' Function specification for inclusion in StoX projects
 #' @export
 stoxFunctionAttributes <- list(
@@ -309,6 +371,30 @@ stoxFunctionAttributes <- list(
     functionType = "processData",
     functionCategory = "Baseline",
     functionOutputDataType = "GearDefinition",
+    functionParameterType = list(resourceFilePath = "character"),
+    functionParameterFormat = list(resourceFilePath = "filePaths"),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
+  ),
+
+  DefineCarNeighbours = list(
+    functionType = "processData",
+    functionCategory = "Baseline",
+    functionOutputDataType = "CarNeighbours",
+    functionParameterType = list(resourceFilePath = "character"),
+    functionParameterFormat = list(resourceFilePath = "filePaths"),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
+  ),
+
+  DefineAgeErrorMatrix  = list(
+    functionType = "processData",
+    functionCategory = "Baseline",
+    functionOutputDataType = "AgeErrorMatrix",
     functionParameterType = list(resourceFilePath = "character"),
     functionParameterFormat = list(resourceFilePath = "filePaths"),
     functionArgumentHierarchy = list(),

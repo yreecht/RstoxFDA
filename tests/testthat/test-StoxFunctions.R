@@ -62,7 +62,7 @@ expect_equal(nrow(car), 60)
 expect_equal(ncol(car), 2)
 
 context("test-StoxFunctions: DefineCarNeighbours useProcessData")
-nullCar <- DefineCarNeighbours(NULL, resourceFilePath = regularfile, useProcessData = T)
+nullCar <- DefineCarNeighbours(NULL, resourceFilePath = carfile, useProcessData = T)
 expect_true(is.null(nullCar))
 
 context("test-StoxFunctions: DefineCarNeighbours non-symmetric")
@@ -72,6 +72,35 @@ expect_error(DefineCarNeighbours(resourceFilePath = errorfile), "Neighbour defin
 context("test-StoxFunctions: DefineCarNeighbours repeated key")
 errorfile <- system.file("testresources","mainarea_error2.txt", package="RstoxFDA")
 expect_error(DefineCarNeighbours(resourceFilePath = errorfile), "Malformed resource file, Non-unique keys: repition in first column: 1")
+
+
+
+
+context("test-StoxFunctions: DefineAgeErrorMatrix")
+ageerorfile <- system.file("testresources","AgeErrorHirstEtAl2012.txt", package="RstoxFDA")
+ageerror <- DefineAgeErrorMatrix(resourceFilePath = ageerorfile)
+expect_true(data.table::is.data.table(ageerror))
+expect_equal(nrow(ageerror), 15)
+expect_equal(ncol(ageerror), 16)
+
+context("test-StoxFunctions: DefineAgeErrorMatrix useProcessData")
+nullAE <- DefineAgeErrorMatrix(NULL, resourceFilePath = ageerorfile, useProcessData = T)
+expect_true(is.null(nullAE))
+
+context("test-StoxFunctions: DefineAgeErrorMatrix non-symmetric")
+ageerorfile <- system.file("testresources","AgeNonSym.txt", package="RstoxFDA")
+ageerror <- DefineAgeErrorMatrix(resourceFilePath = ageerorfile)
+expect_true(data.table::is.data.table(ageerror))
+expect_equal(nrow(ageerror), 14)
+expect_equal(ncol(ageerror), 16)
+
+context("test-StoxFunctions: DefineAgeErrorMatrix malformed")
+ageerorfile <- system.file("testresources","AgeMalformed.txt", package="RstoxFDA")
+expect_error(DefineAgeErrorMatrix(resourceFilePath = ageerorfile),"Malformed resource file. All probabilities must be in >=0 and <=1.")
+
+ageerorfile <- system.file("testresources","AgeMalformed2.txt", package="RstoxFDA")
+expect_error(DefineAgeErrorMatrix(resourceFilePath = ageerorfile),"Malformed resource file. Columns must sum to 1.")
+
 
 
 
