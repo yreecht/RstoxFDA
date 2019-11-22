@@ -108,20 +108,20 @@ DefineGear <- function(processData, resourceFilePath, encoding="latin1", useProc
 #' Prepare data for Reca.
 #' @details
 #'  Performs data checks and data conversions,
-#'  and stores some data-related parameters in preparation for running
+#'  and stores some data-related parameters in preparation for running.
 #'  \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
-#'  via \code{\link}[RstoxFDA]{runReca}.
-#'  @param StoxBioticData \code{\link[RstoxData]{StoxBioticData}} data with samples from fisheries and approriate columns appended for identifying corresponding landings.
-#'  @param StoxLandingData \code{\link[RstoxData]{StoxLandingData}} data with landings from fisheries and approriate columns appended for identifying corresponding samples
-#'  @param fixedEffects character() vector identifying column names that should be treated as fixed effects
-#'  @param randomEffects character() vector identifying column names that should be treated as fixed effects
-#'  @param carEffect character() identifying the column name that should be treated as CAR-effect (conditional autoregressive effect)
-#'  @param CarNeighbours \code{\link[RstoxFDA]{CarNeighbours}} identifies which values of the carEffect are to be considered as neighbours.
-#'  @param AgeErrorMatrix \code{\link[RstoxFDA]{AgeErrorMatrix}} specifies the probabilities of misreading ages.
-#'  @param stockSplitting logical() whether to run estimate results for separate stocks in the data (coastal cod-analysis)
-#'  @param ClassificationErrorMatrix \code{\link[RstoxFDA]{ClassificationErrorMatrix}} specifies the probability of misclassifying stock for an individual.
-#'  @return \code{\link[RstoxFDA]{RecaData}}
-#'  @export
+#'  via \code{\link[RstoxFDA]{runReca}}.
+#' @param StoxBioticData \code{\link[RstoxData]{StoxBioticData}} data with samples from fisheries and approriate columns appended for identifying corresponding landings.
+#' @param StoxLandingData \code{\link[RstoxData]{StoxLandingData}} data with landings from fisheries and approriate columns appended for identifying corresponding samples
+#' @param fixedEffects character() vector identifying column names that should be treated as fixed effects
+#' @param randomEffects character() vector identifying column names that should be treated as fixed effects
+#' @param carEffect character() identifying the column name that should be treated as CAR-effect (conditional autoregressive effect)
+#' @param CarNeighbours \code{\link[RstoxFDA]{CarNeighbours}} identifies which values of the carEffect are to be considered as neighbours.
+#' @param AgeErrorMatrix \code{\link[RstoxFDA]{AgeErrorMatrix}} specifies the probabilities of misreading ages.
+#' @param stockSplitting logical() whether to run estimate results for separate stocks in the data (coastal cod-analysis)
+#' @param ClassificationErrorMatrix \code{\link[RstoxFDA]{ClassificationErrorMatrix}} specifies the probability of misclassifying stock for an individual.
+#' @return \code{\link[RstoxFDA]{RecaData}}
+#' @export
 PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationErrorMatrix=NULL){
 
   if (stockSplitting){
