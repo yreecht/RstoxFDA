@@ -17,20 +17,23 @@ expect_equal(length(unique(mappings$StoxBioticData)), 7)
 expect_false("StoxLandingData" %in% names(mappings))
 
 context("test-StoxFunctions: makeUnifiedDefinitionLookupList missing formats")
-expect_error(makeUnifiedDefinitionLookupList(parsedfile, formats = c("StoxBioticData", "ICESbiotic")), "Not all formats found in file. Missing: ICESbiotic")
+expect_error(makeUnifiedDefinitionLookupList(parsedfile, formats = c("StoxBioticData", "ICESbiotic")), "Not all formats found in resource. Missing: ICESbiotic")
 
 context("test-StoxFunctions: makeUnifiedDefinitionLookupList redefined codes")
 errorfile <- system.file("testresources","gearfactor_error.txt", package="RstoxFDA")
 parsedfile <- DefineGear(resourceFilePath = errorfile)
 expect_error(makeUnifiedDefinitionLookupList(parsedfile), "Codes redefined: 3714")
 
+context("test-StoxFunctions: makeUnifiedDefinitionLookupList repeated keys")
 errorfile <- system.file("testresources","gearfactor_errorkeys.txt", package="RstoxFDA")
-parsedfile <- DefineGear(resourceFilePath = errorfile)
-expect_error(makeUnifiedDefinitionLookupList(parsedfile), "Malformed resource file. Non-unique keys: repition in first two columns.")
+expect_error(DefineGear(resourceFilePath = errorfile), "Malformed resource file. Non-unique keys: repition in first two columns.")
 
-regularfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
+
+
+
 
 context("test-StoxFunctions: DefineGear")
+regularfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
 gear <- DefineGear(resourceFilePath = regularfile)
 expect_true(data.table::is.data.table(gear))
 expect_equal(nrow(gear), 14)
@@ -46,6 +49,31 @@ expect_equal(ncol(gear), 3)
 gg <- DefineGear(gear, resourceFilePath = NULL, useProcessData = T)
 expect_equal(nrow(gear), 14)
 expect_equal(ncol(gear), 3)
+
+
+
+
+
+context("test-StoxFunctions: DefineCarNeighbours")
+carfile <- system.file("testresources","mainarea_neighbour.txt", package="RstoxFDA")
+car <- DefineCarNeighbours(resourceFilePath = carfile)
+expect_true(data.table::is.data.table(car))
+expect_equal(nrow(car), 60)
+expect_equal(ncol(car), 2)
+
+context("test-StoxFunctions: DefineCarNeighbours useProcessData")
+nullCar <- DefineCarNeighbours(NULL, resourceFilePath = regularfile, useProcessData = T)
+expect_true(is.null(nullCar))
+
+context("test-StoxFunctions: DefineCarNeighbours non-symmetric")
+errorfile <- system.file("testresources","mainarea_error.txt", package="RstoxFDA")
+expect_error(DefineCarNeighbours(resourceFilePath = errorfile), "Neighbour definition not symmetric. 1 is neighbour of 0 but not vice versa.")
+
+context("test-StoxFunctions: DefineCarNeighbours repeated key")
+errorfile <- system.file("testresources","mainarea_error2.txt", package="RstoxFDA")
+expect_error(DefineCarNeighbours(resourceFilePath = errorfile), "Malformed resource file, Non-unique keys: repition in first column: 1")
+
+
 
 context("test-StoxFunctions: PrepReca")
 fail("Need data formats StoxBioticData and StoxLandingData in order to test.")

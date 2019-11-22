@@ -2,7 +2,7 @@
 % Please edit documentation in R/StoxFunctions.R
 \name{UnifiedVariableDefinition}
 \alias{UnifiedVariableDefinition}
-\title{UnifiedVariableDefinition}
+\title{Unified Variable Definition (UnifiedVariableDefinition)}
 \description{
 Table (\code{\link[data.table]{data.table}}) defining a unified variable for different data formats
 }

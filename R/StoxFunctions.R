@@ -1,11 +1,40 @@
 
 #' read tab separated file
 #' @noRd
-readTabSepFile <- function(filepath, encoding="ascii"){
+readTabSepFile <- function(filepath, encoding="ascii", col_types = "c", col_names = NULL){
   loc <- readr::default_locale()
   loc$encoding <- encoding
-  tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = "ccc")
-  return(data.table::as.data.table(tab))
+  tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = col_types)
+  tab <- data.table::as.data.table(tab)
+
+  if (length(col_names)>0){
+    missing <- col_names[!(col_names %in% names(tab))]
+    if (length(missing)>0){
+      stop(paste("Resource file does not have required columns:", paste(missing, collapse=", ")))
+    }
+  }
+
+  return(tab)
+}
+
+#' Checks symmetry of Car table
+#' @noRd
+checkSymmetry <- function(tab){
+
+  getn <- function(value){
+    neighbours <- trimws(unlist(strsplit(tab[tab[,1]==value,2], split = ",")))
+    return(neighbours)
+  }
+
+  for (i in 1:nrow(tab)){
+    carvalue <- tab[i,1]
+    neighbours <- getn(carvalue)
+    for (n in neighbours){
+      if (!(n %in% tab[,1]) | !(carvalue %in% getn(n))){
+        stop(paste("Neighbour definition not symmetric.", n, "is neighbour of", carvalue, "but not vice versa."))
+      }
+    }
+  }
 }
 
 #' Get lookup list for unified categorical definition
@@ -29,17 +58,13 @@ readTabSepFile <- function(filepath, encoding="ascii"){
 #' @noRd
 makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
 
-  if (!nrow(unique(tab[,1:2])) == nrow(tab)){
-    stop("Malformed resource file. Non-unique keys: repition in first two columns.")
-  }
-
   if (is.null(formats)){
     formats <- unique(unlist(tab[,2]))
   }
 
   if (!all(formats %in% unlist(tab[,2]))){
     missing <- formats[!(formats %in% unlist(tab[,2]))]
-    stop(paste("Not all formats found in file. Missing:", paste(missing, collapse=", ")))
+    stop(paste("Not all formats found in resource. Missing:", paste(missing, collapse=", ")))
   }
 
   mappings <- list()
@@ -64,11 +89,12 @@ makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
 
 #' Define gear
 #' @description
+#'  StoX function
 #'  Define a unified categorical variable 'Gear', and its correspondance to gear codes in
 #'  data formats \code{\link[RstoxData]{StoxBioticData}} and \code{\link[RstoxData]{StoxLandingData}}.
 #'  Definitions are read from a resource file.
 #' @details
-#'  Definitions are stored with in a tab separated file with headers. Columns defined as:
+#'  Definitions are read from a tab separated file with headers. Columns defined as:
 #'  \describe{
 #'  \item{Column 1: 'UnifiedVariable'}{Unified value (key)}
 #'  \item{Column 2: 'Source'}{The format for which the unified value is defined(key)}
@@ -79,13 +105,53 @@ makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
 #' @param encoding encoding of resource file
 #' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
 #' @return Unified variable definition, see: \code{\link[RstoxFDA]{UnifiedVariableDefinition}}.
-DefineGear <- function(processData, resourceFilePath, encoding="latin1", useProcessData=F){
+DefineGear <- function(processData, resourceFilePath, encoding="UTF-8", useProcessData=F){
 
   if (useProcessData){
     return(processData)
   }
 
-  tab <- readTabSepFile(resourceFilePath)
+  tab <- readTabSepFile(resourceFilePath, col_types = "ccc", col_names = c("UnifiedVariable", "Source", "Definition"))
+
+  if (!nrow(unique(tab[,1:2])) == nrow(tab)){
+    stop("Malformed resource file. Non-unique keys: repition in first two columns.")
+  }
+
+  return(tab)
+}
+
+#' Define CAR neighbours
+#' @description
+#'  StoX function.
+#'  Define which spatial strata are to be considered neighbours,
+#'  when used as a CAR-variable (Conditional AutoRegressive variable).
+#' @details
+#'  Definitions are read from a tab separated file with headers. Columns defined as:
+#'  \describe{
+#'  \item{Column 1: 'CarValue'}{Value for the CAR-variable (key)}
+#'  \item{Column 2: 'Neigbhours'}{Comma-separated list of neighbours (each should occur in Column 1)}
+#'  }
+#'  The neighbour definition must be symmetric.
+#'  If a is among the neighbours of b, b must also be among the neighbours of a.
+#' @param processData data.table() as returned from this function
+#' @param resourceFilePath path to resource file
+#' @param encoding encoding of resource file
+#' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
+#' @return Area Neighbour Definition, see: \code{\link[RstoxFDA]{CarNeighbours}}.
+DefineCarNeighbours <- function(processData, resourceFilePath, encoding="UTF-8", useProcessData=F){
+  if (useProcessData){
+    return(processData)
+  }
+
+  tab <- readTabSepFile(resourceFilePath, col_types = "cc", col_names = c("CarValue", "Neighbours"))
+
+  checkSymmetry(tab)
+
+  if (length(unique(tab[,1])) != nrow(tab)){
+    d <- tab[,1][duplicated(tab[,1])]
+    stop(paste("Malformed resource file, Non-unique keys: repition in first column:", paste(d, collapse = ",")))
+  }
+
   return(tab)
 }
 
@@ -202,7 +268,7 @@ PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEff
 #'
 NULL
 
-#' UnifiedVariableDefinition
+#' Unified Variable Definition (UnifiedVariableDefinition)
 #'
 #' Table (\code{\link[data.table]{data.table}}) defining a unified variable for different data formats
 #'
@@ -217,6 +283,23 @@ NULL
 #'
 NULL
 
+
+#' Area Neighbour Definition (CarNeighbours)
+#'
+#' Table (\code{\link[data.table]{data.table}})
+#' defining neighbours for a CAR-variable (Conditional autoregressive variable).
+#'
+#' @details
+#'  \describe{
+#'   \item{CarVariable}{Values for a variable used as CAR-variable}
+#'   \item{Neighbours}{Comma-separated list of neighbours}
+#'  }
+#'
+#'  The table is symmetric, so that if b is a neighbour of a. a is also a neighbour of b.
+#'
+#' @name CarNeighbours
+#'
+NULL
 
 #' Function specification for inclusion in StoX projects
 #' @export

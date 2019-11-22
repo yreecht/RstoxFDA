@@ -4,7 +4,7 @@
 \alias{DefineGear}
 \title{Define gear}
 \usage{
-DefineGear(processData, resourceFilePath, encoding = "latin1",
+DefineGear(processData, resourceFilePath, encoding = "UTF-8",
   useProcessData = F)
 }
 \arguments{
@@ -20,12 +20,13 @@ DefineGear(processData, resourceFilePath, encoding = "latin1",
 Unified variable definition, see: \code{\link[RstoxFDA]{UnifiedVariableDefinition}}.
 }
 \description{
-Define a unified categorical variable 'Gear', and its correspondance to gear codes in
+StoX function
+ Define a unified categorical variable 'Gear', and its correspondance to gear codes in
  data formats \code{\link[RstoxData]{StoxBioticData}} and \code{\link[RstoxData]{StoxLandingData}}.
  Definitions are read from a resource file.
 }
 \details{
-Definitions are stored with in a tab separated file with headers. Columns defined as:
+Definitions are read from a tab separated file with headers. Columns defined as:
  \describe{
  \item{Column 1: 'UnifiedVariable'}{Unified value (key)}
  \item{Column 2: 'Source'}{The format for which the unified value is defined(key)}
