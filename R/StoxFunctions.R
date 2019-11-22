@@ -179,15 +179,15 @@ DefineAgeErrorMatrix <- function(processData, resourceFilePath, encoding="UTF-8"
   }
 
   stream <- file(resourceFilePath, open="r")
-  matrixNoHeader <- read.delim(stream, sep="\t", header=F, encoding = encoding)
+  matrixNoHeader <- utils::read.delim(stream, sep="\t", header=F, encoding = encoding)
   close(stream)
 
   stream <- file(resourceFilePath, open="r")
-  matrix <- read.delim(stream, sep="\t", header=T, row.names = 1, encoding = encoding)
+  matrix <- utils::read.delim(stream, sep="\t", header=T, row.names = 1, encoding = encoding)
   close(stream)
 
   coln <- as.character(matrixNoHeader[1,2:ncol(matrixNoHeader)])
-  dt <- data.table(matrix)
+  dt <- data.table::data.table(matrix)
 
   colnames(dt) <- coln
   dt$ReadAge <- rownames(matrix)
@@ -327,7 +327,7 @@ PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEff
     stop(paste("Temporal resolution", temporalResolution, "not supported"))
   }
 
-  warning("Get nFish for each sample with delprøve.")
+  warning("Get nFish for each sample with delprove.")
   nFish = NULL
 
   recaObject <- prepRECA(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect, neighbours=CarNeighbours, nFish=nFish, ageError=AgeErrorMatrix, minAge=minAge, maxAge=maxAge, maxLength=maxLength, lengthResolution=lengthResolution, date=NULL, month=month, quarter=quarter, hatchDay=hatchDay)
