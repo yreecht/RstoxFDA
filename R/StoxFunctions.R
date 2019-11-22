@@ -105,14 +105,35 @@ DefineGear <- function(processData, resourceFilePath, encoding="latin1", useProc
   return(tab)
 }
 
-#' Function specification for inclusion in StoX GUI
+#' Prepare data for Reca.
+#' @details
+#'  Performs data checks and data conversions,
+#'  and stores some data-related parameters in preparation for running
+#'  \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
+#'  via \code{\link}[RstoxFDA]{runReca}.
+#'  @param StoxBioticData \code{\link[RstoxData]{StoxBioticData}} data with samples from fisheries and approriate columns appended for identifying corresponding landings.
+#'  @param StoxLandingData \code{\link[RstoxData]{StoxLandingData}} data with landings from fisheries and approriate columns appended for identifying corresponding samples
+#'  @param fixedEffects character() vector identifying column names that should be treated as fixed effects
+#'  @param randomEffects character() vector identifying column names that should be treated as fixed effects
+#'  @param carEffect character() identifying the column name that should be treated as CAR-effect (conditional autoregressive effect)
+#'  @param CarNeighbours \code{\link[RstoxFDA]{CarNeighbours}} identifies which values of the carEffect are to be considered as neighbours.
+#'  @param AgeErrorMatrix \code{\link[RstoxFDA]{AgeErrorMatrix}} specifies the probabilities of misreading ages.
+#'  @param stockSplitting logical() whether to run estimate results for separate stocks in the data (coastal cod-analysis)
+#'  @param ClassificationErrorMatrix \code{\link[RstoxFDA]{ClassificationErrorMatrix}} specifies the probability of misclassifying stock for an individual.
+#'  @return \code{\link[RstoxFDA]{RecaData}}
+#'  @export
+PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationErrorMatrix=NULL){
+
+  if (stockSplitting){
+    stop("Data preparation for stock splitting is not yet implemented.")
+  }
+
+}
+
+#' Function specification for inclusion in StoX projects
 #' @export
 stoxFunctionAttributes <- list(
 
-  # The format describes the actual content, such as catchabilityTable, filePath, filter, etc. These are used by StoX to choose action on these parameters.
-  # The primitive type (one of integer, double, logical, character) will be interpreted in the process property functions from the type of the function input or parameter.
-
-  # Read input biotic data:
   DefineGear = list(
     functionType = "processData",
     functionCategory = "Baseline",
@@ -123,5 +144,28 @@ stoxFunctionAttributes <- list(
     functionAlias = list(),
     functionParameterAlias = list(),
     functionParameterValueAilas = list()
+  ),
+
+  PrepareReca = list(
+    functionType = "modelData",
+    functionCategory = "Baseline",
+    functionOutputDataType = "RecaData",
+    functionParameterType = list(StoxBioticData = "character",
+                                 StoxLandingData = "character",
+                                 fixedEffects = "character",
+                                 randomEffects = "character",
+                                 carEffect = "character",
+                                 CarNeighbours = "character",
+                                 AgeErrorMatrix = "character",
+                                 stockSplitting = "logical",
+                                 ClassificationErrorMatrix = "character"),
+    functionParameterFormat = list(
+                                   fixedEffects = "vector",
+                                   randomEffects = "vector"),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
   )
+
 )
