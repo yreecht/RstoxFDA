@@ -8,7 +8,7 @@ prepRECA(samples, landings, fixedEffects, randomEffects,
   carEffect = NULL, neighbours = NULL, nFish = NULL,
   ageError = NULL, minAge = NULL, maxAge = NULL, maxLength = NULL,
   lengthResolution = NULL, testMax = 1000, date = NULL,
-  month = NULL, quarter = NULL)
+  month = NULL, quarter = NULL, hatchDay = 1)
 }
 \arguments{
 \item{samples}{data.table() with samples, each row corresponding to one sampled fish. Contains columns:
@@ -54,7 +54,9 @@ prepRECA(samples, landings, fixedEffects, randomEffects,
 
 \item{month}{integer() vector, matching the number of rows in 'landings', month of catch (1 for January, etc.), see details.}
 
-\item{quarter}{integer() vector, vector, matching the number of rows in 'landings', quarter of catch (1 for Q1, etc.), see details.
+\item{quarter}{integer() vector, vector, matching the number of rows in 'landings', quarter of catch (1 for Q1, etc.), see details.}
+
+\item{hatchDay}{integer(), encoding the day of the year when fish is consider to transition from one age to the next.
 \describe{
  \item{sampleID}{Column idenitfying the sample, defined as for 'samples'}
  \item{count}{Estimated number of fish in the part of the catch the sample was taken from}

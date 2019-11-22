@@ -107,27 +107,85 @@ DefineGear <- function(processData, resourceFilePath, encoding="latin1", useProc
 
 #' Prepare data for Reca.
 #' @details
+#'  StoX-function.
 #'  Performs data checks and data conversions,
 #'  and stores some data-related parameters in preparation for running.
 #'  \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
-#'  via \code{\link[RstoxFDA]{runReca}}.
-#' @param StoxBioticData \code{\link[RstoxData]{StoxBioticData}} data with samples from fisheries and approriate columns appended for identifying corresponding landings.
-#' @param StoxLandingData \code{\link[RstoxData]{StoxLandingData}} data with landings from fisheries and approriate columns appended for identifying corresponding samples
-#' @param fixedEffects character() vector identifying column names that should be treated as fixed effects
-#' @param randomEffects character() vector identifying column names that should be treated as fixed effects
-#' @param carEffect character() identifying the column name that should be treated as CAR-effect (conditional autoregressive effect)
-#' @param CarNeighbours \code{\link[RstoxFDA]{CarNeighbours}} identifies which values of the carEffect are to be considered as neighbours.
-#' @param AgeErrorMatrix \code{\link[RstoxFDA]{AgeErrorMatrix}} specifies the probabilities of misreading ages.
-#' @param stockSplitting logical() whether to run estimate results for separate stocks in the data (coastal cod-analysis)
-#' @param ClassificationErrorMatrix \code{\link[RstoxFDA]{ClassificationErrorMatrix}} specifies the probability of misclassifying stock for an individual.
+#'  via \code{\link[RstoxFDA]{RunReca}}.
+#'
+#' @param StoxBioticData
+#'  \code{\link[RstoxData]{StoxBioticData}} data with samples from fisheries
+#'  and approriate columns appended for identifying corresponding landings.
+#' @param StoxLandingData
+#'  \code{\link[RstoxData]{StoxLandingData}} data with landings from fisheries
+#'  and approriate columns appended for identifying corresponding samples
+#' @param fixedEffects
+#'  character() vector identifying column names that should be treated as fixed effects
+#' @param randomEffects
+#'  character() vector identifying column names that should be treated as fixed effects
+#' @param carEffect
+#'  character(), optional, identifying the column name that should be treated as CAR-effect
+#'  (conditional autoregressive effect)
+#' @param CarNeighbours
+#'  \code{\link[RstoxFDA]{CarNeighbours}}, mandatory if 'carEffect' is given.
+#'  Identifies which values of the carEffect are to be considered as neighbours.
+#' @param AgeErrorMatrix
+#'  \code{\link[RstoxFDA]{AgeErrorMatrix}}, optional, specifies the probabilities of misreading ages.
+#'  If not provided age errors will not be modelled.
+#' @param stockSplitting
+#'  logical(), default FALSE, whether to run estimates for separate stocks in the data (coastal cod-analysis)
+#' @param ClassificationErrorMatrix
+#'  \code{\link[RstoxFDA]{ClassificationErrorMatrix}}, optional,
+#'  specifies the probability of misclassifying stock for an individual Used in conjunction with 'stockSplitting'. If not provided classification errors will not be modelled.
+#' @param minAge
+#'  integer(), optional, must match dimensions of any 'AgeErrorMatrix'.
+#'  If not provided it will be derived from data.
+#' @param maxAge
+#'  integer(), optional, must match dimensions of any 'AgeErrorMatrix'.
+#'  If not provided it will be derived from data.
+#' @param maxLength
+#'  numeric(), optional, maximal fish length in data in cm.
+#'  If not provided it will be derived from data.
+#' @param lengthResolution
+#'  numeric(), optional, resolution for length measurements in cm.
+#'  If not provided modal value from data is used.
+#' @param temporalResolution
+#'  character(), default "Quarter", code for temporal resolution in landings: "Month" or "Quarter".
+#'  Regulates temporal resolution for calculating fractional ages of fish.
+#'  Not to be confused with any temporal covariate.
+#' @param hatchDay
+#'  integer(), defaults to 1 representing Jan 1st.
+#'  encoding the day of the year when fish is consider to transition from one age to the next.
 #' @return \code{\link[RstoxFDA]{RecaData}}
 #' @export
-PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationErrorMatrix=NULL){
+PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationErrorMatrix=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, temporalResolution=c("Quarter", "Month"), hatchDate=1){
+
+  temporalResolution <- match.arg(temporalResolution, temporalResolution)
+  if (!(temporalResolution %in% c("Quarter", "Month", "Week"))){
+    stop(paste("Temporal resolution", temporalResolution, "not supported"))
+  }
 
   if (stockSplitting){
     stop("Data preparation for stock splitting is not yet implemented.")
   }
 
+  quarter=NULL
+  month=NULL
+
+  if (temporalResolution == "Quarter"){
+
+  }
+  else if (temporalResolution == "Month"){
+
+  }
+  else{
+    stop(paste("Temporal resolution", temporalResolution, "not supported"))
+  }
+
+  warning("Get nFish")
+  nFish = NULL
+
+  prepRECA(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, carEffect, neighbours=CarNeighbours, nFish=nFish, ageError=AgeErrorMatrix, minAge=minAge, maxAge=maxAge, maxLength=maxLength, lengthResolution=lengthResolution, date=NULL, month=Month, quarter=Quarter, hatchDate=hatchDate)
 }
 
 #' Function specification for inclusion in StoX projects
@@ -158,10 +216,17 @@ stoxFunctionAttributes <- list(
                                  CarNeighbours = "character",
                                  AgeErrorMatrix = "character",
                                  stockSplitting = "logical",
-                                 ClassificationErrorMatrix = "character"),
+                                 ClassificationErrorMatrix = "character",
+                                 minAge = "integer",
+                                 maxAge = "integer",
+                                 maxLength = "numeric",
+                                 lengthResolution = "numeric",
+                                 temporalResolution = "character",
+                                 hatchDay = "integer"),
     functionParameterFormat = list(
                                    fixedEffects = "vector",
-                                   randomEffects = "vector"),
+                                   randomEffects = "vector"
+                                   ),
     functionArgumentHierarchy = list(),
     functionAlias = list(),
     functionParameterAlias = list(),

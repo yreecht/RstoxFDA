@@ -484,6 +484,7 @@ getLandings <- function(landings, covariates, covariateMaps, date=NULL, month=NU
 #' @param date POSIXct() vector, matching the number of rows in 'landings', date of catch, see details.
 #' @param month integer() vector, matching the number of rows in 'landings', month of catch (1 for January, etc.), see details.
 #' @param quarter integer() vector, vector, matching the number of rows in 'landings', quarter of catch (1 for Q1, etc.), see details.
+#' @param hatchDay integer(), encoding the day of the year when fish is consider to transition from one age to the next.
 #' \describe{
 #'  \item{sampleID}{Column idenitfying the sample, defined as for 'samples'}
 #'  \item{count}{Estimated number of fish in the part of the catch the sample was taken from}
@@ -550,10 +551,10 @@ getLandings <- function(landings, covariates, covariateMaps, date=NULL, month=NU
 #'    nFish = nFish,
 #'    quarter = landings$Quarter)
 #' @export
-prepRECA <- function(samples, landings, fixedEffects, randomEffects, carEffect=NULL, neighbours=NULL, nFish=NULL, ageError=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, testMax=1000, date=NULL, month=NULL, quarter=NULL){
+prepRECA <- function(samples, landings, fixedEffects, randomEffects, carEffect=NULL, neighbours=NULL, nFish=NULL, ageError=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, testMax=1000, date=NULL, month=NULL, quarter=NULL, hatchDay=1){
   samples <- data.table::as.data.table(samples)
   landings <- data.table::as.data.table(landings)
-  hatchDay=1
+
   # check mandatory columns
   if (!(all(c("LiveWeightKG") %in% names(landings)))){
     stop("Column LiveWeightKG is mandatory in landings")
