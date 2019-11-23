@@ -12,4 +12,4 @@ For Windows and Linux, Reca can be installed via devtools::install_github("https
 For Mac, one might consider the fork at: https://github.com/iambaim/new-reca.
 
 ## StoX
-Contains functions that adheres to StoX function-contracts so that they can be included in StoX-processes. This includes functions for a StoX-Reca template.
+RstoxFDA contains functions that adheres to StoX 3.0 function-contracts so that they can be included in StoX-processes. This includes functions for a StoX-Reca template.
