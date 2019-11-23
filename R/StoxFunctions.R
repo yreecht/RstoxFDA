@@ -121,6 +121,43 @@ DefineGear <- function(processData, resourceFilePath, encoding="UTF-8", useProce
   return(tab)
 }
 
+#' Define gear
+#' @description
+#'  StoX function
+#'  Define positions for areas of a spatial coding system.
+#'  Definitions are read from a resource file.
+#' @details
+#'  Definitions are read from a tab separated file with headers. Columns defined as:
+#'  \describe{
+#'  \item{Column 1: 'Area'}{Area code (key)}
+#'  \item{Column 2: 'Location'}{optional subdivision of area. If provided, encode the case for missing location should be encoded as well.}
+#'  \item{Column 3: 'Latitude'}{WGS84 Latitude, decimal degress}
+#'  \item{Column 4: 'Longitude'}{WGS84 Longitude, decimal degress}
+#'  }
+#' @param processData data.table() as returned from this function
+#' @param resourceFilePath path to resource file
+#' @param encoding encoding of resource file
+#' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
+#' @return \code{\link[RstoxFDA]{AreaCodePosition}}.
+#' @export
+DefineAreaCodePosition <- function(processData, resourceFilePath, encoding="UTF-8", useProcessData=F){
+
+  if (useProcessData){
+    return(processData)
+  }
+
+  tab <- readTabSepFile(resourceFilePath, col_types = "ccdd", col_names = c("Area", "Location",	"Latitude",	"Longitude"), encoding = encoding)
+
+  missingLoc <- tab[is.na(tab[,2]),]
+
+  if (length(unique(missingLoc[,1])) != length(unique(tab[,1]))){
+    stop("Malformed resource file. Some Area does not have coordinates defined for the case when location is missing.")
+  }
+
+  return(tab)
+
+}
+
 #' Define CAR neighbours
 #' @description
 #'  StoX function.
@@ -432,6 +469,23 @@ NULL
 #'
 NULL
 
+#' Area Code Positions (AreaCodePosition)
+#'
+#' Table (\code{\link[data.table]{data.table}}) defining a position for area codes.
+#'
+#' @details
+#'  \describe{
+#'   \item{Area}{Area code. (key)}
+#'   \item{Location}{optional subdivision of 'Area'}
+#'   \item{Latitude}{WGS84 Latitude, decimal degrees}
+#'   \item{Longitude}{WGS84 Longitude, decimal degrees}
+#'  }
+#'  If location is provided, the case for missing location is also encoded.
+#'
+#' @name AreaCodePosition
+#'
+NULL
+
 
 #' Area Neighbour Definition (CarNeighbours)
 #'
@@ -513,6 +567,18 @@ stoxFunctionAttributes <- list(
     functionParameterValueAilas = list()
   ),
 
+  DefineAreaCodePosition = list(
+    functionType = "processData",
+    functionCategory = "Baseline",
+    functionOutputDataType = "AreaCodePosition",
+    functionParameterType = list(resourceFilePath = "character"),
+    functionParameterFormat = list(resourceFilePath = "filePaths"),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
+  ),
+
   DefineCarNeighbours = list(
     functionType = "processData",
     functionCategory = "Baseline",
@@ -574,6 +640,25 @@ stoxFunctionAttributes <- list(
                                    randomEffects = "vector",
                                    continousEffects = "vector"
                                    ),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
+  ),
+
+  RunRecaEstimate = list(
+    functionType = "modelData",
+    functionCategory = "Analysis",
+    functionOutputDataType = "RecaData",
+    functionParameterType = list(RecaData = "character",
+                                 nSamples = "integer",
+                                 burnin = "integer",
+                                 lgamodel = "character",
+                                 thin = "integer",
+                                 delta.age = "double",
+                                 seed = "integer",
+                                 caa.burnin = "integer"),
+    functionParameterFormat = list(),
     functionArgumentHierarchy = list(),
     functionAlias = list(),
     functionParameterAlias = list(),

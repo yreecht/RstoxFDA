@@ -880,7 +880,7 @@ renameRecaOutput <- function(ecafit, covariateMaps, careffect){
 #' @export
 runRECA <- function(RecaObj, nSamples, burnin, lgamodel="log-linear", fitfile="fit", predictfile="pred", resultdir=NULL, thin=10, delta.age=0.001, seed=NULL, caa.burnin=0){
 
-  if (is.null(seed)){
+  if (length(seed) == 0){
     seed <- sample.int(.Machine$integer.max, 1)
   }
 

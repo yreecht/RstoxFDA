@@ -54,6 +54,24 @@ expect_equal(ncol(gear), 3)
 
 
 
+context("test-StoxFunctions: DefineAreaCodePosition")
+regularfile <- system.file("testresources","mainarea_fdir_from_2018_incl.txt", package="RstoxFDA")
+areaPos <- DefineAreaCodePosition(resourceFilePath = regularfile)
+expect_true(data.table::is.data.table(areaPos))
+expect_equal(nrow(areaPos), 21)
+expect_equal(ncol(areaPos), 4)
+
+context("test-StoxFunctions: DefineAreaCodePosition useProcessData")
+nullPos <- DefineAreaCodePosition(NULL, resourceFilePath = regularfile, useProcessData = T)
+expect_true(is.null(nullPos))
+
+context("test-StoxFunctions: DefineAreaCodePosition malformed")
+errorfile <- system.file("testresources","areaPosError.txt", package="RstoxFDA")
+expect_error(DefineAreaCodePosition(resourceFilePath = errorfile), "Malformed resource file. Some Area does not have coordinates defined for the case when location is missing.")
+
+
+
+
 context("test-StoxFunctions: DefineCarNeighbours")
 carfile <- system.file("testresources","mainarea_neighbour.txt", package="RstoxFDA")
 car <- DefineCarNeighbours(resourceFilePath = carfile)
