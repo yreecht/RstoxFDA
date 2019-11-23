@@ -250,7 +250,7 @@ DefineClassificationError<- function(processData, resourceFilePath, encoding="UT
 #'  Performs data checks and data conversions,
 #'  and stores some data-related parameters in preparation for running
 #'  \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
-#'  via \code{\link[RstoxFDA]{RunReca}}.
+#'  via \code{\link[RstoxFDA]{RunRecaEstimate}}.
 #'
 #' @param StoxBioticData
 #'  \code{\link[RstoxData]{StoxBioticData}} data with samples from fisheries
@@ -299,7 +299,7 @@ DefineClassificationError<- function(processData, resourceFilePath, encoding="UT
 #'  encoding the day of the year when fish is consider to transition from one age to the next.
 #' @return \code{\link[RstoxFDA]{RecaData}} Data prepared for running Reca.
 #' @export
-PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, continousEffects=NULL, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationError=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, temporalResolution=c("Quarter", "Month"), hatchDay=1){
+PrepareRecaEstimate <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, continousEffects=NULL, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationError=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, temporalResolution=c("Quarter", "Month"), hatchDay=1){
 
   temporalResolution <- match.arg(temporalResolution, temporalResolution)
   if (!(temporalResolution %in% c("Quarter", "Month", "Week"))){
@@ -334,15 +334,56 @@ PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEff
   return(recaObject)
 }
 
+
+#' Run Reca
+#' @description
+#'  StoX-function.
+#'  Runs \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}.
+#' @details
+#'  \code{\link[Reca]{eca.estimate}} performs Markov-chain Monte Carlo (MCMC) simulations to determine maximum likelihood of parameters for the given samples.
+#'
+#'  \code{\link[Reca]{eca.predict}} samples the posterior distributions of parameters estimated in \code{\link[Reca]{eca.estimate}},
+#'  in order to obtain proportinos of catches and fish parameters.
+#'  Using these parameters and the given total landings, predictions of distribution of catch-parameter distributions will be calculated.
+#'
+#'  If resultdir is NULL,  atemporary directory will be created for its purpose.
+#'  This will be attempted removed after execution.
+#'  If removal is not successful a warning will be issued which includes the path to the temporary directory.
+#'
+#' @param RecaData \code{\link[RstoxFDA]{RecaData}} as returned from \code{\link[RstoxFDA]{PrepareRecaEstimate}}
+#' @param nSamples number of MCMC samples that will be made available for \code{\link[Reca]{eca.predict}}. See documentation for \code{\link[Reca]{eca.estimate}},
+#' @param burnin number of MCMC samples run and discarded by \code{\link[Reca]{eca.estimate}} before any samples are saved. See documentation for \code{\link[Reca]{eca.estimate}}.
+#' @param lgamodel The length age relationship to use for length-age fits (options: "log-linear", "non-linear": Schnute-Richards model). See documentation for \code{\link[Reca]{eca.estimate}}.
+#' @param fitfile name of output files in resultdir. See documentation for \code{\link[Reca]{eca.estimate}}.
+#' @param predictfile name of output files in resultdir. See documentation for \code{\link[Reca]{eca.predict}}.
+#' @param resultdir a directory where Reca may store temp-files \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}. . If NULL, a temporary directory will be created. See documentation for \code{\link[Reca]{eca.estimate}}.
+#' @param thin controls how many iterations are run between each samples saved. This may be set to account for autocorrelation introduced by Metropolis-Hastings simulation. see documentation for \code{\link[Reca]{eca.estimate}}
+#' @param delta.age see documentation for \code{\link[Reca]{eca.estimate}}
+#' @param seed see documentation for \code{\link[Reca]{eca.estimate}}
+#' @param caa.burnin see documentation for \code{\link[Reca]{eca.predict}}
+#' @return \code{\link[RstoxFDA]{RecaResult}} results from Reca run.
+#' @export
+RunRecaEstimate <- function(RecaData, nSamples, burnin, lgamodel=c("log-linear", "non-linear"), fitfile="fit", predictfile="pred", resultdir=NULL, thin=10, delta.age=0.001, seed=NULL, caa.burnin=0){
+
+  lgamodel <- match.arg(lgamodel)
+
+  recaResult <- runRECA(RecaData, nSamples = nSamples, burnin=burnin, lgamodel=lgamodel, fitfile=fitfile, predictfile = predictfile, resultdir = resultdir, thin=thin, delta.age = delta.age, seed = seed, caa.burnin = caa.burnin)
+
+  return(recaResult)
+}
+
+
+
+
 ##
 # Stox Data types
 ##
 
-#' RecaData
+#' Reca Data (RecaData)
 #'
 #' Data and some data parameters prepared for running
 #' \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
-#' via \code{\link[RstoxFDA]{RunReca}}.
+#' via \code{\link[RstoxFDA]{RunRecaEstimate}}.
 #'
 #' @details
 #' \describe{
@@ -354,6 +395,25 @@ PrepareReca <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEff
 #' }
 #'
 #' @name RecaData
+#'
+NULL
+
+#' Reca Results (RecaResult)
+#'
+#' Results from running
+#' \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
+#' via \code{\link[RstoxFDA]{RunRecaEstimate}}.
+#'
+#' @details
+#'
+#' \describe{
+#'  \item{input}{All input data and parameters provided to \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}}
+#'  \item{fit}{as returned by \code{\link[Reca]{eca.estimate}}}
+#'  \item{prediction}{as returned by \code{\link[Reca]{eca.predict}}}
+#'  \item{covariateMaps}{list() mapping from Reca covariate encoding to values fed to \code{\link[RstoxFDA]{PrepareRecaEstimate}}. As in \code{\link[RstoxFDA]{RecaData}}}
+#' }
+#'
+#' @name RecaResult
 #'
 NULL
 
@@ -489,7 +549,7 @@ stoxFunctionAttributes <- list(
     functionParameterValueAilas = list()
   ),
 
-  PrepareReca = list(
+  PrepareRecaEstimate = list(
     functionType = "modelData",
     functionCategory = "Analysis",
     functionOutputDataType = "RecaData",

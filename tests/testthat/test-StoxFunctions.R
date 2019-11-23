@@ -117,6 +117,16 @@ expect_true(is.null(classNULL))
 
 
 
-context("test-StoxFunctions: PrepReca")
+
+context("test-StoxFunctions: RunRecaEstimate")
+data(recaDataExample)
+result <- RunRecaEstimate(recaDataExample, 100, 100, thin=1)
+expect_true(all(c("input", "fit", "prediction", "covariateMaps") %in% names(result)))
+expect_equal(dim(result$prediction$TotalCount)[3], 100)
+
+
+
+
+context("test-StoxFunctions: PrepRecaEstimate")
 fail("Need data formats StoxBioticData and StoxLandingData in order to test.")
 

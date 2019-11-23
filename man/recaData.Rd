@@ -2,11 +2,11 @@
 % Please edit documentation in R/StoxFunctions.R
 \name{RecaData}
 \alias{RecaData}
-\title{RecaData}
+\title{Reca Data (RecaData)}
 \description{
 Data and some data parameters prepared for running
 \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
-via \code{\link[RstoxFDA]{RunReca}}.
+via \code{\link[RstoxFDA]{RunRecaEstimate}}.
 }
 \details{
 \describe{

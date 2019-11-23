@@ -432,7 +432,8 @@ getLandings <- function(landings, covariates, covariateMaps, date=NULL, month=NU
 
 #' Prepare data for R-ECA
 #' @description
-#'  Checks and reformats data as required by \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
+#'  Checks and reformats data in preparation for running with \code{\link[RstoxFDA]{runRECA}} or \code{\link[RstoxFDA]{RunRecaEstimate}}
+#'  Not to be confused with \code{\link[RstoxFDA]{PrepareRecaEstimate}}, which is primarily intended for including in Stox projects.
 #' @details
 #'  The cell definition is specified by 'landings'.
 #'  The type of covariates are specified in fixedEffects, randomEffects and carEffect.
@@ -489,14 +490,7 @@ getLandings <- function(landings, covariates, covariateMaps, date=NULL, month=NU
 #'  \item{sampleID}{Column idenitfying the sample, defined as for 'samples'}
 #'  \item{count}{Estimated number of fish in the part of the catch the sample was taken from}
 #' }
-#' @return list() with elements:
-#' \describe{
-#'  \item{AgeLength}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}}
-#'  \item{WeightLength}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}}
-#'  \item{Landings}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}}
-#'  \item{GlobalParameters}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}. see details}
-#'  \item{CovariateMaps}{Mapping of values for each covariate in landings and samples (including catchId) to integer value used in R-ECA.}
-#' }
+#' @return \code{\link[RstoxFDA]{RecaData}} Data and some data related parameters prepared for running Reca.
 #' @examples
 #'  data(catchsamples)
 #'  catchsamples$catchId <- catchsamples$LEid
@@ -851,7 +845,10 @@ renameRecaOutput <- function(ecafit, covariateMaps, careffect){
 }
 
 #' Run R-ECA
-#' @description Runs \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}.
+#' @description
+#'  Runs \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}.
+#'  Not to be confused with \code{\link[RstoxFDA]{RunRecaEstimate}},
+#'  which is primarily intended for including in Stox projects.
 #' @details
 #'  \code{\link[Reca]{eca.estimate}} performs Markov-chain Monte Carlo (MCMC) simulations to determine maximum likelihood of parameters for the given samples.
 #'
@@ -863,7 +860,7 @@ renameRecaOutput <- function(ecafit, covariateMaps, careffect){
 #'  This will be attempted removed after execution.
 #'  If removal is not successful a warning will be issued which includes the path to the temporary directory.
 #'
-#' @param RecaObj as returned from \code{\link[RstoxFDA]{prepRECA}}
+#' @param RecaObj \code{\link[RstoxFDA]{RecaData}} as returned from \code{\link[RstoxFDA]{prepRECA}} or \code{\link[RstoxFDA]{PrepareRecaEstimate}}
 #' @param nSamples number of MCMC samples that will be made available for \code{\link[Reca]{eca.predict}}. See documentation for \code{\link[Reca]{eca.estimate}},
 #' @param burnin number of MCMC samples run and discarded by \code{\link[Reca]{eca.estimate}} before any samples are saved. See documentation for \code{\link[Reca]{eca.estimate}}.
 #' @param lgamodel The length age relationship to use for length-age fits (options: "log-linear", "non-linear": Schnute-Richards model). See documentation for \code{\link[Reca]{eca.estimate}}.
@@ -874,12 +871,7 @@ renameRecaOutput <- function(ecafit, covariateMaps, careffect){
 #' @param delta.age see documentation for \code{\link[Reca]{eca.estimate}}
 #' @param seed see documentation for \code{\link[Reca]{eca.estimate}}
 #' @param caa.burnin see documentation for \code{\link[Reca]{eca.predict}}
-#' @return list() with elements:
-#' \describe{
-#'  \item{fit}{as returned by \code{\link[Reca]{eca.estimate}}}
-#'  \item{prediction}{as returned by \code{\link[Reca]{eca.predict}}}
-#'  \item{covariateMaps}{list() mapping from Reca covariate encoding to values fed to \code{\link[RstoxFDA]{prepRECA}}. As on parameter 'RecaObj'}
-#' }
+#' @return \code{\link[RstoxFDA]{RecaResult}} results from Reca run.
 #' @examples
 #'  data(recaDataExample)
 #'

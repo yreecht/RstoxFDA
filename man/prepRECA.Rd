@@ -63,17 +63,11 @@ prepRECA(samples, landings, fixedEffects, randomEffects,
 }}
 }
 \value{
-list() with elements:
-\describe{
- \item{AgeLength}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}}
- \item{WeightLength}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}}
- \item{Landings}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}}
- \item{GlobalParameters}{input needed for \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}. see details}
- \item{CovariateMaps}{Mapping of values for each covariate in landings and samples (including catchId) to integer value used in R-ECA.}
-}
+\code{\link[RstoxFDA]{RecaData}} Data and some data related parameters prepared for running Reca.
 }
 \description{
-Checks and reformats data as required by \code{\link[Reca]{eca.estimate}} and \code{\link[Reca]{eca.predict}}
+Checks and reformats data in preparation for running with \code{\link[RstoxFDA]{runRECA}} or \code{\link[RstoxFDA]{RunRecaEstimate}}
+ Not to be confused with \code{\link[RstoxFDA]{PrepareRecaEstimate}}, which is primarily intended for including in Stox projects.
 }
 \details{
 The cell definition is specified by 'landings'.
