@@ -3,7 +3,7 @@
 readTabSepFile <- function(filepath, encoding="ascii", col_types = NULL, col_names = NULL){
   loc <- readr::default_locale()
   loc$encoding <- encoding
-  tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = col_types)
+  tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = col_types, comment = "#")
   tab <- data.table::as.data.table(tab)
 
   if (length(col_names)>0){

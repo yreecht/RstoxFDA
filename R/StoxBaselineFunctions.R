@@ -53,7 +53,7 @@ makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
   mappings <- list()
   for (f in formats){
     mappings[[f]] <- list()
-    ftab <- tab[tab[,2] == f,]
+    ftab <- tab[tab$Source == f,]
     for (i in 1:nrow(ftab)){
       u <- ftab[[i,1]]
       codes <- trimws(unique(unlist(strsplit(ftab[[i,3]], ","))))
@@ -68,6 +68,42 @@ makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
   }
 
   return(mappings)
+}
+
+#' append gear
+#' @noRd
+appendGear <- function(table, gearcolumn, gearDefinition, colName){
+
+  if (length(unique(gearDefinition$Source)) > 1){
+    stop("Error: filter gearDefinition before call")
+  }
+
+  if (colName %in% names(table)){
+    stop(paste("Column with name '", colName, "' already exists.", sep=""))
+  }
+
+  conversionTable <- makeUnifiedDefinitionLookupList(gearDefinition)[[1]]
+  table[,colName] <- convertCodes(unlist(table[,gearcolumn,with=F]), conversionTable)
+
+  return(table)
+}
+
+###
+# Functions for appending columns to data
+#
+
+#' Append Gear to StoxBioticData
+#' @description
+#'  Appends a column to StoxBioticData with a unified gear definition
+#'  that are also defined for for other formats, such as StoxLanding.
+#' @param StoxBioticData \code{\link[RstoxData]{StoxBioticData}} data which will be annotated.
+#' @param UnifiedVariableDefinition \code{\link[RstoxFDA]{UnifiedVariableDefinition}} unified gear definition.
+#' @param columnName character(), defaults to 'UnifiedGear', name of the appended column.
+#' @return StoxBioticData with column appended. See \code{\link[RstoxData]{StoxBioticData}}.
+#' @export
+AppendGearStoxBiotic <- function(StoxBioticData, UnifiedVariableDefinition, columnName="UnifiedGear"){
+  geardef <- UnifiedVariableDefinition[UnifiedVariableDefinition$Source == "StoxBioticData",]
+  return(appendGear(StoxBioticData, "gear", geardef, columnName))
 }
 
 ###

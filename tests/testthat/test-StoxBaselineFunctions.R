@@ -1,5 +1,5 @@
 
-context("test-StoxFunctions: makeUnifiedDefinitionLookupList")
+context("test-StoxBaselineFunctions: makeUnifiedDefinitionLookupList")
 regularfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
 
 parsedfile <- DefineGear(resourceFilePath = regularfile)
@@ -10,21 +10,21 @@ expect_equal(length(mappings), 2)
 expect_equal(length(unique(mappings$StoxLandingData)), 7)
 expect_equal(length(unique(mappings$StoxBioticData)), 7)
 
-context("test-StoxFunctions: makeUnifiedDefinitionLookupList one format only")
+context("test-StoxBaselineFunctions: makeUnifiedDefinitionLookupList one format only")
 mappings <- makeUnifiedDefinitionLookupList(parsedfile, formats = c("StoxBioticData"))
 expect_equal(length(mappings), 1)
 expect_equal(length(unique(mappings$StoxBioticData)), 7)
 expect_false("StoxLandingData" %in% names(mappings))
 
-context("test-StoxFunctions: makeUnifiedDefinitionLookupList missing formats")
+context("test-StoxBaselineFunctions: makeUnifiedDefinitionLookupList missing formats")
 expect_error(makeUnifiedDefinitionLookupList(parsedfile, formats = c("StoxBioticData", "ICESbiotic")), "Not all formats found in resource. Missing: ICESbiotic")
 
-context("test-StoxFunctions: makeUnifiedDefinitionLookupList redefined codes")
+context("test-StoxBaselineFunctions: makeUnifiedDefinitionLookupList redefined codes")
 errorfile <- system.file("testresources","gearfactor_error.txt", package="RstoxFDA")
 parsedfile <- DefineGear(resourceFilePath = errorfile)
 expect_error(makeUnifiedDefinitionLookupList(parsedfile), "Codes redefined: 3714")
 
-context("test-StoxFunctions: makeUnifiedDefinitionLookupList repeated keys")
+context("test-StoxBaselineFunctions: makeUnifiedDefinitionLookupList repeated keys")
 errorfile <- system.file("testresources","gearfactor_errorkeys.txt", package="RstoxFDA")
 expect_error(DefineGear(resourceFilePath = errorfile), "Malformed resource file. Non-unique keys: repition in first two columns.")
 
@@ -32,14 +32,14 @@ expect_error(DefineGear(resourceFilePath = errorfile), "Malformed resource file.
 
 
 
-context("test-StoxFunctions: DefineGear")
+context("test-StoxBaselineFunctions: DefineGear")
 regularfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
 gear <- DefineGear(resourceFilePath = regularfile)
 expect_true(data.table::is.data.table(gear))
 expect_equal(nrow(gear), 14)
 expect_equal(ncol(gear), 3)
 
-context("test-StoxFunctions: DefineGear useProcessData")
+context("test-StoxBaselineFunctions: DefineGear useProcessData")
 nullgear <- DefineGear(NULL, resourceFilePath = regularfile, useProcessData = T)
 expect_true(is.null(nullgear))
 errorfile <- system.file("testresources","gearfactor_error.txt", package="RstoxFDA")
@@ -53,23 +53,23 @@ expect_equal(ncol(gear), 3)
 
 
 
-context("test-StoxFunctions: DefineTemporalCategories")
+context("test-StoxBaselineFunctions: DefineTemporalCategories")
 temp <- DefineTemporalCategories(NULL)
 expect_true(data.table::is.data.table(temp))
 expect_equal(nrow(temp), 4)
 expect_equal(ncol(temp), 4)
 
-context("test-StoxFunctions: DefineTemporalCategories useProcessData")
+context("test-StoxBaselineFunctions: DefineTemporalCategories useProcessData")
 temp <- DefineTemporalCategories(NULL, useProcessData = T)
 expect_true(is.null(temp))
 
-context("test-StoxFunctions: DefineTemporalCategories Month")
+context("test-StoxBaselineFunctions: DefineTemporalCategories Month")
 temp <- DefineTemporalCategories(NULL, temporalCategory = "Month")
 expect_true(data.table::is.data.table(temp))
 expect_equal(nrow(temp), 12)
 expect_equal(ncol(temp), 4)
 
-context("test-StoxFunctions: DefineTemporalCategories non-seasonal")
+context("test-StoxBaselineFunctions: DefineTemporalCategories non-seasonal")
 temp <- DefineTemporalCategories(NULL, temporalCategory = "Month", seasonal = F, years=c(2015,2016))
 expect_true(data.table::is.data.table(temp))
 expect_equal(nrow(temp), 24)
@@ -77,23 +77,23 @@ expect_equal(ncol(temp), 4)
 expect_false(any(is.na(temp$year)))
 
 
-context("test-StoxFunctions: DefineTemporalCategories unrecognized category")
+context("test-StoxBaselineFunctions: DefineTemporalCategories unrecognized category")
 expect_error(DefineTemporalCategories(NULL, temporalCategory = "Something"), "Temporal category Something not recognized.")
 
-context("test-StoxFunctions: DefineTemporalCategories Custom")
+context("test-StoxBaselineFunctions: DefineTemporalCategories Custom")
 temp <- DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("05-02","15-09"))
 expect_true(data.table::is.data.table(temp))
 expect_equal(nrow(temp), 2)
 expect_equal(ncol(temp), 4)
 
-context("test-StoxFunctions: DefineTemporalCategories Custom seasonal")
+context("test-StoxBaselineFunctions: DefineTemporalCategories Custom seasonal")
 temp <- DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("05-02","15-09"), seasonal=T)
 expect_true(data.table::is.data.table(temp))
 expect_equal(nrow(temp), 2)
 expect_equal(ncol(temp), 4)
 expect_error(DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("05-02","15-09"), seasonal=T, years=c(2015, 2016)), "Years provided for seasonal definition.")
 
-context("test-StoxFunctions: DefineTemporalCategories Custom non-seasonal")
+context("test-StoxBaselineFunctions: DefineTemporalCategories Custom non-seasonal")
 expect_error(DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("01-01","15-09","01-01"), seasonal=F, years=c(2015, 2016)), "Need to provide unique periods.")
 temp <- DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("01-01","15-09"), seasonal=F, years=c(2015, 2016))
 expect_true(data.table::is.data.table(temp))
@@ -103,65 +103,65 @@ expect_false(any(is.na(temp$year)))
 
 
 
-context("test-StoxFunctions: DefineAreaCodePosition")
+context("test-StoxBaselineFunctions: DefineAreaCodePosition")
 regularfile <- system.file("testresources","mainarea_fdir_from_2018_incl.txt", package="RstoxFDA")
 areaPos <- DefineAreaCodePosition(resourceFilePath = regularfile)
 expect_true(data.table::is.data.table(areaPos))
 expect_equal(nrow(areaPos), 21)
 expect_equal(ncol(areaPos), 4)
 
-context("test-StoxFunctions: DefineAreaCodePosition useProcessData")
+context("test-StoxBaselineFunctions: DefineAreaCodePosition useProcessData")
 nullPos <- DefineAreaCodePosition(NULL, resourceFilePath = regularfile, useProcessData = T)
 expect_true(is.null(nullPos))
 
-context("test-StoxFunctions: DefineAreaCodePosition malformed")
+context("test-StoxBaselineFunctions: DefineAreaCodePosition malformed")
 errorfile <- system.file("testresources","areaPosError.txt", package="RstoxFDA")
 expect_error(DefineAreaCodePosition(resourceFilePath = errorfile), "Malformed resource file. Some Area does not have coordinates defined for the case when location is missing.")
 
 
 
 
-context("test-StoxFunctions: DefineCarNeighbours")
+context("test-StoxBaselineFunctions: DefineCarNeighbours")
 carfile <- system.file("testresources","mainarea_neighbour.txt", package="RstoxFDA")
 car <- DefineCarNeighbours(resourceFilePath = carfile)
 expect_true(data.table::is.data.table(car))
 expect_equal(nrow(car), 60)
 expect_equal(ncol(car), 2)
 
-context("test-StoxFunctions: DefineCarNeighbours useProcessData")
+context("test-StoxBaselineFunctions: DefineCarNeighbours useProcessData")
 nullCar <- DefineCarNeighbours(NULL, resourceFilePath = carfile, useProcessData = T)
 expect_true(is.null(nullCar))
 
-context("test-StoxFunctions: DefineCarNeighbours non-symmetric")
+context("test-StoxBaselineFunctions: DefineCarNeighbours non-symmetric")
 errorfile <- system.file("testresources","mainarea_error.txt", package="RstoxFDA")
 expect_error(DefineCarNeighbours(resourceFilePath = errorfile), "Neighbour definition not symmetric. 1 is neighbour of 0 but not vice versa.")
 
-context("test-StoxFunctions: DefineCarNeighbours repeated key")
+context("test-StoxBaselineFunctions: DefineCarNeighbours repeated key")
 errorfile <- system.file("testresources","mainarea_error2.txt", package="RstoxFDA")
 expect_error(DefineCarNeighbours(resourceFilePath = errorfile), "Malformed resource file, Non-unique keys: repition in first column: 1")
 
 
 
 
-context("test-StoxFunctions: DefineAgeErrorMatrix")
+context("test-StoxBaselineFunctions: DefineAgeErrorMatrix")
 ageerorfile <- system.file("testresources","AgeErrorHirstEtAl2012.txt", package="RstoxFDA")
 ageerror <- DefineAgeErrorMatrix(resourceFilePath = ageerorfile)
 expect_true(data.table::is.data.table(ageerror))
 expect_equal(nrow(ageerror), 15)
 expect_equal(ncol(ageerror), 16)
 
-context("test-StoxFunctions: DefineAgeErrorMatrix useProcessData")
+context("test-StoxBaselineFunctions: DefineAgeErrorMatrix useProcessData")
 nullAE <- DefineAgeErrorMatrix(NULL, resourceFilePath = ageerorfile, useProcessData = T)
 expect_true(is.null(nullAE))
 
-context("test-StoxFunctions: DefineAgeErrorMatrix non-symmetric")
+context("test-StoxBaselineFunctions: DefineAgeErrorMatrix non-symmetric")
 ageerorfile <- system.file("testresources","AgeNonSym.txt", package="RstoxFDA")
 ageerror <- DefineAgeErrorMatrix(resourceFilePath = ageerorfile)
 expect_true(data.table::is.data.table(ageerror))
 expect_equal(nrow(ageerror), 14)
 expect_equal(ncol(ageerror), 16)
 
-context("test-StoxFunctions: DefineAgeErrorMatrix malformed")
+context("test-StoxBaselineFunctions: DefineAgeErrorMatrix malformed")
 ageerorfile <- system.file("testresources","AgeMalformed.txt", package="RstoxFDA")
 expect_error(DefineAgeErrorMatrix(resourceFilePath = ageerorfile),"Malformed resource file. All probabilities must be in >=0 and <=1.")
 
@@ -171,14 +171,41 @@ expect_error(DefineAgeErrorMatrix(resourceFilePath = ageerorfile),"Malformed res
 
 
 
-context("test-StoxFunctions: DefineClassificationError")
+context("test-StoxBaselineFunctions: DefineClassificationError")
 classerorfile <- system.file("testresources","classificationError.txt", package="RstoxFDA")
 classerror <- DefineClassificationError(resourceFilePath = classerorfile)
 expect_true(data.table::is.data.table(classerror))
 expect_equal(nrow(classerror), 1)
 expect_equal(ncol(classerror), 8)
 
-context("test-StoxFunctions: DefineClassificationError useProcessdata")
+context("test-StoxBaselineFunctions: DefineClassificationError useProcessdata")
 classNULL <- DefineClassificationError(NULL, resourceFilePath = classerorfile, useProcessData = T)
 expect_true(is.null(classNULL))
 
+
+
+
+context("test-StoxBaselineFunctions: AppendGear")
+gearfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
+stoxBioticMock <- system.file("testresources","StoxBioticDataMock.txt", package="RstoxFDA")
+
+gear <- DefineGear(NULL, resourceFilePath = gearfile)
+stoxBioticPre <- readTabSepFile(stoxBioticMock, col_types = "cccc")
+
+stoxBioticPost <- AppendGearStoxBiotic(stoxBioticPre, gear)
+expect_true(data.table::is.data.table(stoxBioticPost))
+expect_equal(ncol(stoxBioticPost), ncol(stoxBioticPre) + 1)
+expect_false(any(is.na(stoxBioticPost$UnifiedGear)))
+
+context("test-StoxBaselineFunctions: AppendGear NA in gear")
+sbError <- stoxBioticPre
+sbError$gear[1] <- NA
+expect_error(AppendGearStoxBiotic(sbError, gear))
+
+context("test-StoxBaselineFunctions: AppendGear unkown gear")
+sbError <- stoxBioticPre
+sbError$gear[1] <- "9999"
+expect_error(AppendGearStoxBiotic(sbError, gear), "Conversion not defined for all codes. Missing for: 9999")
+
+context("test-StoxBaselineFunctions: AppendGear existing gear column")
+expect_error(AppendGearStoxBiotic(stoxBioticPre, gear, "gear"), "olumn with name 'gear' already exists.")

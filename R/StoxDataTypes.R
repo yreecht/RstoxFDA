@@ -157,7 +157,7 @@ stoxFunctionAttributes <- list(
   DefineGear = list(
     functionType = "processData",
     functionCategory = "Baseline",
-    functionOutputDataType = "GearDefinition",
+    functionOutputDataType = "UnifiedVariableDefinition",
     functionParameterType = list(resourceFilePath = "character"),
     functionParameterFormat = list(resourceFilePath = "filePaths"),
     functionArgumentHierarchy = list(),
@@ -224,6 +224,19 @@ stoxFunctionAttributes <- list(
     functionOutputDataType = "ClassificationError",
     functionParameterType = list(resourceFilePath = "character"),
     functionParameterFormat = list(resourceFilePath = "filePaths"),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
+  ),
+
+  AppendGearStoxBiotic  = list(
+    functionType = "modelData",
+    functionCategory = "Baseline",
+    functionOutputDataType = "RstoxBioticData",
+    functionParameterType = list(StoxBioticData = "character",
+                                 UnifiedVariableDefinition = "character"),
+    functionParameterFormat = list(),
     functionArgumentHierarchy = list(),
     functionAlias = list(),
     functionParameterAlias = list(),
