@@ -243,6 +243,19 @@ stoxFunctionAttributes <- list(
     functionParameterValueAilas = list()
   ),
 
+  AppendGearStoxLanding  = list(
+    functionType = "modelData",
+    functionCategory = "Baseline",
+    functionOutputDataType = "RstoxLandingData",
+    functionParameterType = list(StoxBioticData = "character",
+                                 UnifiedVariableDefinition = "character"),
+    functionParameterFormat = list(),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
+  ),
+
   PrepareRecaEstimate = list(
     functionType = "modelData",
     functionCategory = "Analysis",

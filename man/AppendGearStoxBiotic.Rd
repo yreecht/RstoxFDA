@@ -19,5 +19,5 @@ StoxBioticData with column appended. See \code{\link[RstoxData]{StoxBioticData}}
 }
 \description{
 Appends a column to StoxBioticData with a unified gear definition
- that are also defined for for other formats, such as StoxLanding.
+ that are also defined for for other formats, such as StoxLandingData.
 }

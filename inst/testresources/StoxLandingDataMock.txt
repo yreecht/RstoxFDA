@@ -1,0 +1,4 @@
+speciesFAOCommercial	gear	area	location
+HAD	55	00	05
+HAD	61	02	09
+HAD	21	3	25

@@ -95,7 +95,7 @@ appendGear <- function(table, gearcolumn, gearDefinition, colName){
 #' Append Gear to StoxBioticData
 #' @description
 #'  Appends a column to StoxBioticData with a unified gear definition
-#'  that are also defined for for other formats, such as StoxLanding.
+#'  that are also defined for for other formats, such as StoxLandingData.
 #' @param StoxBioticData \code{\link[RstoxData]{StoxBioticData}} data which will be annotated.
 #' @param UnifiedVariableDefinition \code{\link[RstoxFDA]{UnifiedVariableDefinition}} unified gear definition.
 #' @param columnName character(), defaults to 'UnifiedGear', name of the appended column.
@@ -104,6 +104,20 @@ appendGear <- function(table, gearcolumn, gearDefinition, colName){
 AppendGearStoxBiotic <- function(StoxBioticData, UnifiedVariableDefinition, columnName="UnifiedGear"){
   geardef <- UnifiedVariableDefinition[UnifiedVariableDefinition$Source == "StoxBioticData",]
   return(appendGear(StoxBioticData, "gear", geardef, columnName))
+}
+
+#' Append Gear to StoxLandingData
+#' @description
+#'  Appends a column to StoxLandingData with a unified gear definition
+#'  that are also defined for for other formats, such as StoxBioticData.
+#' @param StoxLandingData \code{\link[RstoxData]{StoxLandingData}} data which will be annotated.
+#' @param UnifiedVariableDefinition \code{\link[RstoxFDA]{UnifiedVariableDefinition}} unified gear definition.
+#' @param columnName character(), defaults to 'UnifiedGear', name of the appended column.
+#' @return StoxLandingData with column appended. See \code{\link[RstoxData]{StoxLandingData}}.
+#' @export
+AppendGearStoxLanding <- function(StoxLandingData, UnifiedVariableDefinition, columnName="UnifiedGear"){
+  geardef <- UnifiedVariableDefinition[UnifiedVariableDefinition$Source == "StoxLandingData",]
+  return(appendGear(StoxLandingData, "gear", geardef, columnName))
 }
 
 ###

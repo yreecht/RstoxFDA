@@ -185,7 +185,7 @@ expect_true(is.null(classNULL))
 
 
 
-context("test-StoxBaselineFunctions: AppendGear")
+context("test-StoxBaselineFunctions: AppendGearStoxBiotic")
 gearfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
 stoxBioticMock <- system.file("testresources","StoxBioticDataMock.txt", package="RstoxFDA")
 
@@ -197,15 +197,30 @@ expect_true(data.table::is.data.table(stoxBioticPost))
 expect_equal(ncol(stoxBioticPost), ncol(stoxBioticPre) + 1)
 expect_false(any(is.na(stoxBioticPost$UnifiedGear)))
 
-context("test-StoxBaselineFunctions: AppendGear NA in gear")
+context("test-StoxBaselineFunctions: AppendGearStoxBiotic NA in gear")
 sbError <- stoxBioticPre
 sbError$gear[1] <- NA
 expect_error(AppendGearStoxBiotic(sbError, gear))
 
-context("test-StoxBaselineFunctions: AppendGear unkown gear")
+context("test-StoxBaselineFunctions: AppendGearStoxBiotic unkown gear")
 sbError <- stoxBioticPre
 sbError$gear[1] <- "9999"
 expect_error(AppendGearStoxBiotic(sbError, gear), "Conversion not defined for all codes. Missing for: 9999")
 
-context("test-StoxBaselineFunctions: AppendGear existing gear column")
-expect_error(AppendGearStoxBiotic(stoxBioticPre, gear, "gear"), "olumn with name 'gear' already exists.")
+context("test-StoxBaselineFunctions: AppendGearStoxBiotic existing gear column")
+expect_error(AppendGearStoxBiotic(stoxBioticPre, gear, "gear"), "Column with name 'gear' already exists.")
+
+
+
+
+context("test-StoxBaselineFunctions: AppendGearStoxBiotic")
+gearfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
+stoxLandingMock <- system.file("testresources","StoxLandingDataMock.txt", package="RstoxFDA")
+
+gear <- DefineGear(NULL, resourceFilePath = gearfile)
+stoxLandingPre <- readTabSepFile(stoxLandingMock, col_types = "cccc")
+stoxLandingPost <- AppendGearStoxLanding(stoxLandingPre, gear)
+expect_true(data.table::is.data.table(stoxLandingPost))
+expect_equal(ncol(stoxLandingPost), ncol(stoxLandingPre) + 1)
+expect_false(any(is.na(stoxLandingPost$UnifiedGear)))
+
