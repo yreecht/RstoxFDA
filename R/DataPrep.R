@@ -1,3 +1,21 @@
+#' read tab separated file
+#' @noRd
+readTabSepFile <- function(filepath, encoding="ascii", col_types = NULL, col_names = NULL){
+  loc <- readr::default_locale()
+  loc$encoding <- encoding
+  tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = col_types)
+  tab <- data.table::as.data.table(tab)
+
+  if (length(col_names)>0){
+    missing <- col_names[!(col_names %in% names(tab))]
+    if (length(missing)>0){
+      stop(paste("Resource file does not have required columns:", paste(missing, collapse=", ")))
+    }
+  }
+
+  return(tab)
+}
+
 #' Get temporal categories
 #' @description define a categorical variable based for a vector of dates
 #' @param date POSIXct() vector of dates

@@ -53,6 +53,55 @@ expect_equal(ncol(gear), 3)
 
 
 
+context("test-StoxFunctions: DefineTemporalCategories")
+temp <- DefineTemporalCategories(NULL)
+expect_true(data.table::is.data.table(temp))
+expect_equal(nrow(temp), 4)
+expect_equal(ncol(temp), 4)
+
+context("test-StoxFunctions: DefineTemporalCategories useProcessData")
+temp <- DefineTemporalCategories(NULL, useProcessData = T)
+expect_true(is.null(temp))
+
+context("test-StoxFunctions: DefineTemporalCategories Month")
+temp <- DefineTemporalCategories(NULL, temporalCategory = "Month")
+expect_true(data.table::is.data.table(temp))
+expect_equal(nrow(temp), 12)
+expect_equal(ncol(temp), 4)
+
+context("test-StoxFunctions: DefineTemporalCategories non-seasonal")
+temp <- DefineTemporalCategories(NULL, temporalCategory = "Month", seasonal = F, years=c(2015,2016))
+expect_true(data.table::is.data.table(temp))
+expect_equal(nrow(temp), 24)
+expect_equal(ncol(temp), 4)
+expect_false(any(is.na(temp$year)))
+
+
+context("test-StoxFunctions: DefineTemporalCategories unrecognized category")
+expect_error(DefineTemporalCategories(NULL, temporalCategory = "Something"), "Temporal category Something not recognized.")
+
+context("test-StoxFunctions: DefineTemporalCategories Custom")
+temp <- DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("05-02","15-09"))
+expect_true(data.table::is.data.table(temp))
+expect_equal(nrow(temp), 2)
+expect_equal(ncol(temp), 4)
+
+context("test-StoxFunctions: DefineTemporalCategories Custom seasonal")
+temp <- DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("05-02","15-09"), seasonal=T)
+expect_true(data.table::is.data.table(temp))
+expect_equal(nrow(temp), 2)
+expect_equal(ncol(temp), 4)
+expect_error(DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("05-02","15-09"), seasonal=T, years=c(2015, 2016)), "Years provided for seasonal definition.")
+
+context("test-StoxFunctions: DefineTemporalCategories Custom non-seasonal")
+expect_error(DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("01-01","15-09","01-01"), seasonal=F, years=c(2015, 2016)), "Need to provide unique periods.")
+temp <- DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("01-01","15-09"), seasonal=F, years=c(2015, 2016))
+expect_true(data.table::is.data.table(temp))
+expect_equal(nrow(temp), 4)
+expect_equal(ncol(temp), 4)
+expect_false(any(is.na(temp$year)))
+
+
 
 context("test-StoxFunctions: DefineAreaCodePosition")
 regularfile <- system.file("testresources","mainarea_fdir_from_2018_incl.txt", package="RstoxFDA")
@@ -132,19 +181,4 @@ expect_equal(ncol(classerror), 8)
 context("test-StoxFunctions: DefineClassificationError useProcessdata")
 classNULL <- DefineClassificationError(NULL, resourceFilePath = classerorfile, useProcessData = T)
 expect_true(is.null(classNULL))
-
-
-
-
-context("test-StoxFunctions: RunRecaEstimate")
-data(recaDataExample)
-result <- RunRecaEstimate(recaDataExample, 100, 100, thin=1)
-expect_true(all(c("input", "fit", "prediction", "covariateMaps") %in% names(result)))
-expect_equal(dim(result$prediction$TotalCount)[3], 100)
-
-
-
-
-context("test-StoxFunctions: PrepRecaEstimate")
-fail("Need data formats StoxBioticData and StoxLandingData in order to test.")
 
