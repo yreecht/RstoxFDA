@@ -224,3 +224,30 @@ expect_true(data.table::is.data.table(stoxLandingPost))
 expect_equal(ncol(stoxLandingPost), ncol(stoxLandingPre) + 1)
 expect_false(any(is.na(stoxLandingPost$UnifiedGear)))
 
+
+
+context("test-StoxBaselineFunctions: appendTemporal")
+temp <- DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("01-10","01-12"))
+tabExampleFile <- system.file("testresources","startStopExample.txt", package="RstoxFDA")
+tabExamplePre <- readTabSepFile(tabExampleFile, col_types = "ccccDD")
+tabExamplePost <- appendTemporal(tabExamplePre, "period", temp, datecolumns = c("startD", "stopD"))
+expect_equal(tabExamplePost$period[1], "[01-12, 01-10>")
+expect_equal(tabExamplePost$period[2], "[01-12, 01-10>")
+expect_equal(tabExamplePost$period[3], "[01-10, 01-12>")
+
+tabExamplePost <- appendTemporal(tabExamplePre, "period", temp, datecolumns = c("stopD", "startD"))
+expect_equal(tabExamplePost$period[1], "[01-10, 01-12>")
+expect_equal(tabExamplePost$period[2], "[01-12, 01-10>")
+expect_equal(tabExamplePost$period[3], "[01-10, 01-12>")
+
+tabExampleMissing <- tabExamplePre
+tabExampleMissing$stopD[2] <- NA
+expect_error(appendTemporal(tabExampleMissing, "period", temp, datecolumns = c("stopD", "startD")), "NA for some dates")
+
+tempMisspec <- temp
+tempMisspec$year[1] <- 1993
+expect_error(appendTemporal(tabExamplePre, "period", tempMisspec, datecolumns = c("stopD", "startD")), "Year is provided for some, but not all tmeporal definitions.")
+
+tempYearspec <- temp
+temp$year <- 2019
+expect_error(appendTemporal(tabExamplePre, "period", temp, datecolumns = c("stopD", "startD")), "Some dates preced the first temporal category.")

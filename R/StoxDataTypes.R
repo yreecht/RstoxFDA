@@ -64,6 +64,10 @@ NULL
 #'   \item{year}{integer() Year for which the category is defined, NA for seasonal definitions or for definition for a single unspecified year.}
 #'  }
 #'
+#'  Start and end of year is not implied as category delimitations when not included.
+#'  If 1st of January is not definied as the start of a category,
+#'  it is taken to be included in the last category of the preceding year.
+#'
 #' @name TemporalCategories
 #'
 NULL

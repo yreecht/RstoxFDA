@@ -70,6 +70,78 @@ makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
   return(mappings)
 }
 
+#'
+#' @param dateColumns vector of date-columns to try in order.
+#' @noRd
+appendTemporal <- function(table, temporalColumn, temporalDefinition, datecolumns){
+
+  if (temporalColumn %in% names(table)){
+    stop(paste("Temporal column", temporalColumn, "exists already."))
+  }
+
+  if (!(all(is.na(temporalDefinition$year))) & any(is.na(temporalDefinition$year))){
+    stop("Year is provided for some, but not all tmeporal definitions.")
+  }
+
+  warning("Implement some date format checks")
+
+  dateCol <- as.POSIXct(rep(NA, nrow(table)))
+  for (d in datecolumns){
+    filter <- is.na(dateCol) & !is.na(table[[d]])
+    dateCol[filter] <- table[[d]][filter]
+  }
+
+  if (any(is.na(dateCol))){
+    stop("NA for some dates")
+  }
+
+  month <- as.integer(strftime(dateCol, format="%m"))
+  day <- as.integer(strftime(dateCol, format="%d"))
+  year <- as.integer(strftime(dateCol, format="%Y"))
+
+  if (!(all(is.na(temporalDefinition$year))) & !(all(year %in% temporalDefinition$year))){
+    stop("Year is provided in temporal definitions, but does not contain definitions for all years in data.")
+  }
+
+  temporalDefinition <- temporalDefinition[order(temporalDefinition$year, temporalDefinition$startMonth, temporalDefinition$startDay, decreasing = T),]
+
+  temporalCategory <- rep(NA, nrow(table))
+
+  if (all(is.na(temporalDefinition$year))){
+    filt <- (month < temporalDefinition$startMonth[1] | (month == temporalDefinition$startMonth[1] & day < temporalDefinition$startDay[1]))
+    temporalCategory[filt] <- temporalDefinition$temporalCategory[1]
+
+    for (i in 1:nrow(temporalDefinition)){
+      filt <- (month > temporalDefinition$startMonth[i] | (month == temporalDefinition$startMonth[i] & day >= temporalDefinition$startDay[i]))
+      temporalCategory[filt] <- temporalDefinition$temporalCategory[i]
+    }
+
+  }
+  else if (all(!is.na(temporalDefinition$year))){
+
+    if (any(year < temporalDefinition$year[1] |
+            year == temporalDefinition$year[1] & month < temporalDefinition$startMonth[1] |
+            (year == temporalDefinition$year[1] & month == temporalDefinition$startMonth[1] & day < temporalDefinition$startDay[1]))){
+      stop("Some dates preced the first temporal category.")
+    }
+
+    for (i in 1:nrow(temporalDefinition)){
+      filt <- (year > temporalDefinition$year[i] |
+                 (year == temporalDefinition$year[i] & month > temporalDefinition$startMonth[i]) |
+                 (year == temporalDefinition$year[i] & month == temporalDefinition$startMonth[i] & day >= temporalDefinition$startDay[i]))
+      temporalCategory[filt] <- temporalDefinition$temporalCategory[i]
+    }
+  }
+  else{
+    stop()
+  }
+
+
+  table[,temporalColumn] <- temporalCategory
+
+  return(table)
+}
+
 #' append gear
 #' @noRd
 appendGear <- function(table, gearcolumn, gearDefinition, colName){
@@ -179,7 +251,6 @@ DefineTemporalCategories <- function(processData, temporalCategory=c("Quarter", 
   if (useProcessData){
     return(processData)
   }
-
 
   temporalCategory <- match.arg(temporalCategory, temporalCategory)
 
