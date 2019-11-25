@@ -163,7 +163,7 @@ getInfoMatrix <- function(samples, landings, fixedEffects, randomEffects, carEff
 #' @noRd
 addPartCount <- function(DataMatrix, nFish){
 
-  # renumber sampleID to delprøve convention (needed ?)
+  # renumber sampleID to delprove convention (needed ?)
   partsamples <- stats::aggregate(list(nSampleId=DataMatrix$sampleId), by=list(catchId=DataMatrix$catchId), FUN=function(x){length(unique(x))})
   partsamples <- merge(partsamples, unique(DataMatrix[,c("sampleId", "catchId")]))
 

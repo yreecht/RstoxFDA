@@ -1,25 +1,17 @@
 Package: RstoxFDA
-Type: Package
-Title: Fisheries Dependent Analysis with RstoX
-Version: 0.1.0
-Author: Edvin Fuglebakk
-Maintainer: Edvin Fuglebakk <Edvin.Fuglebakk@hi.no>
-Description: Fisheries Dependent Analysis with RstoX.
-    Support for estimation of catch at age using Reca.
+Title: Estimated Catch at Age with Rstox
+Version: 1.0
+Authors@R: c(
+  person(given = "Arne Johannes", family = "Holmin", role = c("cre", "aut"), email = "edvin.fuglebakk@hi.no"), 
+  person(given = "Edvin", family = "Fuglebakk", role = "aut"))
+Depends: R (>= 3.6)
+Description: This package is used to run the Estimated Catch at Age model through the Reca package developed by the Norwegian Computing Center.
+URL: https://github.com/StoXProject/RstoxFDA
+BugReports: https://github.com/StoXProject/RstoxFDA/issues
 License: LGPL-3
-Encoding: UTF-8
 LazyData: true
-Depends: R (>= 2.10)
 Imports: 
- readr,
- data.table,
- stats,
- utils,
- ggplot2,
- RColorBrewer,
- gridExtra,
- RstoxData
+    data.table (>= 1.12.6)
 Suggests: 
- testthat,
- Reca
+    testthat
 RoxygenNote: 6.1.1
