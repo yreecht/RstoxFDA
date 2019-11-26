@@ -261,3 +261,11 @@ appendTemporal(tabMultiYear, "period", my, datecolumns = c("stopD", "startD"))
 my <- DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("01-10","01-12"), years = c(2019))
 tabMultiYear$stopD[2] <- as.Date("2020-10-01")
 expect_error(appendTemporal(tabMultiYear, "period", my, datecolumns = c("stopD", "startD")),"Year is provided in temporal definitions, but does not contain definitions for all years in data.")
+
+
+
+
+context("test-StoxBaselineFunctions: appendGearLanding")
+library(RstoxData)
+landingH <- RstoxData::readXmlFile(system.file("testresources","landing.xml", package="RstoxFDA"), stream = T)
+StoxLanding <- RstoxData:::extractAggregateLandings(landingH)

@@ -4,10 +4,27 @@
 \name{RstoxFDA}
 \alias{RstoxFDA}
 \alias{RstoxFDA-package}
-\title{Estimated Catch at Age with Rstox}
+\title{Fisheries Dependent Analysis with RstoX.}
 \description{
-This package is used to run the Estimated Catch at Age model through the Reca package developed by the Norwegian Computing Center.
+This package is used to for fisheries dependent analysis. Including running the Estimated Catch at Age model through the Reca package developed by the Norwegian Computing Center.
 }
 \details{
-The estimated catch at age (ECA) model uses the correlation structure in biotic (fishery independent) data to distribute age readings from cathes (landings) onto the biotic data. The ECA model is described in Hirst, D., Aanes, S., Storvik, G., Huseby, R. B., & Tvete, I. F. (2004). Estimating catch at age from market sampling data by using a Bayesian hierarchical model. Journal of the Royal Statistical Society: Series C (Applied Statistics), 53(1), 1-14.
+The estimated catch at age (ECA) model uses the correlation structure in fisheries dependent data to distribute age readings from cathes (samples) onto the total reported landings. The ECA model is described in Hirst, D., Aanes, S., Storvik, G., Huseby, R. B., & Tvete, I. F. (2004). Estimating catch at age from market sampling data by using a Bayesian hierarchical model. Journal of the Royal Statistical Society: Series C (Applied Statistics), 53(1), 1-14.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/StoXProject/RstoxFDA}
+  \item Report bugs at \url{https://github.com/StoXProject/RstoxFDA/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Arne Johannes Holmin \email{edvin.fuglebakk@hi.no}
+
+Authors:
+\itemize{
+  \item Edvin Fuglebakk
+}
+
 }

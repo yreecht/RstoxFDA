@@ -2,7 +2,7 @@
 # R version: 3.6
 
 
-# This package is used to run the Estimated Catch at Age model through the Reca package developed by the Norwegian Computing Center.
+# This package is used to for fisheries dependent analysis. Including running the Estimated Catch at Age model through the Reca package developed by the Norwegian Computing Center.
 
 
 # Install the latest developer version
