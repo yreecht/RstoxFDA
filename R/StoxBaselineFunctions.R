@@ -80,7 +80,7 @@ appendTemporal <- function(table, temporalColumn, temporalDefinition, datecolumn
   }
 
   if (!(all(is.na(temporalDefinition$year))) & any(is.na(temporalDefinition$year))){
-    stop("Year is provided for some, but not all tmeporal definitions.")
+    stop("Year is provided for some, but not all temporal definitions.")
   }
 
   warning("Implement some date format checks")
@@ -337,6 +337,9 @@ DefineTemporalCategories <- function(processData, temporalCategory=c("Quarter", 
     out$year <- rep(years[1], ncat)
     out$temporalCategory <- paste(years[1], " ", output$temporalCategory, sep="")
     yearoutput <- out
+    output <- yearoutput
+  }
+  if (length(years)>1){
     for (i in 1:(length(years)-1)){
       y<-i+1
       out <- output

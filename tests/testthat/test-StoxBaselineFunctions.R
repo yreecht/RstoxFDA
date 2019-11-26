@@ -250,3 +250,14 @@ expect_error(appendTemporal(tabExamplePre, "period", tempMisspec, datecolumns = 
 tempYearspec <- temp
 temp$year <- 2019
 expect_error(appendTemporal(tabExamplePre, "period", temp, datecolumns = c("stopD", "startD")), "Some dates preced the first temporal category.")
+
+my <- DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("01-10","01-12"), years = c(2019,2020))
+tabMultiYear <- tabExamplePre
+tabMultiYear$stopD[2] <- as.Date("2019-01-01")
+expect_error(appendTemporal(tabMultiYear, "period", my, datecolumns = c("stopD", "startD")), "Some dates preced the first temporal category.")
+tabMultiYear$stopD[2] <- as.Date("2019-10-01")
+appendTemporal(tabMultiYear, "period", my, datecolumns = c("stopD", "startD"))
+
+my <- DefineTemporalCategories(NULL, temporalCategory = "Custom", customPeriods = c("01-10","01-12"), years = c(2019))
+tabMultiYear$stopD[2] <- as.Date("2020-10-01")
+expect_error(appendTemporal(tabMultiYear, "period", my, datecolumns = c("stopD", "startD")),"Year is provided in temporal definitions, but does not contain definitions for all years in data.")
