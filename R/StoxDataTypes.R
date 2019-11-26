@@ -52,7 +52,7 @@ NULL
 #'
 NULL
 
-#' Temporal Categories (TemporalCategories)
+#' Temporal Categories (TemporalDefinition)
 #'
 #' Table (\code{\link[data.table]{data.table}}) defining a categorical variable for grouping data based on date.
 #'
@@ -68,7 +68,7 @@ NULL
 #'  If 1st of January is not definied as the start of a category,
 #'  it is taken to be included in the last category of the preceding year.
 #'
-#' @name TemporalCategories
+#' @name TemporalDefinition
 #'
 NULL
 
@@ -173,7 +173,7 @@ stoxFunctionAttributes <- list(
   DefineTemporalCategories = list(
     functionType = "processData",
     functionCategory = "Baseline",
-    functionOutputDataType = "TemporalCategories",
+    functionOutputDataType = "TemporalDefinition",
     functionParameterType = list(temporalCategory = "character",
                                  customPeriods = "character",
                                  seasonal = "logical",
@@ -237,7 +237,7 @@ stoxFunctionAttributes <- list(
   AppendGearStoxBiotic  = list(
     functionType = "modelData",
     functionCategory = "Baseline",
-    functionOutputDataType = "RstoxBioticData",
+    functionOutputDataType = "StoxBioticData",
     functionParameterType = list(StoxBioticData = "character",
                                  UnifiedVariableDefinition = "character"),
     functionParameterFormat = list(),
@@ -250,9 +250,22 @@ stoxFunctionAttributes <- list(
   AppendGearStoxLanding  = list(
     functionType = "modelData",
     functionCategory = "Baseline",
-    functionOutputDataType = "RstoxLandingData",
+    functionOutputDataType = "StoxLandingData",
     functionParameterType = list(StoxBioticData = "character",
                                  UnifiedVariableDefinition = "character"),
+    functionParameterFormat = list(),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
+  ),
+
+  AppendTemporalStoxLanding  = list(
+    functionType = "modelData",
+    functionCategory = "Baseline",
+    functionOutputDataType = "StoxLandingData",
+    functionParameterType = list(StoxLandingData = "character",
+                                 TemporalDefinition = "character"),
     functionParameterFormat = list(),
     functionArgumentHierarchy = list(),
     functionAlias = list(),

@@ -212,7 +212,7 @@ expect_error(AppendGearStoxBiotic(stoxBioticPre, gear, "gear"), "Column with nam
 
 
 
-context("test-StoxBaselineFunctions: AppendGearStoxBiotic")
+context("test-StoxBaselineFunctions: AppendGearStoxLanding")
 gearfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
 stoxLandingMock <- system.file("testresources","StoxLandingDataMock.txt", package="RstoxFDA")
 
@@ -223,6 +223,11 @@ expect_true(data.table::is.data.table(stoxLandingPost))
 expect_equal(ncol(stoxLandingPost), ncol(stoxLandingPre) + 1)
 expect_false(any(is.na(stoxLandingPost$UnifiedGear)))
 
+#try on proper format as well.
+landingH <- RstoxData::readXmlFile(system.file("testresources","landing.xml", package="RstoxFDA"), stream = T)
+stoxLandingPre <- RstoxData:::StoxLanding(landingH)
+stoxLandingPost <- AppendGearStoxLanding(stoxLandingPre, gear)
+expect_false(any(is.na(stoxLandingPost$UnifiedGear)))
 
 
 context("test-StoxBaselineFunctions: appendTemporal")
@@ -263,9 +268,9 @@ tabMultiYear$stopD[2] <- as.Date("2020-10-01")
 expect_error(appendTemporal(tabMultiYear, "period", my, datecolumns = c("stopD", "startD")),"Year is provided in temporal definitions, but does not contain definitions for all years in data.")
 
 
-
-
-context("test-StoxBaselineFunctions: appendGearLanding")
-library(RstoxData)
+context("test-StoxBaselineFunctions: AppendTemporalStoxLanding")
+temp <- DefineTemporalCategories(NULL, temporalCategory = "Quarter")
 landingH <- RstoxData::readXmlFile(system.file("testresources","landing.xml", package="RstoxFDA"), stream = T)
-StoxLanding <- RstoxData:::extractAggregateLandings(landingH)
+stoxLandingPre <- RstoxData:::StoxLanding(landingH)
+stoxLandingPost <- AppendTemporalStoxLanding(stoxLandingPre, temp)
+expect_false(any(is.na(stoxLandingPost$TemporalCategory)))

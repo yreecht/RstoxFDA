@@ -22,6 +22,7 @@ checkSymmetry <- function(tab){
 
 #' Get lookup list for unified categorical definition
 #' @description
+#'  StoX function
 #'  From a resource file, read a definition for a categorical variable that can unify coding systems
 #'  between formats such as NMDlanding and NMDbiotic.
 #' @details
@@ -142,6 +143,20 @@ appendTemporal <- function(table, temporalColumn, temporalDefinition, datecolumn
   return(table)
 }
 
+#' Append Temporal Categories to StoxLandingData
+#' @description
+#'  StoX function
+#'  Appends a column to StoxLandingData with a temporal category, such as 'quarter',
+#'  that are also defined for for other formats, such as StoxBioticData.
+#' @param StoxLandingData \code{\link[RstoxData]{StoxLandingData}} data which will be annotated.
+#' @param TemporalDefinition \code{\link[RstoxFDA]{TemporalDefinition}} definiton of temporal category.
+#' @param columnName character(), defaults to 'TemporalCategory', name of the appended column.
+#' @return StoxLandingData with column appended. See \code{\link[RstoxData]{StoxLandingData}}.
+#' @export
+AppendTemporalStoxLanding <- function(StoxLandingData, TemporalDefinition, columnName="TemporalCategory"){
+  return(appendTemporal(StoxLandingData, columnName, TemporalDefinition, "catchDate"))
+}
+
 #' append gear
 #' @noRd
 appendGear <- function(table, gearcolumn, gearDefinition, colName){
@@ -166,6 +181,7 @@ appendGear <- function(table, gearcolumn, gearDefinition, colName){
 
 #' Append Gear to StoxBioticData
 #' @description
+#'  StoX function
 #'  Appends a column to StoxBioticData with a unified gear definition
 #'  that are also defined for for other formats, such as StoxLandingData.
 #' @param StoxBioticData \code{\link[RstoxData]{StoxBioticData}} data which will be annotated.
@@ -180,6 +196,7 @@ AppendGearStoxBiotic <- function(StoxBioticData, UnifiedVariableDefinition, colu
 
 #' Append Gear to StoxLandingData
 #' @description
+#'  StoX function
 #'  Appends a column to StoxLandingData with a unified gear definition
 #'  that are also defined for for other formats, such as StoxBioticData.
 #' @param StoxLandingData \code{\link[RstoxData]{StoxLandingData}} data which will be annotated.
@@ -233,6 +250,7 @@ DefineGear <- function(processData, resourceFilePath, encoding="UTF-8", useProce
 
 #' Define Temporal Categories
 #' @description
+#'  StoX function
 #'  Define temporal categories for grouping data based on date.
 #' @details
 #'  Not providing years, has the effect of making the defintion seasonal, independent of year,
@@ -243,7 +261,7 @@ DefineGear <- function(processData, resourceFilePath, encoding="UTF-8", useProce
 #' @param years integer() vector, optional, provide if defintion should be non-seasonal.
 #' @param encoding encoding of resource file
 #' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
-#' @return Temporal Categories, see: \code{\link[RstoxFDA]{TemporalCategories}}.
+#' @return Temporal Categories, see: \code{\link[RstoxFDA]{TemporalDefinition}}.
 #' @export
 DefineTemporalCategories <- function(processData, temporalCategory=c("Quarter", "Month", "Custom"), customPeriods = NULL,  years = NULL, encoding="UTF-8", useProcessData=F){
 

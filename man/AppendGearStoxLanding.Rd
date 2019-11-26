@@ -21,6 +21,7 @@ AppendGearStoxLanding(
 StoxLandingData with column appended. See \code{\link[RstoxData]{StoxLandingData}}.
 }
 \description{
-Appends a column to StoxLandingData with a unified gear definition
+StoX function
+ Appends a column to StoxLandingData with a unified gear definition
  that are also defined for for other formats, such as StoxBioticData.
 }

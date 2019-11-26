@@ -30,7 +30,8 @@ DefineTemporalCategories(
 Temporal Categories, see: \code{\link[RstoxFDA]{TemporalCategories}}.
 }
 \description{
-Define temporal categories for grouping data based on date.
+StoX function
+ Define temporal categories for grouping data based on date.
 }
 \details{
 Not providing years, has the effect of making the defintion seasonal, independent of year,
