@@ -4,12 +4,24 @@
 \alias{PrepareRecaEstimate}
 \title{Prepare data for Reca.}
 \usage{
-PrepareRecaEstimate(StoxBioticData, StoxLandingData, fixedEffects,
-  randomEffects, continousEffects = NULL, carEffect = NULL,
-  CarNeighbours = NULL, AgeErrorMatrix = NULL, stockSplitting = F,
-  ClassificationError = NULL, minAge = NULL, maxAge = NULL,
-  maxLength = NULL, lengthResolution = NULL,
-  temporalResolution = c("Quarter", "Month"), hatchDay = 1)
+PrepareRecaEstimate(
+  StoxBioticData,
+  StoxLandingData,
+  fixedEffects,
+  randomEffects,
+  continousEffects = NULL,
+  carEffect = NULL,
+  CarNeighbours = NULL,
+  AgeErrorMatrix = NULL,
+  stockSplitting = F,
+  ClassificationError = NULL,
+  minAge = NULL,
+  maxAge = NULL,
+  maxLength = NULL,
+  lengthResolution = NULL,
+  temporalResolution = c("Quarter", "Month"),
+  hatchDay = 1
+)
 }
 \arguments{
 \item{StoxBioticData}{\code{\link[RstoxData]{StoxBioticData}} data with samples from fisheries

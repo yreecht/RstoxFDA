@@ -4,10 +4,19 @@
 \alias{RunRecaEstimate}
 \title{Run Reca}
 \usage{
-RunRecaEstimate(RecaData, nSamples, burnin, lgamodel = c("log-linear",
-  "non-linear"), fitfile = "fit", predictfile = "pred",
-  resultdir = NULL, thin = 10, delta.age = 0.001, seed = NULL,
-  caa.burnin = 0)
+RunRecaEstimate(
+  RecaData,
+  nSamples,
+  burnin,
+  lgamodel = c("log-linear", "non-linear"),
+  fitfile = "fit",
+  predictfile = "pred",
+  resultdir = NULL,
+  thin = 10,
+  delta.age = 0.001,
+  seed = NULL,
+  caa.burnin = 0
+)
 }
 \arguments{
 \item{RecaData}{\code{\link[RstoxFDA]{RecaData}} as returned from \code{\link[RstoxFDA]{PrepareRecaEstimate}}}

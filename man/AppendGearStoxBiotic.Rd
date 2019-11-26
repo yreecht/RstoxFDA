@@ -4,8 +4,11 @@
 \alias{AppendGearStoxBiotic}
 \title{Append Gear to StoxBioticData}
 \usage{
-AppendGearStoxBiotic(StoxBioticData, UnifiedVariableDefinition,
-  columnName = "UnifiedGear")
+AppendGearStoxBiotic(
+  StoxBioticData,
+  UnifiedVariableDefinition,
+  columnName = "UnifiedGear"
+)
 }
 \arguments{
 \item{StoxBioticData}{\code{\link[RstoxData]{StoxBioticData}} data which will be annotated.}

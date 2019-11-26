@@ -4,8 +4,12 @@
 \alias{DefineAgeErrorMatrix}
 \title{Define Age Error Matrix}
 \usage{
-DefineAgeErrorMatrix(processData, resourceFilePath, encoding = "UTF-8",
-  useProcessData = F)
+DefineAgeErrorMatrix(
+  processData,
+  resourceFilePath,
+  encoding = "UTF-8",
+  useProcessData = F
+)
 }
 \arguments{
 \item{processData}{data.table() as returned from this function}

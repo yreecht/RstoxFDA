@@ -4,8 +4,7 @@
 \alias{categoriseDate}
 \title{Get temporal categories}
 \usage{
-categoriseDate(date, temporalType = "quarter", seasonal = T,
-  FUN = NULL)
+categoriseDate(date, temporalType = "quarter", seasonal = T, FUN = NULL)
 }
 \arguments{
 \item{date}{POSIXct() vector of dates}

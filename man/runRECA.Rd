@@ -4,9 +4,19 @@
 \alias{runRECA}
 \title{Run R-ECA}
 \usage{
-runRECA(RecaObj, nSamples, burnin, lgamodel = "log-linear",
-  fitfile = "fit", predictfile = "pred", resultdir = NULL,
-  thin = 10, delta.age = 0.001, seed = NULL, caa.burnin = 0)
+runRECA(
+  RecaObj,
+  nSamples,
+  burnin,
+  lgamodel = "log-linear",
+  fitfile = "fit",
+  predictfile = "pred",
+  resultdir = NULL,
+  thin = 10,
+  delta.age = 0.001,
+  seed = NULL,
+  caa.burnin = 0
+)
 }
 \arguments{
 \item{RecaObj}{\code{\link[RstoxFDA]{RecaData}} as returned from \code{\link[RstoxFDA]{prepRECA}} or \code{\link[RstoxFDA]{PrepareRecaEstimate}}}

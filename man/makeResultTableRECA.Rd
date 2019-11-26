@@ -4,8 +4,12 @@
 \alias{makeResultTableRECA}
 \title{Catch at Age result table}
 \usage{
-makeResultTableRECA(prediction, unit = "millions", plusGroup = NULL,
-  alpha = 0.05)
+makeResultTableRECA(
+  prediction,
+  unit = "millions",
+  plusGroup = NULL,
+  alpha = 0.05
+)
 }
 \arguments{
 \item{prediction}{as returned by \code{\link[Reca]{eca.predict}} or \code{\link[RstoxFDA]{runRECA}}.}

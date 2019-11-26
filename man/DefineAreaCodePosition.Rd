@@ -4,8 +4,12 @@
 \alias{DefineAreaCodePosition}
 \title{Define Area Code Positions}
 \usage{
-DefineAreaCodePosition(processData, resourceFilePath, encoding = "UTF-8",
-  useProcessData = F)
+DefineAreaCodePosition(
+  processData,
+  resourceFilePath,
+  encoding = "UTF-8",
+  useProcessData = F
+)
 }
 \arguments{
 \item{processData}{data.table() as returned from this function}

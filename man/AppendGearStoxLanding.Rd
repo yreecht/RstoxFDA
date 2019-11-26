@@ -4,8 +4,11 @@
 \alias{AppendGearStoxLanding}
 \title{Append Gear to StoxLandingData}
 \usage{
-AppendGearStoxLanding(StoxLandingData, UnifiedVariableDefinition,
-  columnName = "UnifiedGear")
+AppendGearStoxLanding(
+  StoxLandingData,
+  UnifiedVariableDefinition,
+  columnName = "UnifiedGear"
+)
 }
 \arguments{
 \item{StoxLandingData}{\code{\link[RstoxData]{StoxLandingData}} data which will be annotated.}

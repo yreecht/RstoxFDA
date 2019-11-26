@@ -4,8 +4,12 @@
 \alias{DefineCarNeighbours}
 \title{Define CAR neighbours}
 \usage{
-DefineCarNeighbours(processData, resourceFilePath, encoding = "UTF-8",
-  useProcessData = F)
+DefineCarNeighbours(
+  processData,
+  resourceFilePath,
+  encoding = "UTF-8",
+  useProcessData = F
+)
 }
 \arguments{
 \item{processData}{data.table() as returned from this function}

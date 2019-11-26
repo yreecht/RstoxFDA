@@ -4,8 +4,12 @@
 \alias{DefineGear}
 \title{Define gear}
 \usage{
-DefineGear(processData, resourceFilePath, encoding = "UTF-8",
-  useProcessData = F)
+DefineGear(
+  processData,
+  resourceFilePath,
+  encoding = "UTF-8",
+  useProcessData = F
+)
 }
 \arguments{
 \item{processData}{data.table() as returned from this function}

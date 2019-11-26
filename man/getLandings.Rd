@@ -4,8 +4,14 @@
 \alias{getLandings}
 \title{Formats landings for R-ECA.}
 \usage{
-getLandings(landings, covariates, covariateMaps, date = NULL,
-  month = NULL, quarter = NULL)
+getLandings(
+  landings,
+  covariates,
+  covariateMaps,
+  date = NULL,
+  month = NULL,
+  quarter = NULL
+)
 }
 \arguments{
 \item{landings}{data.table() with total landings (as in \code{\link[RstoxFDA]{prepRECA}}, and \code{\link[RstoxFDA]{rEcaDataReport}}), each row corresponding to one cell. Contains columns:

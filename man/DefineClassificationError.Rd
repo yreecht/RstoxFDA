@@ -4,8 +4,12 @@
 \alias{DefineClassificationError}
 \title{Define Classification Error (for stock splitting)}
 \usage{
-DefineClassificationError(processData, resourceFilePath,
-  encoding = "UTF-8", useProcessData = F)
+DefineClassificationError(
+  processData,
+  resourceFilePath,
+  encoding = "UTF-8",
+  useProcessData = F
+)
 }
 \arguments{
 \item{processData}{data.table() as returned from this function}

@@ -4,11 +4,25 @@
 \alias{prepRECA}
 \title{Prepare data for R-ECA}
 \usage{
-prepRECA(samples, landings, fixedEffects, randomEffects,
-  carEffect = NULL, neighbours = NULL, nFish = NULL,
-  ageError = NULL, minAge = NULL, maxAge = NULL, maxLength = NULL,
-  lengthResolution = NULL, testMax = 1000, date = NULL,
-  month = NULL, quarter = NULL, hatchDay = 1)
+prepRECA(
+  samples,
+  landings,
+  fixedEffects,
+  randomEffects,
+  carEffect = NULL,
+  neighbours = NULL,
+  nFish = NULL,
+  ageError = NULL,
+  minAge = NULL,
+  maxAge = NULL,
+  maxLength = NULL,
+  lengthResolution = NULL,
+  testMax = 1000,
+  date = NULL,
+  month = NULL,
+  quarter = NULL,
+  hatchDay = 1
+)
 }
 \arguments{
 \item{samples}{data.table() with samples, each row corresponding to one sampled fish. Contains columns:

@@ -245,7 +245,7 @@ expect_error(appendTemporal(tabExampleMissing, "period", temp, datecolumns = c("
 
 tempMisspec <- temp
 tempMisspec$year[1] <- 1993
-expect_error(appendTemporal(tabExamplePre, "period", tempMisspec, datecolumns = c("stopD", "startD")), "Year is provided for some, but not all tmeporal definitions.")
+expect_error(appendTemporal(tabExamplePre, "period", tempMisspec, datecolumns = c("stopD", "startD")), "Year is provided for some, but not all temporal definitions.")
 
 tempYearspec <- temp
 temp$year <- 2019

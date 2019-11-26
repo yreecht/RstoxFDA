@@ -4,9 +4,14 @@
 \alias{DefineTemporalCategories}
 \title{Define Temporal Categories}
 \usage{
-DefineTemporalCategories(processData, temporalCategory = c("Quarter",
-  "Month", "Custom"), customPeriods = NULL, seasonal = T,
-  years = NULL, encoding = "UTF-8", useProcessData = F)
+DefineTemporalCategories(
+  processData,
+  temporalCategory = c("Quarter", "Month", "Custom"),
+  customPeriods = NULL,
+  years = NULL,
+  encoding = "UTF-8",
+  useProcessData = F
+)
 }
 \arguments{
 \item{processData}{data.table() as returned from this function}
@@ -15,9 +20,7 @@ DefineTemporalCategories(processData, temporalCategory = c("Quarter",
 
 \item{customPeriods}{character(), provided if temporalCategory is 'Custom', vector of strings formatted as DD-MM, giving the start date of each temporal category.}
 
-\item{seasonal}{logical(), defaults to TRUE, whether the categories are defined as seasons or periods, that is, whether e.g. Q1 of 2015 is condiedered the same category as Q1 2016.}
-
-\item{years}{integer() vector, optional, provide if non-seasonal categories should specify year.}
+\item{years}{integer() vector, optional, provide if defintion should be non-seasonal.}
 
 \item{encoding}{encoding of resource file}
 
@@ -30,6 +33,6 @@ Temporal Categories, see: \code{\link[RstoxFDA]{TemporalCategories}}.
 Define temporal categories for grouping data based on date.
 }
 \details{
-A seasonal definition has the effect of making caegories independent of year,
- and of making season cross year boundaries of 1st of January is not a the start of any category.
+Not providing years, has the effect of making the defintion seasonal, independent of year,
+ so that e.g. Q1 in 2015 is considered the same category as Q1 in 2016
 }

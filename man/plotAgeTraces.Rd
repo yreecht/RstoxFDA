@@ -4,9 +4,19 @@
 \alias{plotAgeTraces}
 \title{Traceplot}
 \usage{
-plotAgeTraces(prediction, unit = "millions", plusGroup = NULL,
-  nclust = 4, iter.max = 20, nstart = 10, agecolors = NULL,
-  lowerquant = 0.05, upperquant = 0.95, catlimit = 8, title = "")
+plotAgeTraces(
+  prediction,
+  unit = "millions",
+  plusGroup = NULL,
+  nclust = 4,
+  iter.max = 20,
+  nstart = 10,
+  agecolors = NULL,
+  lowerquant = 0.05,
+  upperquant = 0.95,
+  catlimit = 8,
+  title = ""
+)
 }
 \arguments{
 \item{prediction}{as returned by \code{\link[Reca]{eca.predict}} or \code{\link[RstoxFDA]{runRECA}}.}

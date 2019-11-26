@@ -4,8 +4,13 @@
 \alias{plotCatchAtAge}
 \title{Catch at Age plot}
 \usage{
-plotCatchAtAge(prediction, unit = "millions", plusGroup = NULL,
-  credibility = 0.95, title = NULL)
+plotCatchAtAge(
+  prediction,
+  unit = "millions",
+  plusGroup = NULL,
+  credibility = 0.95,
+  title = NULL
+)
 }
 \arguments{
 \item{prediction}{as returned by \code{\link[Reca]{eca.predict}} or \code{\link[RstoxFDA]{runRECA}}.}
