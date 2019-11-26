@@ -103,13 +103,13 @@ appendTemporal <- function(table, temporalColumn, temporalDefinition, datecolumn
     stop("Year is provided in temporal definitions, but does not contain definitions for all years in data.")
   }
 
-  temporalDefinition <- temporalDefinition[order(temporalDefinition$year, temporalDefinition$startMonth, temporalDefinition$startDay, decreasing = T),]
+  temporalDefinition <- temporalDefinition[order(temporalDefinition$year, temporalDefinition$startMonth, temporalDefinition$startDay, decreasing = F),]
 
   temporalCategory <- rep(NA, nrow(table))
 
   if (all(is.na(temporalDefinition$year))){
     filt <- (month < temporalDefinition$startMonth[1] | (month == temporalDefinition$startMonth[1] & day < temporalDefinition$startDay[1]))
-    temporalCategory[filt] <- temporalDefinition$temporalCategory[1]
+    temporalCategory[filt] <- temporalDefinition$temporalCategory[nrow(temporalDefinition)]
 
     for (i in 1:nrow(temporalDefinition)){
       filt <- (month > temporalDefinition$startMonth[i] | (month == temporalDefinition$startMonth[i] & day >= temporalDefinition$startDay[i]))
@@ -235,18 +235,17 @@ DefineGear <- function(processData, resourceFilePath, encoding="UTF-8", useProce
 #' @description
 #'  Define temporal categories for grouping data based on date.
 #' @details
-#'  A seasonal definition has the effect of making caegories independent of year,
-#'  and of making season cross year boundaries of 1st of January is not a the start of any category.
+#'  Not providing years, has the effect of making the defintion seasonal, independent of year,
+#'  so that e.g. Q1 in 2015 is considered the same category as Q1 in 2016
 #' @param processData data.table() as returned from this function
 #' @param temporalCategory character(), defaults to 'Quarter', type of temporal category: 'Quarter', 'Month' or 'Custom'
 #' @param customPeriods character(), provided if temporalCategory is 'Custom', vector of strings formatted as DD-MM, giving the start date of each temporal category.
-#' @param seasonal logical(), defaults to TRUE, whether the categories are defined as seasons or periods, that is, whether e.g. Q1 of 2015 is condiedered the same category as Q1 2016.
-#' @param years integer() vector, optional, provide if non-seasonal categories should specify year.
+#' @param years integer() vector, optional, provide if defintion should be non-seasonal.
 #' @param encoding encoding of resource file
 #' @param useProcessData logical() Bypasses execution of function, and simply returns argument 'processData'
 #' @return Temporal Categories, see: \code{\link[RstoxFDA]{TemporalCategories}}.
 #' @export
-DefineTemporalCategories <- function(processData, temporalCategory=c("Quarter", "Month", "Custom"), customPeriods = NULL, seasonal = T, years = NULL, encoding="UTF-8", useProcessData=F){
+DefineTemporalCategories <- function(processData, temporalCategory=c("Quarter", "Month", "Custom"), customPeriods = NULL,  years = NULL, encoding="UTF-8", useProcessData=F){
 
   if (useProcessData){
     return(processData)
@@ -256,10 +255,6 @@ DefineTemporalCategories <- function(processData, temporalCategory=c("Quarter", 
 
   if (length(customPeriods)>0 & temporalCategory != "Custom"){
     stop(paste("Custom period provided, but temporalCategory is", temporalCategory))
-  }
-
-  if (seasonal & length(years)>0){
-    stop("Years provided for seasonal definition.")
   }
 
   if (length(customPeriods)>0){
@@ -296,7 +291,7 @@ DefineTemporalCategories <- function(processData, temporalCategory=c("Quarter", 
         c("January", "Februrary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December")),
         startDay=as.integer(rep(1,12)),
         startMonth=as.integer(seq(1,12)),
-        year=as.integer(rep(NA, 4))
+        year=as.integer(rep(NA, 12))
     )
   }
   else if (temporalCategory == "Quarter"){
@@ -311,28 +306,18 @@ DefineTemporalCategories <- function(processData, temporalCategory=c("Quarter", 
     days <- as.integer(substr(customPeriods, 1,2))
     months <- as.integer(substr(customPeriods, 4,5))
 
-    ord <- order(months, days)
+    ord <- order(months, days, decreasing = F)
     months <- months[ord]
     days <- days[ord]
 
-    if (!seasonal){
-      if (months[1]!=1 & days[1] != 1){
-        days <- c(1, days)
-        months <- c(1, months)
+    startstr <- customPeriods
 
-        customPeriods <- c("01-01", customPeriods)
 
-      }
-      startstr <- customPeriods
-      endstr <- c(customPeriods[2:length(customPeriods)], "-----")
-
+    if (months[1]==1 & days[1] == 1){
+        endstr <- c(customPeriods[2:length(customPeriods)], "-----")
     }
-    else if (seasonal){
-      startstr <- customPeriods
+    else {
       endstr <- c(customPeriods[2:length(customPeriods)], customPeriods[1])
-    }
-    else{
-      stop()
     }
 
     output <- data.table::data.table(temporalCategory=as.character(
@@ -346,7 +331,7 @@ DefineTemporalCategories <- function(processData, temporalCategory=c("Quarter", 
     stop(paste("Temporal category", temporalCategory, "not recognized."))
   }
 
-  if (!seasonal & length(years)>0){
+  if (length(years)>0){
     ncat <- nrow(output)
     out <- output
     out$year <- rep(years[1], ncat)
