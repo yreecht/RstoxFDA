@@ -13,4 +13,8 @@ Table (\code{\link[data.table]{data.table}}) defining a categorical variable for
   \item{startMonth}{integer() Month for first day in the temporal category (1-based)}
   \item{year}{integer() Year for which the category is defined, NA for seasonal definitions or for definition for a single unspecified year.}
  }
+
+ Start and end of year is not implied as category delimitations when not included.
+ If 1st of January is not definied as the start of a category,
+ it is taken to be included in the last category of the preceding year.
 }
