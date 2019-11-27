@@ -1,4 +1,4 @@
-#' Fisheries Dependent Analysis with RstoX.
+#' Fisheries Dependent Analysis with RstoX
 #'
 #' This package is used to for fisheries dependent analysis. Including running the Estimated Catch at Age model through the Reca package developed by the Norwegian Computing Center.
 #'

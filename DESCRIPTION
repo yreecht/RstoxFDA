@@ -1,5 +1,5 @@
 Package: RstoxFDA
-Title: Fisheries Dependent Analysis with RstoX.
+Title: Fisheries Dependent Analysis with RstoX
 Version: 1.0
 Authors@R: c(
   person(given = "Arne Johannes", family = "Holmin", role = c("cre", "aut"), email = "edvin.fuglebakk@hi.no"), 
