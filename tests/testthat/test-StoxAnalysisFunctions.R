@@ -4,8 +4,3 @@ result <- RunRecaEstimate(recaDataExample, 100, 100, thin=1)
 expect_true(all(c("input", "fit", "prediction", "covariateMaps") %in% names(result)))
 expect_equal(dim(result$prediction$TotalCount)[3], 100)
 
-
-
-
-context("test-StoxAnalysisFunctions: PrepRecaEstimate")
-fail("Need data formats StoxBioticData and StoxLandingData in order to test.")

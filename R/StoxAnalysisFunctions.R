@@ -55,6 +55,7 @@
 #' @export
 PrepareRecaEstimate <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, continousEffects=NULL, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationError=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, temporalResolution=c("Quarter", "Month"), hatchDay=1){
 
+  stop("Not implemented")
   stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))
 
   temporalResolution <- match.arg(temporalResolution, temporalResolution)

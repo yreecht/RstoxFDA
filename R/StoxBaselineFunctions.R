@@ -95,7 +95,7 @@ RedefinePositionStoxBiotic <- function(StoxBioticData){
 #' @param resolution character(), defaults to Area, specify what resolution to use: 'Area' or 'Location'. See details.
 #' @param latColName character(), defaults to Latitude, name of the latitude column that will be appended.
 #' @param lonColName character(), defaults to Longitude, name of the longitude column that will be appended.
-#' @return \code{\link[RstoxFDA]{StoxLandingData}} with columns for latitude and longitude appended.
+#' @return \code{\link[RstoxData]{StoxLandingData}} with columns for latitude and longitude appended.
 #' @export
 AppendPositionLanding <- function(StoxLandingData, AreaCodePosition, resolution = c("Area", "Location"), latColName="Latitude", lonColName="Longitude"){
   stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))

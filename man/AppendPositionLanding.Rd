@@ -24,7 +24,7 @@ AppendPositionLanding(
 \item{lonColName}{character(), defaults to Longitude, name of the longitude column that will be appended.}
 }
 \value{
-\code{\link[RstoxFDA]{StoxLandingData}} with columns for latitude and longitude appended.
+\code{\link[RstoxData]{StoxLandingData}} with columns for latitude and longitude appended.
 }
 \description{
 StoX function
