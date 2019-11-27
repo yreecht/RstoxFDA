@@ -1,9 +1,9 @@
 #' read tab separated file
 #' @noRd
-readTabSepFile <- function(filepath, encoding="ascii", col_types = NULL, col_names = NULL){
+readTabSepFile <- function(filepath, encoding="ascii", col_types = NULL, col_names = NULL, trim_ws=T){
   loc <- readr::default_locale()
   loc$encoding <- encoding
-  tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = col_types, comment = "#")
+  tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = col_types, comment = "#", trim_ws = trim_ws)
   tab <- data.table::as.data.table(tab)
 
   if (length(col_names)>0){

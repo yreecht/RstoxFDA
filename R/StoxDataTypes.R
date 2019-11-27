@@ -273,6 +273,20 @@ stoxFunctionAttributes <- list(
     functionParameterValueAilas = list()
   ),
 
+  AppendPositionLanding = list(
+    functionType = "modelData",
+    functionCategory = "Baseline",
+    functionOutputDataType = "StoxLandingData",
+    functionParameterType = list(StoxLandingData = "character",
+                                 AreaCodePosition = "character",
+                                 resolution = "character"),
+    functionParameterFormat = list(),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
+  ),
+
   PrepareRecaEstimate = list(
     functionType = "modelData",
     functionCategory = "Analysis",

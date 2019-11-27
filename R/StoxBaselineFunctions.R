@@ -71,6 +71,69 @@ makeUnifiedDefinitionLookupList <- function(tab, formats=NULL){
   return(mappings)
 }
 
+ConvertLengthBiotic <- function(BioticData){
+  stop("Not implemented")
+}
+
+ConvertWeightsBiotic <- function(BioticData){
+  stop("Not implemented")
+}
+
+RedefinePositionStoxBiotic <- function(StoxBioticData){
+  stop("Not implemented")
+}
+
+#' Append position to landings data
+#' @description
+#'  StoX function
+#'  Appends a position to landings data, based on Area and Location codes.
+#' @details
+#'  When 'resolution' is specified as 'Area' the midpoint of the Area will be assigned to the landings.
+#'  When 'resolution' is specified as 'Location' the midpoint of the Location will be assigned to the landings.
+#' @param StoxLandingData landing data, see \code{\link[RstoxData]{StoxLandingData}}
+#' @param AreaCodePosition coordinates for Area and Location codes, see \code{\link[RstoxFDA]{AreaCodePosition}}
+#' @param resolution character(), defaults to Area, specify what resolution to use: 'Area' or 'Location'. See details.
+#' @param latColName character(), defaults to Latitude, name of the latitude column that will be appended.
+#' @param lonColName character(), defaults to Longitude, name of the longitude column that will be appended.
+#' @return \code{\link[RstoxFDA]{StoxLandingData}} with columns for latitude and longitude appended.
+#' @export
+AppendPositionLanding <- function(StoxLandingData, AreaCodePosition, resolution = c("Area", "Location"), latColName="Latitude", lonColName="Longitude"){
+  if (latColName %in% names(StoxLandingData)){
+    stop(paste("Column", latColName, "already exists."))
+  }
+  if (lonColName %in% names(StoxLandingData)){
+    stop(paste("Column", lonColName, "already exists."))
+  }
+
+  resolution <- match.arg(resolution, resolution)
+
+  AreaCodePosition[[latColName]] <- AreaCodePosition$Latitude
+  AreaCodePosition[[lonColName]] <- AreaCodePosition$Longitude
+
+  if (resolution == "Area"){
+    if (!all(StoxLandingData$area %in% AreaCodePosition$Area)){
+      missing <- StoxLandingData$area[!(StoxLandingData$area %in% AreaCodePosition$area)]
+      stop(paste("Positions not provided for all Areas. Missing: ", paste(missing, collapse=",")))
+    }
+    AreaCodePosition <- AreaCodePosition[,c("Area", latColName, lonColName), with=F]
+    return(data.table::as.data.table(merge(StoxLandingData, AreaCodePosition, by.x="area", by.y="Area", all.x=T)))
+  }
+  else if (resolution == "Location"){
+    arealocdata <- paste(StoxLandingData$area, StoxLandingData$location, sep="-")
+    arealocresource <- paste(AreaCodePosition$Area, AreaCodePosition$Location, sep="-")
+    if (!all(arealocdata %in% arealocresource)){
+      missing <- arealocdata[!(arealocdata %in% arealocresource)]
+      stop(paste("Positions not provided for all Areas and Locations. Missing: ", paste(missing, collapse=",")))
+    }
+    AreaCodePosition <- AreaCodePosition[,c("Area", "Location", latColName, lonColName), with=F]
+    return(data.table::as.data.table(merge(StoxLandingData, AreaCodePosition, by.x=c("area", "location"), by.y=c("Area", "Location"), all.x=T)))
+  }
+  else{
+    stop(paste("Resolution", resolution, "not supported"))
+  }
+
+}
+
 #'
 #' @param dateColumns vector of date-columns to try in order.
 #' @noRd
@@ -155,6 +218,18 @@ appendTemporal <- function(table, temporalColumn, temporalDefinition, datecolumn
 #' @export
 AppendTemporalStoxLanding <- function(StoxLandingData, TemporalDefinition, columnName="TemporalCategory"){
   return(appendTemporal(StoxLandingData, columnName, TemporalDefinition, "catchDate"))
+}
+
+AppendTemporalStoxBiotic <- function(StoxBioticData, TemporalDefinition, columnName="TemporalCategory"){
+  stop("Not implemented")
+}
+
+AppendStratumStoxBiotic <- function(StoxBioticData, StratumPolygon){
+  stop("Not implemented")
+}
+
+AppendStratumStoxLanding <- function(StoxLandingData, StratumPolygon){
+  stop("Not implemented")
 }
 
 #' append gear
@@ -398,9 +473,9 @@ DefineAreaCodePosition <- function(processData, resourceFilePath, encoding="UTF-
 
   tab <- readTabSepFile(resourceFilePath, col_types = "ccdd", col_names = c("Area", "Location",	"Latitude",	"Longitude"), encoding = encoding)
 
-  missingLoc <- tab[is.na(tab[,2]),]
+  missingLoc <- tab[is.na(tab[["Location"]]),]
 
-  if (length(unique(missingLoc[,1])) != length(unique(tab[,1]))){
+  if (length(unique(missingLoc[["Area"]])) != length(unique(tab[["Area"]]))){
     stop("Malformed resource file. Some Area does not have coordinates defined for the case when location is missing.")
   }
 

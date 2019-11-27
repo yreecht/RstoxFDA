@@ -27,7 +27,7 @@ DefineTemporalCategories(
 \item{useProcessData}{logical() Bypasses execution of function, and simply returns argument 'processData'}
 }
 \value{
-Temporal Categories, see: \code{\link[RstoxFDA]{TemporalCategories}}.
+Temporal Categories, see: \code{\link[RstoxFDA]{TemporalDefinition}}.
 }
 \description{
 StoX function

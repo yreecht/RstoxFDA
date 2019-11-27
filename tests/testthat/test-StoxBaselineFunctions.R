@@ -274,3 +274,30 @@ landingH <- RstoxData::readXmlFile(system.file("testresources","landing.xml", pa
 stoxLandingPre <- RstoxData:::StoxLanding(landingH)
 stoxLandingPost <- AppendTemporalStoxLanding(stoxLandingPre, temp)
 expect_false(any(is.na(stoxLandingPost$TemporalCategory)))
+
+context("test-StoxBaselineFunctions: AppendTemporalStoxLanding used colName")
+expect_error(AppendTemporalStoxLanding(stoxLandingPre, temp, columnName = "catchDate"), "s")
+
+
+context("test-StoxBaselineFunctions: AppendPositionLanding missing")
+regularfile <- system.file("testresources","mainarea_fdir_from_2018_incl.txt", package="RstoxFDA")
+areaPos <- DefineAreaCodePosition(resourceFilePath = regularfile)
+landingH <- RstoxData::readXmlFile(system.file("testresources","landing.xml", package="RstoxFDA"), stream = T)
+stoxLandingPre <- RstoxData:::StoxLanding(landingH)
+expect_error(AppendPositionLanding(stoxLandingPre, areaPos))
+expect_error(AppendPositionLanding(stoxLandingPre, areaPos, resolution = "Location"))
+
+context("test-StoxBaselineFunctions: AppendPositionLanding regular run")
+regularfile <- system.file("testresources","mainarea_fdir_from_2018_compl.txt", package="RstoxFDA")
+areaPos <- DefineAreaCodePosition(resourceFilePath = regularfile)
+landingPost <- AppendPositionLanding(stoxLandingPre, areaPos)
+expect_true(all(c("Latitude", "Longitude") %in% names(landingPost)))
+expect_true(all(!is.na(landingPost$Latitude)))
+expect_true(all(!is.na(landingPost$Longitude)))
+
+lata <- min(landingPost$Latitude[1])
+landingPost <- AppendPositionLanding(stoxLandingPre, areaPos, resolution = "Location")
+expect_false(lata == min(landingPost$Latitude[1]))
+
+context("test-StoxBaselineFunctions: AppendPositionLanding used colName")
+expect_error(AppendPositionLanding(stoxLandingPre, areaPos, latColName = "catchDate"), "Column catchDate already exists.")

@@ -2,6 +2,8 @@
 
 export(AppendGearStoxBiotic)
 export(AppendGearStoxLanding)
+export(AppendPositionLanding)
+export(AppendTemporalStoxLanding)
 export(DefineAgeErrorMatrix)
 export(DefineAreaCodePosition)
 export(DefineCarNeighbours)
