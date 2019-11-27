@@ -6,6 +6,12 @@ readTabSepFile <- function(filepath, encoding="ascii", col_types = NULL, col_nam
   tab <- readr::read_delim(filepath, delim = "\t", locale = loc, col_types = col_types, comment = "#", trim_ws = trim_ws)
   tab <- data.table::as.data.table(tab)
 
+  for (n in names(tab)){
+    if (is.Date(tab[[n]])){
+      tab[[n]] <- as.POSIXct(tab[[n]])
+    }
+  }
+
   if (length(col_names)>0){
     missing <- col_names[!(col_names %in% names(tab))]
     if (length(missing)>0){

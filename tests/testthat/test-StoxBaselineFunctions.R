@@ -217,7 +217,7 @@ gearfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
 stoxLandingMock <- system.file("testresources","StoxLandingDataMock.txt", package="RstoxFDA")
 
 gear <- DefineGear(NULL, resourceFilePath = gearfile)
-stoxLandingPre <- readTabSepFile(stoxLandingMock, col_types = "cccc")
+stoxLandingPre <- readTabSepFile(stoxLandingMock, col_types = "ccccccccccccccccccccc")
 stoxLandingPost <- AppendGearStoxLanding(stoxLandingPre, gear)
 expect_true(data.table::is.data.table(stoxLandingPost))
 expect_equal(ncol(stoxLandingPost), ncol(stoxLandingPre) + 1)

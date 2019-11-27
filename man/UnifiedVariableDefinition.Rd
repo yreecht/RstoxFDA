@@ -8,7 +8,7 @@ Table (\code{\link[data.table]{data.table}}) defining a unified variable for dif
 }
 \details{
 \describe{
-  \item{Unified variable}{Unified code}
+  \item{UnifiedVariable}{Unified code}
   \item{Source}{Format for which the unified variable has corresponding codes}
   \item{Definition}{The codes defining the unified code in the 'source'. Comma-separated list of codes.}
  }

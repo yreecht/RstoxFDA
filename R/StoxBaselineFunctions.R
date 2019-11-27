@@ -5,7 +5,7 @@
 checkSymmetry <- function(tab){
 
   getn <- function(value){
-    neighbours <- trimws(unlist(strsplit(tab[tab[,1]==value,2], split = ",")))
+    neighbours <- trimws(unlist(strsplit(tab[tab[["CarValue"]]==value,"Neighbours"], split = ",")))
     return(neighbours)
   }
 
@@ -13,7 +13,7 @@ checkSymmetry <- function(tab){
     carvalue <- tab[i,1]
     neighbours <- getn(carvalue)
     for (n in neighbours){
-      if (!(n %in% tab[,1]) | !(carvalue %in% getn(n))){
+      if (!(n %in% tab[["CarValue"]]) | !(carvalue %in% getn(n))){
         stop(paste("Neighbour definition not symmetric.", n, "is neighbour of", carvalue, "but not vice versa."))
       }
     }
@@ -98,6 +98,9 @@ RedefinePositionStoxBiotic <- function(StoxBioticData){
 #' @return \code{\link[RstoxFDA]{StoxLandingData}} with columns for latitude and longitude appended.
 #' @export
 AppendPositionLanding <- function(StoxLandingData, AreaCodePosition, resolution = c("Area", "Location"), latColName="Latitude", lonColName="Longitude"){
+  stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))
+  stopifnot(is.AreaCodePosition(AreaCodePosition))
+
   if (latColName %in% names(StoxLandingData)){
     stop(paste("Column", latColName, "already exists."))
   }
@@ -138,6 +141,7 @@ AppendPositionLanding <- function(StoxLandingData, AreaCodePosition, resolution 
 #' @param dateColumns vector of date-columns to try in order.
 #' @noRd
 appendTemporal <- function(table, temporalColumn, temporalDefinition, datecolumns){
+  stopifnot(is.TemporalDefinition(temporalDefinition))
 
   if (temporalColumn %in% names(table)){
     stop(paste("Temporal column", temporalColumn, "exists already."))
@@ -146,11 +150,11 @@ appendTemporal <- function(table, temporalColumn, temporalDefinition, datecolumn
   if (!(all(is.na(temporalDefinition$year))) & any(is.na(temporalDefinition$year))){
     stop("Year is provided for some, but not all temporal definitions.")
   }
-
-  warning("Implement some date format checks")
-
   dateCol <- as.POSIXct(rep(NA, nrow(table)))
   for (d in datecolumns){
+    if (!is.POSIXct(table[[d]])){
+      stop("Error. Invalid date format. Use POSIXct.")
+    }
     filter <- is.na(dateCol) & !is.na(table[[d]])
     dateCol[filter] <- table[[d]][filter]
   }
@@ -217,6 +221,8 @@ appendTemporal <- function(table, temporalColumn, temporalDefinition, datecolumn
 #' @return StoxLandingData with column appended. See \code{\link[RstoxData]{StoxLandingData}}.
 #' @export
 AppendTemporalStoxLanding <- function(StoxLandingData, TemporalDefinition, columnName="TemporalCategory"){
+  stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))
+  stopifnot(is.TemporalDefinition(TemporalDefinition))
   return(appendTemporal(StoxLandingData, columnName, TemporalDefinition, "catchDate"))
 }
 
@@ -229,6 +235,7 @@ AppendStratumStoxBiotic <- function(StoxBioticData, StratumPolygon){
 }
 
 AppendStratumStoxLanding <- function(StoxLandingData, StratumPolygon){
+  stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))
   stop("Not implemented")
 }
 
@@ -265,6 +272,7 @@ appendGear <- function(table, gearcolumn, gearDefinition, colName){
 #' @return StoxBioticData with column appended. See \code{\link[RstoxData]{StoxBioticData}}.
 #' @export
 AppendGearStoxBiotic <- function(StoxBioticData, UnifiedVariableDefinition, columnName="UnifiedGear"){
+  stopifnot(is.UnifiedVariableDefinition(UnifiedVariableDefinition))
   geardef <- UnifiedVariableDefinition[UnifiedVariableDefinition$Source == "StoxBioticData",]
   return(appendGear(StoxBioticData, "gear", geardef, columnName))
 }
@@ -280,6 +288,8 @@ AppendGearStoxBiotic <- function(StoxBioticData, UnifiedVariableDefinition, colu
 #' @return StoxLandingData with column appended. See \code{\link[RstoxData]{StoxLandingData}}.
 #' @export
 AppendGearStoxLanding <- function(StoxLandingData, UnifiedVariableDefinition, columnName="UnifiedGear"){
+  stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))
+  stopifnot(is.UnifiedVariableDefinition(UnifiedVariableDefinition))
   geardef <- UnifiedVariableDefinition[UnifiedVariableDefinition$Source == "StoxLandingData",]
   return(appendGear(StoxLandingData, "gear", geardef, columnName))
 }
@@ -511,8 +521,8 @@ DefineCarNeighbours <- function(processData, resourceFilePath, encoding="UTF-8",
 
   checkSymmetry(tab)
 
-  if (length(unique(tab[,1])) != nrow(tab)){
-    d <- tab[,1][duplicated(tab[,1])]
+  if (length(unique(tab[["CarValue"]])) != nrow(tab)){
+    d <- tab[["CarValue"]][duplicated(tab[["CarValue"]])]
     stop(paste("Malformed resource file, Non-unique keys: repition in first column:", paste(d, collapse = ",")))
   }
 

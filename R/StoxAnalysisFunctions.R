@@ -55,6 +55,8 @@
 #' @export
 PrepareRecaEstimate <- function(StoxBioticData, StoxLandingData, fixedEffects, randomEffects, continousEffects=NULL, carEffect=NULL, CarNeighbours=NULL, AgeErrorMatrix=NULL, stockSplitting=F, ClassificationError=NULL, minAge=NULL, maxAge=NULL, maxLength=NULL, lengthResolution=NULL, temporalResolution=c("Quarter", "Month"), hatchDay=1){
 
+  stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))
+
   temporalResolution <- match.arg(temporalResolution, temporalResolution)
   if (!(temporalResolution %in% c("Quarter", "Month", "Week"))){
     stop(paste("Temporal resolution", temporalResolution, "not supported"))
@@ -118,6 +120,8 @@ PrepareRecaEstimate <- function(StoxBioticData, StoxLandingData, fixedEffects, r
 #' @return \code{\link[RstoxFDA]{RecaResult}} results from Reca run.
 #' @export
 RunRecaEstimate <- function(RecaData, nSamples, burnin, lgamodel=c("log-linear", "non-linear"), fitfile="fit", predictfile="pred", resultdir=NULL, thin=10, delta.age=0.001, seed=NULL, caa.burnin=0){
+
+  stopifnot(is.RecaData(RecaData))
 
   lgamodel <- match.arg(lgamodel)
 

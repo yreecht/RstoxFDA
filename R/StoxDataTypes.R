@@ -1,4 +1,26 @@
+#' @noRd
+is.POSIXct <- function(date){
+  if (length(date) > 1 & "POSIXct" %in% class(date)){
+    return(TRUE)
+  }
+  if (length(date) == 1 & class(date) == "POSIXct"){
+    return(TRUE)
+  }
 
+  return(FALSE)
+}
+
+#' @noRd
+is.Date <- function(date){
+  if (length(date) > 1 & "Date" %in% class(date)){
+    return(TRUE)
+  }
+  if (length(date) == 1 & class(date) == "Date"){
+    return(TRUE)
+  }
+
+  return(FALSE)
+}
 #' Reca Data (RecaData)
 #'
 #' Data and some data parameters prepared for running
@@ -17,6 +39,48 @@
 #' @name RecaData
 #'
 NULL
+
+#' Check if argument is RecaData
+#' @description
+#'  Checks if argument conforms to specification for \code{\link[RstoxFDA]{RecaData}}
+#' @param RecaData argument to be checked for data conformity
+#' @return logical, TRUE if argument conformed to specification for \code{\link[RstoxFDA]{RecaData}}
+#' @export
+is.RecaData <- function(RecaData){
+  if (!is.list(RecaData)){
+    return(FALSE)
+  }
+  if (!all(c("AgeLength", "WeightLength", "Landings", "GlobalParameters", "CovariateMaps") %in% names(RecaData))){
+    return(FALSE)
+  }
+  if (!is.list(RecaData$AgeLength)){
+    return(FALSE)
+  }
+  if (!is.list(RecaData$WeightLength)){
+    return(FALSE)
+  }
+  if (!is.list(RecaData$Landings)){
+    return(FALSE)
+  }
+  if (!is.list(RecaData$GlobalParameters)){
+    return(FALSE)
+  }
+  if (!is.list(RecaData$CovariateMaps)){
+    return(FALSE)
+  }
+
+  if (!all(c("DataMatrix", "CovariateMatrix", "info") %in% names(RecaData$AgeLength))){
+    return(FALSE)
+  }
+  if (!all(c("DataMatrix", "CovariateMatrix", "info") %in% names(RecaData$WeightLength))){
+    return(FALSE)
+  }
+  if (!all(c("AgeLengthCov", "WeightLengthCov", "LiveWeightKG") %in% names(RecaData$Landings))){
+    return(FALSE)
+  }
+
+  return(TRUE)
+}
 
 #' Reca Results (RecaResult)
 #'
@@ -37,13 +101,56 @@ NULL
 #'
 NULL
 
+#' @noRd
+is.RecaPrediction <- function(prediction){
+  if (!is.list(prediction)){
+    return(FALSE)
+  }
+  if (!all(c("TotalCount", "MeanLength", "MeanWeight", "AgeCategories", "LengthIntervalsLog") %in% names(prediction))){
+    return(FALSE)
+  }
+  if (!is.array(prediction$TotalCount)){
+    return(FALSE)
+  }
+  if (!is.array(prediction$MeanLength)){
+    return(FALSE)
+  }
+  if (!is.array(prediction$MeanWeight)){
+    return(FALSE)
+  }
+  return(TRUE)
+}
+
+#' Check if argument is RecaResult
+#' @description
+#'  Checks if argument conforms to specification for \code{\link[RstoxFDA]{RecaResult}}
+#' @param RecaResult argument to be checked for data conformity
+#' @return logical, TRUE if argument conformed to specification for \code{\link[RstoxFDA]{RecaResult}}
+#' @export
+is.RecaResult <- function(RecaResult){
+  if (!is.list(RecaResult)){
+    return(FALSE)
+  }
+  if (!all(c("input", "fit", "prediction", "covariateMaps") %in% names(RecaResult))){
+    return(FALSE)
+  }
+  if (!is.RecaData(RecaResult$input)){
+    return(FALSE)
+  }
+  if (!is.RecaPrediction(RecaResult$prediction)){
+    return(FALSE)
+  }
+
+  return(TRUE)
+}
+
 #' Unified Variable Definition (UnifiedVariableDefinition)
 #'
 #' Table (\code{\link[data.table]{data.table}}) defining a unified variable for different data formats
 #'
 #' @details
 #'  \describe{
-#'   \item{Unified variable}{Unified code}
+#'   \item{UnifiedVariable}{Unified code}
 #'   \item{Source}{Format for which the unified variable has corresponding codes}
 #'   \item{Definition}{The codes defining the unified code in the 'source'. Comma-separated list of codes.}
 #'  }
@@ -51,6 +158,23 @@ NULL
 #' @name UnifiedVariableDefinition
 #'
 NULL
+
+#' Check if argument is UnifiedVariableDefinition
+#' @description
+#'  Checks if argument conforms to specification for \code{\link[RstoxFDA]{UnifiedVariableDefinition}}
+#' @param UnifiedVariableDefinition argument to be checked for data conformity
+#' @return logical, TRUE if argument conformed to specification for \code{\link[RstoxFDA]{UnifiedVariableDefinition}}
+#' @export
+is.UnifiedVariableDefinition <- function(UnifiedVariableDefinition){
+  if (!data.table::is.data.table(UnifiedVariableDefinition)){
+    return(FALSE)
+  }
+  if (!all(c("UnifiedVariable", "Source", "Definition") %in% names(UnifiedVariableDefinition))){
+    return(FALSE)
+  }
+
+  return(TRUE)
+}
 
 #' Temporal Categories (TemporalDefinition)
 #'
@@ -72,6 +196,23 @@ NULL
 #'
 NULL
 
+#' Check if argument is TemporalDefinition
+#' @description
+#'  Checks if argument conforms to specification for \code{\link[RstoxFDA]{TemporalDefinition}}
+#' @param TemporalDefinition argument to be checked for data conformity
+#' @return logical, TRUE if argument conformed to specification for \code{\link[RstoxFDA]{TemporalDefinition}}
+#' @export
+is.TemporalDefinition <- function(TemporalDefinition){
+  if (!data.table::is.data.table(TemporalDefinition)){
+    return(FALSE)
+  }
+  if (!all(c("temporalCategory", "startDay", "startMonth") %in% names(TemporalDefinition))){
+    return(FALSE)
+  }
+
+  return(TRUE)
+}
+
 #' Area Code Positions (AreaCodePosition)
 #'
 #' Table (\code{\link[data.table]{data.table}}) defining a position for area codes.
@@ -89,6 +230,22 @@ NULL
 #'
 NULL
 
+#' Check if argument is AreaCodePosition
+#' @description
+#'  Checks if argument conforms to specification for \code{\link[RstoxFDA]{AreaCodePosition}}
+#' @param AreaCodePosition argument to be checked for data conformity
+#' @return logical, TRUE if argument conformed to specification for \code{\link[RstoxFDA]{AreaCodePosition}}
+#' @export
+is.AreaCodePosition <- function(AreaCodePosition){
+  if (!data.table::is.data.table(AreaCodePosition)){
+    return(FALSE)
+  }
+  if (!all(c("Area", "Location", "Latitude", "Longitude") %in% names(AreaCodePosition))){
+    return(FALSE)
+  }
+
+  return(TRUE)
+}
 
 #' Area Neighbour Definition (CarNeighbours)
 #'
@@ -107,6 +264,23 @@ NULL
 #'
 NULL
 
+#' Check if argument is CarNeighbours
+#' @description
+#'  Checks if argument conforms to specification for \code{\link[RstoxFDA]{CarNeighbours}}
+#' @param CarNeighbours argument to be checked for data conformity
+#' @return logical, TRUE if argument conformed to specification for \code{\link[RstoxFDA]{CarNeighbours}}
+#' @export
+is.CarNeighbours <- function(CarNeighbours){
+  if (!data.table::is.data.table(CarNeighbours)){
+    return(FALSE)
+  }
+  if (!all(c("CarVariable", "Neighbours") %in% names(CarNeighbours))){
+    return(FALSE)
+  }
+
+  return(TRUE)
+}
+
 #' Age Error Matrix (AgeErrorMatrix)
 #'
 #' Table (\code{\link[data.table]{data.table}})
@@ -123,6 +297,23 @@ NULL
 #' @name AgeErrorMatrix
 #'
 NULL
+
+#' Check if argument is AgeErrorMatrix
+#' @description
+#'  Checks if argument conforms to specification for \code{\link[RstoxFDA]{AgeErrorMatrix}}
+#' @param AgeErrorMatrix argument to be checked for data conformity
+#' @return logical, TRUE if argument conformed to specification for \code{\link[RstoxFDA]{AgeErrorMatrix}}
+#' @export
+is.AgeErrorMatrix <- function(AgeErrorMatrix){
+  if (!data.table::is.data.table(AgeErrorMatrix)){
+    return(FALSE)
+  }
+  if (!("ReadAge" %in% names(AgeErrorMatrix))){
+    return(FALSE)
+  }
+
+  return(TRUE)
+}
 
 #' Stock classification error (ClassificationError)
 #'
@@ -153,6 +344,23 @@ NULL
 #' @name ClassificationError
 #'
 NULL
+
+#' Check if argument is ClassificationError
+#' @description
+#'  Checks if argument conforms to specification for \code{\link[RstoxFDA]{ClassificationError}}
+#' @param ClassificationError argument to be checked for data conformity
+#' @return logical, TRUE if argument conformed to specification for \code{\link[RstoxFDA]{ClassificationError}}
+#' @export
+is.ClassificationError <- function(ClassificationError){
+  if (!data.table::is.data.table(ClassificationError)){
+    return(FALSE)
+  }
+  if (!all(c("ptype1.CC", "ptype1.S", "ptype2.CC", "ptype2.S", "ptype4.CC", "ptype4.S", "ptype5.CC", "ptype5.S") %in% names(ClassificationError))){
+    return(FALSE)
+  }
+
+  return(TRUE)
+}
 
 #' Function specification for inclusion in StoX projects
 #' @export
