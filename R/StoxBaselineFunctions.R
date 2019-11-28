@@ -254,6 +254,7 @@ AppendStratumStoxBiotic <- function(StoxBioticData, StratumPolygon, columnName="
 #'  \code{\link[RstoxData]{StoxLandingData}} does not contain columns for positions,
 #'  these need to be appended before calling this function, and identified with the parameters 'latColumn' and 'lonColumn'.
 #'  \code{\link[RstoxFDA]{AppendPositionLanding}} may be used to append positions.
+#' @seealso \code{\link[RstoxFDA]{AppendPositionLanding}} for appending positions to \code{\link[RstoxData]{StoxLandingData}}.
 #' @param StoxLandingData \code{\link[RstoxData]{StoxLandingData}} data which will be annotated. Needs postions appended. See details.
 #' @param StratumPolygon definition of spatial strata. See \code{\link[RstoxBase]{StratumPolygon}}
 #' @param columnName character(), defaults to 'Stratum', name of the appended column

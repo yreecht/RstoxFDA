@@ -35,3 +35,6 @@ StoX function
  these need to be appended before calling this function, and identified with the parameters 'latColumn' and 'lonColumn'.
  \code{\link[RstoxFDA]{AppendPositionLanding}} may be used to append positions.
 }
+\seealso{
+\code{\link[RstoxFDA]{AppendPositionLanding}} for appending positions to \code{\link[RstoxData]{StoxLandingData}}.
+}
