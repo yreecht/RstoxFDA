@@ -301,3 +301,19 @@ expect_false(lata == min(landingPost$Latitude[1]))
 
 context("test-StoxBaselineFunctions: AppendPositionLanding used colName")
 expect_error(AppendPositionLanding(stoxLandingPre, areaPos, latColName = "catchDate"), "Column catchDate already exists.")
+
+
+
+context("test-StoxBaselineFunctions: appendAreaCode")
+strp <- RstoxBase::DefineStrata(NULL, system.file("testresources", "mainarea_fdir_fom2018_strata.txt", package="RstoxFDA"))
+sp::proj4string(strp) <- sp::CRS("+proj=longlat +datum=WGS84")
+
+areafile <- system.file("testresources","mainarea_fdir_from_2018_compl.txt", package="RstoxFDA")
+areaPos <- DefineAreaCodePosition(resourceFilePath = areafile)
+
+areaPosPost <- appendAreaCode(areaPos, strp, "Latitude", "Longitude", "AreaAppended")
+expect_true(all(as.integer(areaPosPost$Area) == as.integer(areaPosPost$AreaAppended)))
+
+context("test-StoxBaselineFunctions: appendAreaCode wrong projection")
+strp <- sp::spTransform(strp, sp::CRS("+proj=longlat +datum=NAD83"))
+expect_error(appendAreaCode(areaPos, strp, "Latitude", "Longitude", "AreaAppended"))
