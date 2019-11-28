@@ -226,17 +226,47 @@ AppendTemporalStoxLanding <- function(StoxLandingData, TemporalDefinition, colum
   return(appendTemporal(StoxLandingData, columnName, TemporalDefinition, "catchDate"))
 }
 
+
 AppendTemporalStoxBiotic <- function(StoxBioticData, TemporalDefinition, columnName="TemporalCategory"){
   stop("Not implemented")
 }
 
-AppendStratumStoxBiotic <- function(StoxBioticData, StratumPolygon){
-  stop("Not implemented")
+#' Appends Stratum to StoxBioticData
+#' @description
+#'  StoX function
+#'  Appends a column to StoxBioticData with the spatial strata each row belongs to
+#' @param StoxBioticData \code{\link[RstoxData]{StoxBioticData}} data which will be annotated.
+#' @param StratumPolygon definition of spatial strata. See \code{\link[RstoxBase]{StratumPolygon}}
+#' @param columnName character(), defaults to 'Stratum', name of the appended column
+#' @return StoxBioticData with column appended. See \code{\link[RstoxData]{StoxBioticData}}.
+AppendStratumStoxBiotic <- function(StoxBioticData, StratumPolygon, columnName="Stratum"){
+  if (columnName %in% names(StoxBioticData)){
+    stop(paste("Column with name '", columnName, "' already exists.", sep=""))
+  }
+  stop("Not implemented. Remember to export when implemented")
 }
 
-AppendStratumStoxLanding <- function(StoxLandingData, StratumPolygon){
+#' Appends Stratum to StoxLandingData
+#' @description
+#'  StoX function
+#'  Appends a column to StoxLandingData with the spatial strata each row belongs to.
+#' @details
+#'  \code{\link[RstoxData]{StoxLandingData}} does not contain columns for positions,
+#'  these need to be appended before calling this function, and identified with the parameters 'latColumn' and 'lonColumn'.
+#'  \code{\link[RstoxFDA]{AppendPositionLanding}} may be used to append positions.
+#' @param StoxLandingData \code{\link[RstoxData]{StoxLandingData}} data which will be annotated. Needs postions appended. See details.
+#' @param StratumPolygon definition of spatial strata. See \code{\link[RstoxBase]{StratumPolygon}}
+#' @param columnName character(), defaults to 'Stratum', name of the appended column
+#' @param latColumn character(), defaults to 'Latitdue', identifies the column in StoxLandingData with latitudes.
+#' @param lonColumn character(), defaults to 'Longitude', identifies the column in StoxLandingData with longitudes.
+#' @return StoxLandingData with column appended. See \code{\link[RstoxData]{StoxLandingData}}.
+AppendStratumStoxLanding <- function(StoxLandingData, StratumPolygon, columnName, latColumn="Latitude", lonColumn="Longitude"){
   stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))
-  stop("Not implemented")
+  if (!(c(latColumn, lonColumn) %in% names(StoxLandingData))){
+    stop(paste("Could not find appended columns:", latColumn, "and", lonColumn, "on StoxLandingData"))
+  }
+
+  stop("Not implemented. Remember to export when implemented")
 }
 
 #' append gear

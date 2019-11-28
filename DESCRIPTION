@@ -18,7 +18,8 @@ Imports:
     RColorBrewer (>= 1.1-2),
     gridExtra (>= 2.3),
     data.table (>= 1.12.6),
-    RstoxData (>= 0.6.1)
+    RstoxData (>= 0.6.1),
+    RstoxBase (>= 1.0)
 Suggests: 
     testthat,
     Reca
