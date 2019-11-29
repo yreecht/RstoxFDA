@@ -286,17 +286,21 @@ AppendStratumStoxBiotic <- function(StoxBioticData, StratumPolygon, columnName="
 #' @seealso \code{\link[RstoxFDA]{AppendPositionLanding}} for appending positions to \code{\link[RstoxData]{StoxLandingData}}.
 #' @param StoxLandingData \code{\link[RstoxData]{StoxLandingData}} data which will be annotated. Needs postions appended. See details.
 #' @param StratumPolygon definition of spatial strata. See \code{\link[RstoxBase]{StratumPolygon}}
-#' @param columnName character(), defaults to 'Stratum', name of the appended column
+#' @param columnName character(), defaults to 'Stratum', name of the appended column.
 #' @param latColumn character(), defaults to 'Latitdue', identifies the column in StoxLandingData with latitudes.
 #' @param lonColumn character(), defaults to 'Longitude', identifies the column in StoxLandingData with longitudes.
 #' @return StoxLandingData with column appended. See \code{\link[RstoxData]{StoxLandingData}}.
-AppendStratumStoxLanding <- function(StoxLandingData, StratumPolygon, columnName, latColumn="Latitude", lonColumn="Longitude"){
+#' @export
+AppendStratumStoxLanding <- function(StoxLandingData, StratumPolygon, columnName="Stratum", latColumn="Latitude", lonColumn="Longitude"){
   stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))
-  if (!(c(latColumn, lonColumn) %in% names(StoxLandingData))){
+  if (!(all(c(latColumn, lonColumn) %in% names(StoxLandingData)))){
     stop(paste("Could not find appended columns:", latColumn, "and", lonColumn, "on StoxLandingData"))
   }
+  if (columnName %in% names(StoxLandingData)){
+    stop(paste("Column name", columnName, "already exists."))
+  }
 
-  stop("Not implemented. Remember to export when implemented")
+  return(appendAreaCode(StoxLandingData, StratumPolygon, latColumn, lonColumn, columnName))
 }
 
 #' append gear

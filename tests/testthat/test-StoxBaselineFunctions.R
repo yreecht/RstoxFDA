@@ -317,3 +317,23 @@ expect_true(all(as.integer(areaPosPost$Area) == as.integer(areaPosPost$AreaAppen
 context("test-StoxBaselineFunctions: appendAreaCode wrong projection")
 strp <- sp::spTransform(strp, sp::CRS("+proj=longlat +datum=NAD83"))
 expect_error(appendAreaCode(areaPos, strp, "Latitude", "Longitude", "AreaAppended"))
+
+
+
+
+
+
+context("test-StoxBaselineFunctions: AppendStratumStoxLanding")
+
+strp <- RstoxBase::DefineStrata(NULL, system.file("testresources", "mainarea_fdir_fom2018_strata.txt", package="RstoxFDA"))
+sp::proj4string(strp) <- sp::CRS("+proj=longlat +datum=WGS84")
+
+areafile <- system.file("testresources","mainarea_fdir_from_2018_compl.txt", package="RstoxFDA")
+areaPos <- DefineAreaCodePosition(resourceFilePath = areafile)
+
+landingH <- RstoxData::readXmlFile(system.file("testresources","landing.xml", package="RstoxFDA"), stream = T)
+stoxLandingPre <- RstoxData:::StoxLanding(landingH)
+landingWpos <- AppendPositionLanding(stoxLandingPre, areaPos)
+
+landingPost <- AppendStratumStoxLanding(landingWpos, strp)
+expect_true(all(as.integer(landingPost$Stratum)==as.integer(landingPost$area)))

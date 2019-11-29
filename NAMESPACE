@@ -3,6 +3,7 @@
 export(AppendGearStoxBiotic)
 export(AppendGearStoxLanding)
 export(AppendPositionLanding)
+export(AppendStratumStoxLanding)
 export(AppendTemporalStoxLanding)
 export(DefineAgeErrorMatrix)
 export(DefineAreaCodePosition)

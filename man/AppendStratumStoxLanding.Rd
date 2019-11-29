@@ -7,7 +7,7 @@
 AppendStratumStoxLanding(
   StoxLandingData,
   StratumPolygon,
-  columnName,
+  columnName = "Stratum",
   latColumn = "Latitude",
   lonColumn = "Longitude"
 )
@@ -17,7 +17,7 @@ AppendStratumStoxLanding(
 
 \item{StratumPolygon}{definition of spatial strata. See \code{\link[RstoxBase]{StratumPolygon}}}
 
-\item{columnName}{character(), defaults to 'Stratum', name of the appended column}
+\item{columnName}{character(), defaults to 'Stratum', name of the appended column.}
 
 \item{latColumn}{character(), defaults to 'Latitdue', identifies the column in StoxLandingData with latitudes.}
 

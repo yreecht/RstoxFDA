@@ -495,6 +495,19 @@ stoxFunctionAttributes <- list(
     functionParameterValueAilas = list()
   ),
 
+  AppendStratumStoxLanding = list(
+    functionType = "modelData",
+    functionCategory = "Baseline",
+    functionOutputDataType = "StoxLandingData",
+    functionParameterType = list(StoxLandingData = "character",
+                                 StratumPolygon = "character"),
+    functionParameterFormat = list(),
+    functionArgumentHierarchy = list(),
+    functionAlias = list(),
+    functionParameterAlias = list(),
+    functionParameterValueAilas = list()
+  ),
+
   PrepareRecaEstimate = list(
     functionType = "modelData",
     functionCategory = "Analysis",
