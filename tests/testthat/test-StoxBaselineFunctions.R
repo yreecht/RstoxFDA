@@ -214,10 +214,10 @@ expect_error(AppendGearStoxBiotic(stoxBioticPre, gear, "gear"), "Column with nam
 
 context("test-StoxBaselineFunctions: AppendGearStoxLanding")
 gearfile <- system.file("testresources","gearfactor.txt", package="RstoxFDA")
-stoxLandingMock <- system.file("testresources","StoxLandingDataMock.txt", package="RstoxFDA")
+stoxLandingXml <- system.file("testresources","landing.xml", package="RstoxFDA")
 
 gear <- DefineGear(NULL, resourceFilePath = gearfile)
-stoxLandingPre <- readTabSepFile(stoxLandingMock, col_types = "ccccccccccccccccccccc")
+stoxLandingPre <- RstoxData::StoxLanding(RstoxData::readXmlFile(stoxLandingXml))
 stoxLandingPost <- AppendGearStoxLanding(stoxLandingPre, gear)
 expect_true(data.table::is.data.table(stoxLandingPost))
 expect_equal(ncol(stoxLandingPost), ncol(stoxLandingPre) + 1)
@@ -276,7 +276,7 @@ stoxLandingPost <- AppendTemporalStoxLanding(stoxLandingPre, temp)
 expect_false(any(is.na(stoxLandingPost$TemporalCategory)))
 
 context("test-StoxBaselineFunctions: AppendTemporalStoxLanding used colName")
-expect_error(AppendTemporalStoxLanding(stoxLandingPre, temp, columnName = "catchDate"), "s")
+expect_error(AppendTemporalStoxLanding(stoxLandingPre, temp, columnName = "CatchDate"), "s")
 
 
 context("test-StoxBaselineFunctions: AppendPositionLanding missing")
@@ -296,11 +296,11 @@ expect_true(all(!is.na(landingPost$Latitude)))
 expect_true(all(!is.na(landingPost$Longitude)))
 
 lata <- min(landingPost$Latitude[1])
-landingPost <- AppendPositionLanding(stoxLandingPre, areaPos, resolution = "Location")
+landingPost <- AppendPositionLanding(stoxLandingPre, areaPos, resolution = "SubArea")
 expect_false(lata == min(landingPost$Latitude[1]))
 
 context("test-StoxBaselineFunctions: AppendPositionLanding used colName")
-expect_error(AppendPositionLanding(stoxLandingPre, areaPos, latColName = "catchDate"), "Column catchDate already exists.")
+expect_error(AppendPositionLanding(stoxLandingPre, areaPos, latColName = "CatchDate"), "Column CatchDate already exists.")
 
 
 

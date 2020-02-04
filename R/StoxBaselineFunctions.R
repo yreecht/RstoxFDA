@@ -86,18 +86,19 @@ RedefinePositionStoxBiotic <- function(StoxBioticData){
 #' Append position to landings data
 #' @description
 #'  StoX function
-#'  Appends a position to landings data, based on Area and Location codes.
+#'  Appends a position to landings data, based on Area and SubArea codes.
 #' @details
 #'  When 'resolution' is specified as 'Area' the midpoint of the Area will be assigned to the landings.
-#'  When 'resolution' is specified as 'Location' the midpoint of the Location will be assigned to the landings.
+#'  When 'resolution' is specified as 'SubArea' the midpoint of the SubArea will be assigned to the landings.
 #' @param StoxLandingData landing data, see \code{\link[RstoxData]{StoxLandingData}}
-#' @param AreaCodePosition coordinates for Area and Location codes, see \code{\link[RstoxFDA]{AreaCodePosition}}
-#' @param resolution character(), defaults to Area, specify what resolution to use: 'Area' or 'Location'. See details.
+#' @param AreaCodePosition coordinates for Area and SubArea codes, see \code{\link[RstoxFDA]{AreaCodePosition}}
+#' @param resolution character(), defaults to Area, specify what resolution to use: 'Area' or 'SubArea'. See details.
 #' @param latColName character(), defaults to Latitude, name of the latitude column that will be appended.
 #' @param lonColName character(), defaults to Longitude, name of the longitude column that will be appended.
 #' @return \code{\link[RstoxData]{StoxLandingData}} with columns for latitude and longitude appended.
 #' @export
-AppendPositionLanding <- function(StoxLandingData, AreaCodePosition, resolution = c("Area", "Location"), latColName="Latitude", lonColName="Longitude"){
+AppendPositionLanding <- function(StoxLandingData, AreaCodePosition, resolution = c("Area", "SubArea"), latColName="Latitude", lonColName="Longitude"){
+
   stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))
   stopifnot(is.AreaCodePosition(AreaCodePosition))
 
@@ -114,22 +115,22 @@ AppendPositionLanding <- function(StoxLandingData, AreaCodePosition, resolution 
   AreaCodePosition[[lonColName]] <- AreaCodePosition$Longitude
 
   if (resolution == "Area"){
-    if (!all(StoxLandingData$area %in% AreaCodePosition$Area)){
-      missing <- StoxLandingData$area[!(StoxLandingData$area %in% AreaCodePosition$area)]
+    if (!all(StoxLandingData$Area %in% AreaCodePosition$Area)){
+      missing <- StoxLandingData$Area[!(StoxLandingData$Area %in% AreaCodePosition$Area)]
       stop(paste("Positions not provided for all Areas. Missing: ", paste(missing, collapse=",")))
     }
     AreaCodePosition <- AreaCodePosition[,c("Area", latColName, lonColName), with=F]
-    return(data.table::as.data.table(merge(StoxLandingData, AreaCodePosition, by.x="area", by.y="Area", all.x=T)))
+    return(data.table::as.data.table(merge(StoxLandingData, AreaCodePosition, by.x="Area", by.y="Area", all.x=T)))
   }
-  else if (resolution == "Location"){
-    arealocdata <- paste(StoxLandingData$area, StoxLandingData$location, sep="-")
-    arealocresource <- paste(AreaCodePosition$Area, AreaCodePosition$Location, sep="-")
+  else if (resolution == "SubArea"){
+    arealocdata <- paste(StoxLandingData$Area, StoxLandingData$SubArea, sep="-")
+    arealocresource <- paste(AreaCodePosition$Area, AreaCodePosition$SubArea, sep="-")
     if (!all(arealocdata %in% arealocresource)){
       missing <- arealocdata[!(arealocdata %in% arealocresource)]
-      stop(paste("Positions not provided for all Areas and Locations. Missing: ", paste(missing, collapse=",")))
+      stop(paste("Positions not provided for all Areas and SubArea Missing: ", paste(missing, collapse=",")))
     }
-    AreaCodePosition <- AreaCodePosition[,c("Area", "Location", latColName, lonColName), with=F]
-    return(data.table::as.data.table(merge(StoxLandingData, AreaCodePosition, by.x=c("area", "location"), by.y=c("Area", "Location"), all.x=T)))
+    AreaCodePosition <- AreaCodePosition[,c("Area", "SubArea", latColName, lonColName), with=F]
+    return(data.table::as.data.table(merge(StoxLandingData, AreaCodePosition, by.x=c("Area", "SubArea"), by.y=c("Area", "SubArea"), all.x=T)))
   }
   else{
     stop(paste("Resolution", resolution, "not supported"))
@@ -151,6 +152,7 @@ appendTemporal <- function(table, temporalColumn, temporalDefinition, datecolumn
     stop("Year is provided for some, but not all temporal definitions.")
   }
   dateCol <- as.POSIXct(rep(NA, nrow(table)))
+
   for (d in datecolumns){
     if (!is.POSIXct(table[[d]])){
       stop("Error. Invalid date format. Use POSIXct.")
@@ -223,7 +225,7 @@ appendTemporal <- function(table, temporalColumn, temporalDefinition, datecolumn
 AppendTemporalStoxLanding <- function(StoxLandingData, TemporalDefinition, columnName="TemporalCategory"){
   stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))
   stopifnot(is.TemporalDefinition(TemporalDefinition))
-  return(appendTemporal(StoxLandingData, columnName, TemporalDefinition, "catchDate"))
+  return(appendTemporal(StoxLandingData, columnName, TemporalDefinition, "CatchDate"))
 }
 
 
@@ -355,7 +357,7 @@ AppendGearStoxLanding <- function(StoxLandingData, UnifiedVariableDefinition, co
   stopifnot(RstoxData::is.StoxLandingData(StoxLandingData))
   stopifnot(is.UnifiedVariableDefinition(UnifiedVariableDefinition))
   geardef <- UnifiedVariableDefinition[UnifiedVariableDefinition$Source == "StoxLandingData",]
-  return(appendGear(StoxLandingData, "gear", geardef, columnName))
+  return(appendGear(StoxLandingData, "Gear", geardef, columnName))
 }
 
 ###
@@ -545,9 +547,9 @@ DefineAreaCodePosition <- function(processData, resourceFilePath, encoding="UTF-
     return(processData)
   }
 
-  tab <- readTabSepFile(resourceFilePath, col_types = "ccdd", col_names = c("Area", "Location",	"Latitude",	"Longitude"), encoding = encoding)
+  tab <- readTabSepFile(resourceFilePath, col_types = "ccdd", col_names = c("Area", "SubArea",	"Latitude",	"Longitude"), encoding = encoding)
 
-  missingLoc <- tab[is.na(tab[["Location"]]),]
+  missingLoc <- tab[is.na(tab[["SubArea"]]),]
 
   if (length(unique(missingLoc[["Area"]])) != length(unique(tab[["Area"]]))){
     stop("Malformed resource file. Some Area does not have coordinates defined for the case when location is missing.")

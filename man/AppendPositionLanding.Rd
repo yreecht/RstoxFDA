@@ -7,7 +7,7 @@
 AppendPositionLanding(
   StoxLandingData,
   AreaCodePosition,
-  resolution = c("Area", "Location"),
+  resolution = c("Area", "SubArea"),
   latColName = "Latitude",
   lonColName = "Longitude"
 )
@@ -15,9 +15,9 @@ AppendPositionLanding(
 \arguments{
 \item{StoxLandingData}{landing data, see \code{\link[RstoxData]{StoxLandingData}}}
 
-\item{AreaCodePosition}{coordinates for Area and Location codes, see \code{\link[RstoxFDA]{AreaCodePosition}}}
+\item{AreaCodePosition}{coordinates for Area and SubArea codes, see \code{\link[RstoxFDA]{AreaCodePosition}}}
 
-\item{resolution}{character(), defaults to Area, specify what resolution to use: 'Area' or 'Location'. See details.}
+\item{resolution}{character(), defaults to Area, specify what resolution to use: 'Area' or 'SubArea'. See details.}
 
 \item{latColName}{character(), defaults to Latitude, name of the latitude column that will be appended.}
 
@@ -28,9 +28,9 @@ AppendPositionLanding(
 }
 \description{
 StoX function
- Appends a position to landings data, based on Area and Location codes.
+ Appends a position to landings data, based on Area and SubArea codes.
 }
 \details{
 When 'resolution' is specified as 'Area' the midpoint of the Area will be assigned to the landings.
- When 'resolution' is specified as 'Location' the midpoint of the Location will be assigned to the landings.
+ When 'resolution' is specified as 'SubArea' the midpoint of the SubArea will be assigned to the landings.
 }

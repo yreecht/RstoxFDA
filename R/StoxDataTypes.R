@@ -240,7 +240,7 @@ is.AreaCodePosition <- function(AreaCodePosition){
   if (!data.table::is.data.table(AreaCodePosition)){
     return(FALSE)
   }
-  if (!all(c("Area", "Location", "Latitude", "Longitude") %in% names(AreaCodePosition))){
+  if (!all(c("Area", "SubArea", "Latitude", "Longitude") %in% names(AreaCodePosition))){
     return(FALSE)
   }
 
