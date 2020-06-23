@@ -4,7 +4,9 @@
 \name{recaPrediction}
 \alias{recaPrediction}
 \title{Example result from Reca}
-\format{see element prediction in return from \code{\link[RstoxFDA]{runRECA}}.}
+\format{
+see element prediction in return from \code{\link[RstoxFDA]{runRECA}}.
+}
 \usage{
 data(recaPrediction)
 }

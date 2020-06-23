@@ -4,7 +4,9 @@
 \name{catchsamples}
 \alias{catchsamples}
 \title{Data from Norwegian port sampling program.}
-\format{Column names defined as in RDBES data model version 1.17 (\href{https://github.com/ices-tools-dev/RDBES/tree/1a17e09d34d3e9b6bb6173f2b33e10f0830d4cf3}{RDBES data model v 1.17})}
+\format{
+Column names defined as in RDBES data model version 1.17 (\href{https://github.com/ices-tools-dev/RDBES/tree/1a17e09d34d3e9b6bb6173f2b33e10f0830d4cf3}{RDBES data model v 1.17})
+}
 \usage{
 data(catchsamples)
 }

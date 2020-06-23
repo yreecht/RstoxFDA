@@ -24,6 +24,6 @@ Imports:
     RstoxData (>= 0.6.1),
     RstoxBase (>= 1.0)
 Suggests: 
-    testthat,
+    testthat (>= 2.1.0),
     Reca
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0

@@ -1,0 +1,17 @@
+context("metierannotation parse table")
+regularfile <- system.file("testresources","metiermapping_example.txt", package="RstoxFDA")
+metiertable <- readMetierTable(regularfile)
+expect_true(!any(is.na(metiertable$metier)))
+expect_true(!any(is.na(metiertable$gearcode)))
+expect_true(!any(is.na(metiertable$AREA)))
+expect_equal(sum(is.na(metiertable[1,])), 5)
+
+simplefile <- system.file("testresources","metiermapping_example_simple.txt", package="RstoxFDA")
+metiertable <- readMetierTable(simplefile)
+expect_true(!any(is.na(metiertable$metier)))
+expect_true(!any(is.na(metiertable$gearcode)))
+expect_true(!any(is.na(metiertable$AREA)))
+expect_equal(sum(is.na(metiertable[1,])), 8)
+
+errorfile <- system.file("testresources","metiermapping_example_error.txt", package="RstoxFDA")
+expect_error(readMetierTable(errorfile), "Some column names are not recognized: area")

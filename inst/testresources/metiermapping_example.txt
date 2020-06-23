@@ -1,0 +1,3 @@
+# Esample metier configuration with comment
+metier	gearcode	meshedGear	lowerMeshSize	upperMeshSize	selectivityDevice	meshedSelectivityDevice	selDevLowerMeshSize	selDevUpperMeshSize	AREA
+OTB_DEF	51	T	0	120					8
