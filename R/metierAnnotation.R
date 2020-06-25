@@ -43,7 +43,7 @@
 NULL
 
 #' Check if table is correctly formatted metier table
-#' @param table
+#' @param table \code{\link[RstoxFDA]{MetierTable}}
 #' @param throwError if set errors are raised, if not, validity will be returned as T/F
 #' @return validity
 #' @noRd
@@ -114,7 +114,14 @@ is.MetierTable <- function(table, throwError=F){
     return(FALSE)
   }
 
-  #stop("Implement check on meshed gear / selectivitydevice. Given for all non-na gear / selectivitydevices, if given")
+  meshed <- metiertable$meshedGear[!is.na(metiertable$gearcode)]
+  if (any(is.na(meshed)) & !all(is.na(meshed))){
+    stop("The column 'meshedGear' has a value for some gears, but not all")
+  }
+  meshedSel <- metiertable$meshedSelectivityDevice[!is.na(metiertable$gearcode) & !is.na(metiertable$selectivityDevice)]
+  if (any(is.na(meshedSel)) & !all(is.na(meshedSel))){
+    stop("The column 'meshedSelectivityDevice' has a value for some gears, but not all")
+  }
 
   return(TRUE)
 }
@@ -311,6 +318,7 @@ checkSelectivityDevice <- function(selectivityDeviceVector, metiertable){
 #' @param metierColName character() name of the column that should be appended to 'data'
 #' @param strict logical(), whether strict annotation should be applied (halting on missing definitions).
 #' @return \code{\link[data.table]{data.table}} 'data' with the column 'metierColName' appended (character).
+#' @import data.table
 #' @export
 assignMetier <- function(data, metiertable, gearColumn, targetColumn=NULL, meshSizeColumn=NULL, selectivityDeviceColumn=NULL, selectivityDeviceMeshSizeColumn=NULL, metierColName="metier"){
 
@@ -368,11 +376,11 @@ assignMetier <- function(data, metiertable, gearColumn, targetColumn=NULL, meshS
       }
     }
     if (!is.null(meshSizeColumn) & !is.na(metiertable$gearcode[i]) & metiertable$meshedGear[i]){
-      selection <- selection & !is.na(data[[meshSizeColumn]]) & (data[[meshSizeColumn]] <= metiertable$upperMeshSize) & (data[[meshSizeColumn]] >= metiertable$lowerMeshSize)
+      selection <- selection & !is.na(data[[meshSizeColumn]]) & (data[[meshSizeColumn]] <= metiertable$upperMeshSize[i]) & (data[[meshSizeColumn]] >= metiertable$lowerMeshSize[i])
     }
     if (!is.null(selectivityDeviceMeshSizeColumn) & !is.na(metiertable$gearcode[i]) & !is.na(metiertable$selectivityDevice[i]) & metiertable$meshedSelectivityDevice[i]){
-      stop("Deal with NA in selectivityDeviceMeshSizeColumn")
-      selection <- selection & !is.na(data[[selectivityDeviceMeshSizeColumn]]) & (data[[selectivityDeviceMeshSizeColumn]] <= metiertable$selDevUpperMeshSize) & (data[[selectivityDeviceMeshSizeColumn]] >= metiertable$selDevLowerMeshSize)
+      selection[is.na(data[[selectivityDeviceMeshSizeColumn]])] <- F
+      selection[!is.na(data[[selectivityDeviceMeshSizeColumn]])] <- selection[!is.na(data[[selectivityDeviceMeshSizeColumn]])] & (data[[selectivityDeviceMeshSizeColumn]][!is.na(data[[selectivityDeviceMeshSizeColumn]])] <= metiertable$selDevUpperMeshSize[i]) & (data[[selectivityDeviceMeshSizeColumn]][!is.na(data[[selectivityDeviceMeshSizeColumn]])] >= metiertable$selDevLowerMeshSize[i])
     }
 
     data[selection, metierColName] <- metiertable$metier[i]
@@ -385,7 +393,7 @@ assignMetier <- function(data, metiertable, gearColumn, targetColumn=NULL, meshS
     usedCols <- cols[cols %in% names(data)]
     missingMetier <- unique(missingMetier[,..usedCols])
     for (i in 1:nrow(missingMetier)){
-      message(paste("Missing metier definition for:", paste(missingMetier[1,], collapse=" ")))
+      message(paste("Missing metier definition for ", paste(paste(usedCols, missingMetier[i,..usedCols], sep=": "), collapse=", "), sep=""))
     }
     stop("Not all rows could be assigned a metier.")
   }

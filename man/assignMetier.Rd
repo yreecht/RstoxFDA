@@ -12,7 +12,6 @@ assignMetier(
   meshSizeColumn = NULL,
   selectivityDeviceColumn = NULL,
   selectivityDeviceMeshSizeColumn = NULL,
-  areaColumn = NULL,
   metierColName = "metier"
 )
 }
@@ -31,8 +30,6 @@ assignMetier(
 
 \item{selectivityDeviceMeshSizeColumn}{integer(), optional, identifies the column in 'data' that encodes the mesh size of any mounted selectivity device.}
 
-\item{areaColumn}{character(), optional, identifies the column in 'data' that encodes areas for which different metierdefinitions are applicable.}
-
 \item{metierColName}{character() name of the column that should be appended to 'data'}
 
 \item{strict}{logical(), whether strict annotation should be applied (halting on missing definitions).}
@@ -44,6 +41,7 @@ assignMetier(
 annotates metier to data table
 }
 \details{
-The parameter 'areaColumn' may be NULL which specifies that metiers are not dependent on area for the annotation.
- If areaColumn is given, NA values in 'metiertable' specifies that metiers apply to all areas, so that area codes need only be provided for exceptions to this rule.
+For the metier-defining variables 'gearcode', 'target' and 'selectivityDevice' (see \code{\link[RstoxFDA]{MetierTable}}), missing values are matches with missing values.
+ That is, a metier that is defined with a missing value for 'target'
+ will be annotated to otherwise matching data which has a missing value in the 'targetColumn'.
 }
