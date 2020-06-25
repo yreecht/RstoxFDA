@@ -16,7 +16,9 @@ expect_equal(sum(is.na(metiertable[1,])), 8)
 errorfile <- system.file("testresources","metiermapping_example_error.txt", package="RstoxFDA")
 expect_error(readMetierTable(errorfile), "Some column names are not recognized: area")
 
-#test annotation
+
+context("Test annotation")
+
 testdata <- data.table::data.table(id=seq(1,6), gear=as.character(c(51,51,22,22,35,35)),
                                    meshSize=c(90,90,90,120,NA,NA),
                                    selDev=c("G","G",NA,NA,NA,NA),
@@ -26,7 +28,31 @@ testdata <- data.table::data.table(id=seq(1,6), gear=as.character(c(51,51,22,22,
 regularfile <- system.file("testresources","metiermapping_example.txt", package="RstoxFDA")
 metiertable <- readMetierTable(regularfile)
 
-assignMetier(testdata, metiertable, "gear", meshSizeColumn = "meshSize", selectivityDeviceColumn = "selDev", selectivityDeviceMeshSizeColumn = "selDevMS")
+annotated <- assignMetier(testdata, metiertable, "gear", meshSizeColumn = "meshSize", selectivityDeviceColumn = "selDev", selectivityDeviceMeshSizeColumn = "selDevMS")
+expect_equal(ncol(annotated), ncol(testdata) + 1)
+expect_equal(nrow(annotated), nrow(testdata))
+expect_true("metier" %in% names(annotated))
+expect_equal(annotated$metier[1], "OTB_DEF_0_120_1_101-120")
+expect_equal(annotated$metier[2], "OTB_DEF_0_120_1_80-100")
+
+context("metier Annotation with filename definitions provided as filename")
+annotated <- assignMetier(testdata, regularfile, "gear", meshSizeColumn = "meshSize", selectivityDeviceColumn = "selDev", selectivityDeviceMeshSizeColumn = "selDevMS")
+expect_equal(annotated$metier[1], "OTB_DEF_0_120_1_101-120")
+
+
+context("metier Annotation with NA in data")
+testdata <- data.table::data.table(id=seq(1,6), gear=as.character(c(NA,51,22,22,35,35)),
+                                   meshSize=c(90,90,90,120,NA,NA),
+                                   selDev=c(NA,"G",NA,NA,NA,NA),
+                                   selDevMS=c(110,90,NA,NA,NA,NA),
+                                   area=as.character(c("08","08","09","09","09","10")))
+regularfile <- system.file("testresources","metiermapping_example.txt", package="RstoxFDA")
+metiertable <- readMetierTable(regularfile)
+
+annotated <- assignMetier(testdata, metiertable, "gear", meshSizeColumn = "meshSize", selectivityDeviceColumn = "selDev", selectivityDeviceMeshSizeColumn = "selDevMS")
+expect_equal(annotated$metier[1], "MIS_MIS")
+
+
 
 context("Annotation error checks")
 expect_error(assignMetier(testdata, metiertable, "gear"))
@@ -78,12 +104,3 @@ expect_error(checkMetierTable(metiertableMissingMS, meshSize = T, selDevMeshSize
 metiertableMissingMS <- metiertable
 metiertableMissingMS$upperMeshSize[4] <- 101
 expect_error(checkMetierTable(metiertableMissingMS, meshSize = T, selDevMeshSize = T), "Mesh sizes have overlapping ranges for gear 22")
-
-
-#
-# tests
-#
-
-
-# test annotation with NAs in data
-

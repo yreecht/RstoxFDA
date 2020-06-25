@@ -5,7 +5,7 @@
 checkSymmetry <- function(tab){
 
   getn <- function(value){
-    neighbours <- trimws(unlist(strsplit(tab[tab[["CarValue"]]==value,"Neighbours"], split = ",")))
+    neighbours <- trimws(unlist(strsplit(tab[CarValue==value,Neighbours], split = ",")))
     return(neighbours)
   }
 

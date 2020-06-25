@@ -32,13 +32,13 @@ For example, in intercatch, the code OTB_DEF_>=120_0_0_all identifies bottom tra
   \item{metier}{character() metier-string, e.g.: OTB_DEF_>=120_0_0_all}
   \item{gearcode}{character() encoding gear}
   \item{target}{character(), optional, target species}
-  \item{meshedGear}{logical(), optional, whether the gear is a meshed gear. Should be provided for all or none gears}
-  \item{lowerMeshSize}{integer(), optional, the lower mesh size to include in this metier.}
-  \item{upperMeshSize}{integer(), optional, the upper mesh size to include in this metier.}
+  \item{meshedGear}{logical(), optional, whether the gear is a meshed gear. Should be provided for all or none gears.}
+  \item{lowerMeshSize}{integer(), optional, the lower mesh size to include in this metier. Should be provided for all rows where meshedGear is True, and not for other rows.}
+  \item{upperMeshSize}{integer(), optional, the upper mesh size to include in this metier. Should be provided for all rows where meshedGear is True, and not for other rows.}
   \item{selectivityDevice}{character(), optional, encoding selectivity device.}
-  \item{meshedSelectivityDevice}{logical(), optional, encoding selectivity device. Should be provided for all or none selectivity devices}
-  \item{selDevLowerMeshSize}{integer(), optional, the lower mesh size of selectivity device to include in this metier.}
-  \item{selDevUpperMeshSize}{integer(), optional, the upper mesh size of selectivity device to include in this metier.}
+  \item{meshedSelectivityDevice}{logical(), optional, encoding selectivity device. Should be provided for all or none selectivity devices.}
+  \item{selDevLowerMeshSize}{integer(), optional, the lower mesh size of selectivity device to include in this metier. Should be provided for all rows where meshedSelectivityDevice is True, and not for other rows.}
+  \item{selDevUpperMeshSize}{integer(), optional, the upper mesh size of selectivity device to include in this metier. Should be provided for all rows where meshedSelectivityDevice is True, and not for other rows.}
  }
 
  The metier-defining parameters are written in camelCase, parameters that may be used to distinguish applicability of different metierdefinitions are writter in UPPER case.

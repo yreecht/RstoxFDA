@@ -380,7 +380,7 @@ checkSelectivityDevice <- function(selectivityDeviceVector, metiertable){
 #'  will be annotated to otherwise matching data which has a missing value in the 'targetColumn'.
 #'
 #' @param data \code{\link[data.table]{data.table}} with data to be annotated
-#' @param metiertable \code{\link[RstoxFDA]{MetierTable}} with metier definitions. Accepts all NAs for columns not used.
+#' @param metiertable \code{\link[RstoxFDA]{MetierTable}} with metier definitions, or object that can be read with \code{\link[RstoxFDA]{readMetierTable}}
 #' @param gearColumn character() identifies the column in 'data' that encodes gear. Gear definition must match metiertable$gearcode
 #' @param targetColumn character(), optional, identifies the column in 'data' that encodes target species. Definition must match metiertable$target
 #' @param meshSizeColumn integer(), optional, identifies the column in 'data' that encodes the mesh size of the gear.
@@ -392,6 +392,10 @@ checkSelectivityDevice <- function(selectivityDeviceVector, metiertable){
 #' @import data.table
 #' @export
 assignMetier <- function(data, metiertable, gearColumn, targetColumn=NULL, meshSizeColumn=NULL, selectivityDeviceColumn=NULL, selectivityDeviceMeshSizeColumn=NULL, metierColName="metier"){
+
+  if (is.character(metiertable))(
+    metiertable <- readMetierTable(metiertable)
+  )
 
   if (is.null(data)){
     stop("The parameter 'data' must be provided.")
@@ -428,8 +432,13 @@ assignMetier <- function(data, metiertable, gearColumn, targetColumn=NULL, meshS
 
   #annotate
   for (i in 1:nrow(metiertable)){
+    if (is.na(metiertable$gearcode[i])){
+      selection <- is.na(data[[gearColumn]])
+    }
+    else{
+      selection <- !is.na(data[[gearColumn]]) & (data[[gearColumn]] == metiertable$gearcode[i])
+    }
 
-    selection <- !is.na(data[[gearColumn]]) & (data[[gearColumn]] == metiertable$gearcode[i])
     if (!is.null(targetColumn)){
       if (is.na(metiertable$target[i])){
         selection <- selection & is.na(data[[targetColumn]])

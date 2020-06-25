@@ -18,7 +18,7 @@ assignMetier(
 \arguments{
 \item{data}{\code{\link[data.table]{data.table}} with data to be annotated}
 
-\item{metiertable}{\code{\link[RstoxFDA]{MetierTable}} with metier definitions. Accepts all NAs for columns not used.}
+\item{metiertable}{\code{\link[RstoxFDA]{MetierTable}} with metier definitions, or object that can be read with \code{\link[RstoxFDA]{readMetierTable}}}
 
 \item{gearColumn}{character() identifies the column in 'data' that encodes gear. Gear definition must match metiertable$gearcode}
 
