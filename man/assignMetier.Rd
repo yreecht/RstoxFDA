@@ -31,8 +31,6 @@ assignMetier(
 \item{selectivityDeviceMeshSizeColumn}{integer(), optional, identifies the column in 'data' that encodes the mesh size of any mounted selectivity device.}
 
 \item{metierColName}{character() name of the column that should be appended to 'data'}
-
-\item{strict}{logical(), whether strict annotation should be applied (halting on missing definitions).}
 }
 \value{
 \code{\link[data.table]{data.table}} 'data' with the column 'metierColName' appended (character).

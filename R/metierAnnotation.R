@@ -387,7 +387,6 @@ checkSelectivityDevice <- function(selectivityDeviceVector, metiertable){
 #' @param selectivityDeviceColumn character(), optional, identifies the column in 'data' that encodes selectivitydevices mounted on gear. Definition must mathc metiertable$selectivityDevice
 #' @param selectivityDeviceMeshSizeColumn integer(), optional, identifies the column in 'data' that encodes the mesh size of any mounted selectivity device.
 #' @param metierColName character() name of the column that should be appended to 'data'
-#' @param strict logical(), whether strict annotation should be applied (halting on missing definitions).
 #' @return \code{\link[data.table]{data.table}} 'data' with the column 'metierColName' appended (character).
 #' @import data.table
 #' @export
