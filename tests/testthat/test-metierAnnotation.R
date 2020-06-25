@@ -2,9 +2,10 @@ context("metierannotation parse table")
 regularfile <- system.file("testresources","metiermapping_example.txt", package="RstoxFDA")
 metiertable <- readMetierTable(regularfile)
 expect_true(!any(is.na(metiertable$metier)))
-expect_true(!any(is.na(metiertable$gearcode)))
+expect_equal(sum(is.na(metiertable$gearcode)), 1)
 expect_equal(sum(is.na(metiertable[1,])), 3)
 expect_equal(sum(is.na(metiertable[6,])), 6)
+expect_equal(metiertable[7,"gearcode"][[1]], "01")
 
 simplefile <- system.file("testresources","metiermapping_example_simple.txt", package="RstoxFDA")
 metiertable <- readMetierTable(simplefile)
@@ -30,18 +31,59 @@ assignMetier(testdata, metiertable, "gear", meshSizeColumn = "meshSize", selecti
 context("Annotation error checks")
 expect_error(assignMetier(testdata, metiertable, "gear"))
 
+metiertableMissingMS <- metiertable
+metiertableMissingMS$meshedGear[2] <- NA
+expect_error(is.MetierTable(metiertableMissingMS, T), "The column 'meshedGear' has a value for some gears, but not all")
+expect_false(is.MetierTable(metiertableMissingMS))
+metiertableMissingMS$meshedGear <- NA
+expect_error(is.MetierTable(metiertableMissingMS, T))
+expect_false(is.MetierTable(metiertableMissingMS))
+metiertableMissingMS$lowerMeshSize <- NA
+metiertableMissingMS$upperMeshSize <- NA
+expect_true(is.MetierTable(metiertableMissingMS))
+
+metiertableMissingMS <- metiertable
+metiertableMissingMS$meshedGear[2] <- F
+expect_error(is.MetierTable(metiertableMissingMS, T))
+
+metiertableMissingMS <- metiertable
+metiertableMissingMS$meshedSelectivityDevice[2] <- NA
+expect_error(is.MetierTable(metiertableMissingMS, T), "The column 'meshedSelectivityDevice' has a value for some gears, but not all")
+metiertableMissingMS$meshedSelectivityDevice <- NA
+expect_error(is.MetierTable(metiertableMissingMS, T))
+metiertableMissingMS$selDevLowerMeshSize <- NA
+metiertableMissingMS$selDevUpperMeshSize <- NA
+expect_true(is.MetierTable(metiertableMissingMS))
+
+metiertableMissingMS <- metiertable
+metiertableMissingMS$lowerMeshSize <- NA
+expect_error(is.MetierTable(metiertableMissingMS, T))
+metiertableMissingMS <- metiertable
+metiertableMissingMS$selDevLowerMeshSize <- NA
+expect_error(is.MetierTable(metiertableMissingMS, T))
+
+metiertableMissingMS <- metiertable
+metiertableMissingMS$selectivityDevice[2] <- NA
+expect_error(is.MetierTable(metiertableMissingMS, T), "Mesh sizes provided for selectivity devices where 'selectivityDevice' is not given")
+
+metiertableMissingMS <- metiertable
+metiertableMissingMS$gearcode[2] <- NA
+expect_error(is.MetierTable(metiertableMissingMS, T), "Mesh sizes provided for gear where 'gear' is not given")
+
+
+metiertableMissingMS <- metiertable
+metiertableMissingMS$selDevUpperMeshSize[2] <- 101
+expect_error(checkMetierTable(metiertableMissingMS, meshSize = T, selDevMeshSize = T), "Mesh sizes have overlapping ranges for gear 51/G")
+
+metiertableMissingMS <- metiertable
+metiertableMissingMS$upperMeshSize[4] <- 101
+expect_error(checkMetierTable(metiertableMissingMS, meshSize = T, selDevMeshSize = T), "Mesh sizes have overlapping ranges for gear 22")
+
+
 #
 # tests
 #
 
-# check parsing of integers in char field
 
-# implement test for seldev mesh size given, when no selection device is given
-# implement test for seldev mesh size given, selection device is not meshed (logical)
-
-# implement test for mesh size given, when gear is not meshed (logical)
-# implement test for one range of mesh sizes is missing gear
-# implement test for one range of mesh sizes is missing seldev
-
-# implement test for partially specified meshedGear and meshed seldev
+# test annotation with NAs in data
 

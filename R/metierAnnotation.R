@@ -27,13 +27,13 @@
 #'   \item{metier}{character() metier-string, e.g.: OTB_DEF_>=120_0_0_all}
 #'   \item{gearcode}{character() encoding gear}
 #'   \item{target}{character(), optional, target species}
-#'   \item{meshedGear}{logical(), optional, whether the gear is a meshed gear. Should be provided for all or none gears}
-#'   \item{lowerMeshSize}{integer(), optional, the lower mesh size to include in this metier.}
-#'   \item{upperMeshSize}{integer(), optional, the upper mesh size to include in this metier.}
+#'   \item{meshedGear}{logical(), optional, whether the gear is a meshed gear. Should be provided for all or none gears.}
+#'   \item{lowerMeshSize}{integer(), optional, the lower mesh size to include in this metier. Should be provided for all rows where meshedGear is True, and not for other rows.}
+#'   \item{upperMeshSize}{integer(), optional, the upper mesh size to include in this metier. Should be provided for all rows where meshedGear is True, and not for other rows.}
 #'   \item{selectivityDevice}{character(), optional, encoding selectivity device.}
-#'   \item{meshedSelectivityDevice}{logical(), optional, encoding selectivity device. Should be provided for all or none selectivity devices}
-#'   \item{selDevLowerMeshSize}{integer(), optional, the lower mesh size of selectivity device to include in this metier.}
-#'   \item{selDevUpperMeshSize}{integer(), optional, the upper mesh size of selectivity device to include in this metier.}
+#'   \item{meshedSelectivityDevice}{logical(), optional, encoding selectivity device. Should be provided for all or none selectivity devices.}
+#'   \item{selDevLowerMeshSize}{integer(), optional, the lower mesh size of selectivity device to include in this metier. Should be provided for all rows where meshedSelectivityDevice is True, and not for other rows.}
+#'   \item{selDevUpperMeshSize}{integer(), optional, the upper mesh size of selectivity device to include in this metier. Should be provided for all rows where meshedSelectivityDevice is True, and not for other rows.}
 #'  }
 #'
 #'  The metier-defining parameters are written in camelCase, parameters that may be used to distinguish applicability of different metierdefinitions are writter in UPPER case.
@@ -79,12 +79,12 @@ is.MetierTable <- function(table, throwError=F){
     }
     return(FALSE)
   }
-  if (!is.integer(table$lowerMeshSize)){
+  if (!is.numeric(table$lowerMeshSize)){
     if (throwError){
       stop("The column 'lowerMeshSize' must be an integer")
     }
   }
-  if (!is.integer(table$upperMeshSize)){
+  if (!is.numeric(table$upperMeshSize)){
     if (throwError){
       stop("The column 'upperMeshSize' must be an integer")
     }
@@ -102,25 +102,90 @@ is.MetierTable <- function(table, throwError=F){
     }
     return(FALSE)
   }
-  if (!is.integer(table$selDevLowerMeshSize)){
+  if (!is.numeric(table$selDevLowerMeshSize)){
     if (throwError){
       stop("The column 'selDevLowerMeshSize' must be an integer")
     }
   }
-  if (!is.integer(table$selDevUpperMeshSize)){
+  if (!is.numeric(table$selDevUpperMeshSize)){
     if (throwError){
       stop("The column 'selDevUpperMeshSize' must be an integer")
     }
     return(FALSE)
   }
 
-  meshed <- metiertable$meshedGear[!is.na(metiertable$gearcode)]
+  meshed <- table$meshedGear[!is.na(table$gearcode)]
   if (any(is.na(meshed)) & !all(is.na(meshed))){
-    stop("The column 'meshedGear' has a value for some gears, but not all")
+    if (throwError){
+      stop("The column 'meshedGear' has a value for some gears, but not all")
+    }
+    return(FALSE)
   }
-  meshedSel <- metiertable$meshedSelectivityDevice[!is.na(metiertable$gearcode) & !is.na(metiertable$selectivityDevice)]
+
+  upperMesh <- table$upperMeshSize[!is.na(table$meshedGear) & table$meshedGear]
+  if (any(is.na(upperMesh))){
+    if (throwError){
+      stop("The column 'upperMeshSize' is not provided for all meshed gears (where meshedGear is True)")
+    }
+    return(FALSE)
+  }
+  lowerMesh <- table$lowerMeshSize[!is.na(table$meshedGear) & table$meshedGear]
+  if (any(is.na(lowerMesh))){
+    if (throwError){
+      stop("The column 'lowerMeshSize' is not provided for all meshed gears (where meshedGear is True)")
+    }
+    return(FALSE)
+  }
+
+  if (any((!is.na(table$lowerMeshSize) | !is.na(table$upperMeshSize)) & (is.na(table$meshedGear) | !table$meshedGear))){
+    if (throwError){
+      stop("Mesh sizes provided for gears that are not meshed (where meshedGear is missing or False)")
+    }
+    return(FALSE)
+  }
+
+  meshedSel <- table$meshedSelectivityDevice[!is.na(table$gearcode) & !is.na(table$selectivityDevice)]
   if (any(is.na(meshedSel)) & !all(is.na(meshedSel))){
-    stop("The column 'meshedSelectivityDevice' has a value for some gears, but not all")
+    if (throwError){
+      stop("The column 'meshedSelectivityDevice' has a value for some gears, but not all")
+    }
+    return(FALSE)
+  }
+
+  if (any((!is.na(table$lowerMeshSize) | !is.na(table$upperMeshSize)) & is.na(table$gear))){
+    if (throwError){
+      stop("Mesh sizes provided for gear where 'gear' is not given")
+    }
+    return(FALSE)
+  }
+
+  upperMeshSD <- table$selDevUpperMeshSize[!is.na(table$meshedSelectivityDevice) & table$meshedSelectivityDevice]
+  if (any(is.na(upperMeshSD))){
+    if (throwError){
+      stop("The column 'selDevUpperMeshSize' is not provided for all meshed selectivty devices gears (where meshedSelectivityDevice is True)")
+    }
+    return(FALSE)
+  }
+  lowerMeshSD <- table$selDevLowerMeshSize[!is.na(table$meshedSelectivityDevice) & table$meshedSelectivityDevice]
+  if (any(is.na(lowerMeshSD))){
+    if (throwError){
+      stop("The column 'selDevUpperMeshSize' is not provided for all meshed selectivty devices gears (where meshedSelectivityDevice is True)")
+    }
+    return(FALSE)
+  }
+
+  if (any((!is.na(table$selDevLowerMeshSize) | !is.na(table$selDevUpperMeshSize)) & (is.na(table$meshedSelectivityDevice) | !table$meshedSelectivityDevice))){
+    if (throwError){
+      stop("Mesh sizes provided for selectivity devices that are not meshed (where meshedSelectivityDevice is missing or False)")
+    }
+    return(FALSE)
+  }
+
+  if (any((!is.na(table$selDevLowerMeshSize) | !is.na(table$selDevUpperMeshSize)) & is.na(table$selectivityDevice))){
+    if (throwError){
+      stop("Mesh sizes provided for selectivity devices where 'selectivityDevice' is not given")
+    }
+    return(FALSE)
   }
 
   return(TRUE)
@@ -173,7 +238,7 @@ readMetierTable <- function(filename, encoding="UTF8"){
 #' @description checks that metiers are uniquely defined and that mesh-size ranges dont overlap
 #' @param metiertable \code{\link[RstoxFDA]{MetierTable}}
 #' @noRd
-checkMetierTable <- function(metiertable, target=!is.null(targetColumn), meshSize=!is.null(meshSizeColumn), selDev=!is.null(selectivityDeviceColumn), selDevMeshSize=!is.null(selectivityDeviceMeshSizeColumn)){
+checkMetierTable <- function(metiertable, target=F, meshSize=F, selDev=F, selDevMeshSize=F){
   if (!is.MetierTable(metiertable, T)){
     stop("The provided metiertable is not correctly formatted (RstoxFDA::MetierTable).")
   }
@@ -198,7 +263,7 @@ checkMetierTable <- function(metiertable, target=!is.null(targetColumn), meshSiz
     stop(paste("Some metiers have duplicate definitions:", paste(duplicates, collapse=",")))
   }
 
-  if (any(is.na(metiertable$meshedGear)) & !all(is.na(metiertable$meshedGear))){
+  if (any(!is.na(metiertable$gearcode) & is.na(metiertable$meshedGear)) & !all(is.na(metiertable$meshedGear))){
     stop("The parameter 'meshedGear' is only provided for some gears")
   }
   if (any(!is.na(metiertable$selectivityDevice) & is.na(metiertable$meshedSelectivityDevice)) &
@@ -206,8 +271,8 @@ checkMetierTable <- function(metiertable, target=!is.null(targetColumn), meshSiz
     stop("The parameter 'meshedSelectivityDevice' is only provided for some selectivity devices.")
   }
 
-  meshedGears <- unique(metiertable$gearcode[metiertable$meshedGear])
-  nonMeshedGears <- unique(metiertable$gearcode[!metiertable$meshedGear])
+  meshedGears <- unique(metiertable$gearcode[!is.na(metiertable$gearcode) & metiertable$meshedGear])
+  nonMeshedGears <- unique(metiertable$gearcode[!is.na(metiertable$gearcode) & !metiertable$meshedGear])
   meshedConflict <- intersect(meshedGears, nonMeshedGears)
 
   if (length(meshedConflict) > 0){
@@ -242,6 +307,9 @@ checkMetierTable <- function(metiertable, target=!is.null(targetColumn), meshSiz
       incr <- c(incr, lower[i], upper[i])
     }
 
+    if (any(duplicated(incr))){
+      stop(paste("Mesh sizes have overlapping ranges for gear", g))
+    }
     if (any(order(incr) != 1:(2*length(lower)))){
       stop(paste("Mesh sizes have overlapping ranges for gear", g))
     }
@@ -268,6 +336,9 @@ checkMetierTable <- function(metiertable, target=!is.null(targetColumn), meshSiz
       incr <- c(incr, lower[i], upper[i])
     }
 
+    if (any(duplicated(incr))){
+      stop(paste("Mesh sizes have overlapping ranges for gear", g))
+    }
     if (any(order(incr) != 1:(2*length(lower)))){
       stop(paste("Mesh sizes have overlapping ranges for selectivity device on a gear:", g))
     }
