@@ -249,19 +249,24 @@ checkMetierTable <- function(metiertable, target=F, meshSize=F, selDev=F, selDev
     metstring <- paste(metstring, metiertable$target, sep="_")
   }
   if (meshSize){
-    metstring <- paste(metstring, metiertable$lowerMeshSize, metiertable$upperMeshSize, sep="_")
+    metstring <- paste(metstring, metiertable$meshedGear, metiertable$lowerMeshSize, metiertable$upperMeshSize, sep="_")
   }
   if (selDev){
     metstring <- paste(metstring, metiertable$selectivityDevice, sep="_")
   }
   if (selDevMeshSize){
-    metstring <- paste(metstring, metiertable$selDevLowerMeshSize, metiertable$selDevUpperMeshSize, sep="_")
+    metstring <- paste(metstring, metiertable$meshedSelectivityDevice, metiertable$selDevLowerMeshSize, metiertable$selDevUpperMeshSize, sep="_")
   }
 
-  duplicates <- unique(metiertable$metier[duplicated(metstring)])
-  if (length(duplicates) > 0){
-    stop(paste("Some metiers have duplicate definitions:", paste(duplicates, collapse=",")))
+  dupliactedDef <- duplicated(metstring)
+  dupliactedMetDef <- duplicated(paste(metiertable$metier, metstring, sep="_"))
+
+  if (any(dupliactedDef & !dupliactedMetDef)){
+    badMets <- metiertable$metier[dupliactedDef & !dupliactedMetDef]
+    stop(paste("Some metiers have overlapping definitions for selected metiertable columns:", paste(badMets, collapse=",")))
   }
+
+  metiertable <- metiertable[!dupliactedMetDef]
 
   if (any(!is.na(metiertable$gearcode) & is.na(metiertable$meshedGear)) & !all(is.na(metiertable$meshedGear))){
     stop("The parameter 'meshedGear' is only provided for some gears")

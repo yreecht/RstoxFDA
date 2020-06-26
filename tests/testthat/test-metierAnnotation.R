@@ -57,6 +57,11 @@ expect_equal(annotated$metier[1], "MIS_MIS")
 context("Annotation error checks")
 expect_error(assignMetier(testdata, metiertable, "gear"))
 
+metiertableMissingConflict <- metiertable
+metiertableMissingConflict[1,] <-metiertableMissingConflict[2,]
+metiertableMissingConflict$metier[1] <- "MESS"
+expect_error(checkMetierTable(metiertableMissingConflict, F,T,T,T), "Some metiers have overlapping definitions for selected metiertable columns: OTB_DEF_0_120_1_80-100")
+
 metiertableMissingMS <- metiertable
 metiertableMissingMS$meshedGear[2] <- NA
 expect_error(is.MetierTable(metiertableMissingMS, T), "The column 'meshedGear' has a value for some gears, but not all")
