@@ -4,7 +4,9 @@
 \name{recaDataExample}
 \alias{recaDataExample}
 \title{Example data for Reca}
-\format{see \code{\link[RstoxFDA]{prepRECA}}.}
+\format{
+see \code{\link[RstoxFDA]{prepRECA}}.
+}
 \usage{
 data(recaDataExample)
 }
