@@ -4,6 +4,9 @@
 #' @noRd
 checkSymmetry <- function(tab){
 
+  #to get data.table notation throguh check
+  CarValue <- Neighbours <- NULL
+
   getn <- function(value){
     neighbours <- trimws(unlist(strsplit(tab[CarValue==value,Neighbours], split = ",")))
     return(neighbours)

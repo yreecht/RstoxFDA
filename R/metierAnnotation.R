@@ -470,9 +470,9 @@ assignMetier <- function(data, metiertable, gearColumn, targetColumn=NULL, meshS
   if (nrow(missingMetier) > 0){
     cols <- c(gearColumn, targetColumn, selectivityDeviceColumn, meshSizeColumn, selectivityDeviceMeshSizeColumn)
     usedCols <- cols[cols %in% names(data)]
-    missingMetier <- unique(missingMetier[,..usedCols])
+    missingMetier <- unique(missingMetier[,usedCols,with=F])
     for (i in 1:nrow(missingMetier)){
-      message(paste("Missing metier definition for ", paste(paste(usedCols, missingMetier[i,..usedCols], sep=": "), collapse=", "), sep=""))
+      message(paste("Missing metier definition for ", paste(paste(usedCols, missingMetier[i,usedCols,with=F], sep=": "), collapse=", "), sep=""))
     }
     stop("Not all rows could be assigned a metier.")
   }
