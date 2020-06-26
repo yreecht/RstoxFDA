@@ -43,3 +43,38 @@ For the metier-defining variables 'gearcode', 'target' and 'selectivityDevice' (
  That is, a metier that is defined with a missing value for 'target'
  will be annotated to otherwise matching data which has a missing value in the 'targetColumn'.
 }
+\examples{
+ data(metier4table)
+ data(activityCensus)
+
+ # annotate metier lvl 4 on the cencus based on gear, and compare with finer gear declaration.
+ annotated <- assignMetier(activityCensus,
+          metier4table,
+          "gearNS",
+          metierColName = "metier4")
+ table(annotated$metier4)
+
+ data(metier5table)
+ # annotate metier lvl 5 on COD-catches based on only gear, and compare with declarations for shrimp fisheries
+ annotated <- assignMetier(activityCensus[activityCensus$species=="COD"],
+          metier5table,
+          "gearNS",
+          metierColName = "metier5")
+ annotatedShrimp <- annotated[annotated$targetFAO \%in\% c("PAN", "PRA"),]
+ table(paste(annotatedShrimp$gearFAO, annotatedShrimp$targetFAO, sep="/"), annotatedShrimp$metier5)
+
+ data(metier6table)
+ # annotate metier lvl 6 on COD-catches based on gear and mesh size, and compare with lvl 5 annotations from last example
+ annotated <- assignMetier(activityCensus[activityCensus$species=="COD"],
+          metier6table,
+          "gearNS",
+          meshSizeColumn = "meshSize",
+          metierColName = "metier6")
+ annotated <- assignMetier(annotated,
+           metier5table,
+           "gearNS",
+           metierColName = "metier5")
+ annotatedShrimp <- annotated[annotated$targetFAO \%in\% c("PAN", "PRA"),]
+ table(annotatedShrimp$metier5, annotatedShrimp$metier6)
+
+}

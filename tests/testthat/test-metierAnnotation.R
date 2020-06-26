@@ -60,7 +60,7 @@ expect_error(assignMetier(testdata, metiertable, "gear"))
 metiertableMissingConflict <- metiertable
 metiertableMissingConflict[1,] <-metiertableMissingConflict[2,]
 metiertableMissingConflict$metier[1] <- "MESS"
-expect_error(checkMetierTable(metiertableMissingConflict, F,T,T,T), "Some metiers have overlapping definitions for selected metiertable columns: OTB_DEF_0_120_1_80-100")
+expect_error(checkMetierTable(metiertableMissingConflict, F,T,T,T), "The provided metier table cannot be used with this selection of data columns. Some metiers have conflicting definitions: OTB_DEF_0_120_1_80-100")
 
 metiertableMissingMS <- metiertable
 metiertableMissingMS$meshedGear[2] <- NA

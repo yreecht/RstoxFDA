@@ -201,6 +201,7 @@ is.MetierTable <- function(table, throwError=F){
 #' @param filename character() path to file that contains metier definitions. See details for format.
 #' @param encoding The character encoding of the file identified by 'filename'
 #' @return \code{\link[RstoxFDA]{MetierTable}} containing metier definitons.
+#' @export
 readMetierTable <- function(filename, encoding="UTF8"){
   loc <- readr::locale()
   loc$encoding <- encoding
@@ -230,6 +231,7 @@ readMetierTable <- function(filename, encoding="UTF8"){
     stop(paste("Some column names are not recognized:", paste(nonmapped, collapse=",")))
   }
 
+  is.MetierTable(mettab_dt)
   return(mettab_dt)
 
 }
@@ -263,7 +265,7 @@ checkMetierTable <- function(metiertable, target=F, meshSize=F, selDev=F, selDev
 
   if (any(dupliactedDef & !dupliactedMetDef)){
     badMets <- metiertable$metier[dupliactedDef & !dupliactedMetDef]
-    stop(paste("Some metiers have overlapping definitions for selected metiertable columns:", paste(badMets, collapse=",")))
+    stop(paste("The provided metier table cannot be used with this selection of data columns. Some metiers have conflicting definitions:", paste(badMets, collapse=",")))
   }
 
   metiertable <- metiertable[!dupliactedMetDef]
@@ -276,8 +278,8 @@ checkMetierTable <- function(metiertable, target=F, meshSize=F, selDev=F, selDev
     stop("The parameter 'meshedSelectivityDevice' is only provided for some selectivity devices.")
   }
 
-  meshedGears <- unique(metiertable$gearcode[!is.na(metiertable$gearcode) & metiertable$meshedGear])
-  nonMeshedGears <- unique(metiertable$gearcode[!is.na(metiertable$gearcode) & !metiertable$meshedGear])
+  meshedGears <- unique(metiertable$gearcode[!is.na(metiertable$gearcode) & !is.na(metiertable$meshedGear) & metiertable$meshedGear])
+  nonMeshedGears <- unique(metiertable$gearcode[!is.na(metiertable$gearcode) & !is.na(metiertable$meshedGear) & !metiertable$meshedGear])
   meshedConflict <- intersect(meshedGears, nonMeshedGears)
 
   if (length(meshedConflict) > 0){
@@ -356,7 +358,7 @@ checkMetierTable <- function(metiertable, target=F, meshSize=F, selDev=F, selDev
 checkGear <- function(gearVector, metiertable){
   missing <- gearVector[!is.na(gearVector) & !(gearVector %in% metiertable$gearcode)]
   if (length(missing) > 0){
-    stop(paste("Metier is not defined for all gears. Missing: ", paste(missing, collapse=",")))
+    stop(paste("Metier is not defined for all gears. Missing: ", paste(unique(missing), collapse=",")))
   }
 }
 
@@ -393,6 +395,40 @@ checkSelectivityDevice <- function(selectivityDeviceVector, metiertable){
 #' @param selectivityDeviceMeshSizeColumn integer(), optional, identifies the column in 'data' that encodes the mesh size of any mounted selectivity device.
 #' @param metierColName character() name of the column that should be appended to 'data'
 #' @return \code{\link[data.table]{data.table}} 'data' with the column 'metierColName' appended (character).
+#' @examples
+#'  data(metier4table)
+#'  data(activityCensus)
+#'
+#'  # annotate metier lvl 4 on the cencus based on gear, and compare with finer gear declaration.
+#'  annotated <- assignMetier(activityCensus,
+#'           metier4table,
+#'           "gearNS",
+#'           metierColName = "metier4")
+#'  table(annotated$metier4)
+#'
+#'  data(metier5table)
+#'  # annotate metier lvl 5 on COD-catches based on only gear, and compare with declarations for shrimp fisheries
+#'  annotated <- assignMetier(activityCensus[activityCensus$species=="COD"],
+#'           metier5table,
+#'           "gearNS",
+#'           metierColName = "metier5")
+#'  annotatedShrimp <- annotated[annotated$targetFAO %in% c("PAN", "PRA"),]
+#'  table(paste(annotatedShrimp$gearFAO, annotatedShrimp$targetFAO, sep="/"), annotatedShrimp$metier5)
+#'
+#'  data(metier6table)
+#'  # annotate metier lvl 6 on COD-catches based on gear and mesh size, and compare with lvl 5 annotations from last example
+#'  annotated <- assignMetier(activityCensus[activityCensus$species=="COD"],
+#'           metier6table,
+#'           "gearNS",
+#'           meshSizeColumn = "meshSize",
+#'           metierColName = "metier6")
+#'  annotated <- assignMetier(annotated,
+#'            metier5table,
+#'            "gearNS",
+#'            metierColName = "metier5")
+#'  annotatedShrimp <- annotated[annotated$targetFAO %in% c("PAN", "PRA"),]
+#'  table(annotatedShrimp$metier5, annotatedShrimp$metier6)
+#'
 #' @import data.table
 #' @export
 assignMetier <- function(data, metiertable, gearColumn, targetColumn=NULL, meshSizeColumn=NULL, selectivityDeviceColumn=NULL, selectivityDeviceMeshSizeColumn=NULL, metierColName="metier"){
