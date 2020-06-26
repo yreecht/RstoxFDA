@@ -20,7 +20,12 @@
 #' @examples
 #' data(metier6table)
 #' data(activityCensus)
-#' annotated <- assignMetier(activityCensus[activityCensus$species=="COD"], metier6table, "gearNS", meshSizeColumn = "meshSize", metierColName = "metier6")
+#' annotated <- assignMetier(activityCensus[activityCensus$species=="COD"],
+#'         metier6table,
+#'         "gearNS",
+#'         meshSizeColumn = "meshSize",
+#'         metierColName = "metier6")
 #' annotatedShrimp <- annotated[annotated$targetFAO %in% c("PAN", "PRA"),]
-#' table(paste(annotatedShrimp$gearFAO, annotatedShrimp$targetFAO, sep="/"), annotatedShrimp$metier6)
+#' table(paste(annotatedShrimp$gearFAO, annotatedShrimp$targetFAO, sep="/"),
+#'      annotatedShrimp$metier6)
 "metier6table"

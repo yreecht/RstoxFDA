@@ -39,7 +39,11 @@ assignMetier(
 annotates metier to data table
 }
 \details{
-For the metier-defining variables 'gearcode', 'target' and 'selectivityDevice' (see \code{\link[RstoxFDA]{MetierTable}}), missing values are matches with missing values.
+Annotates data with metier, given a metier definition (\code{\link[RstoxFDA]{MetierTable}}) and a selection of data-columns that idenitfies metier-defining variables.
+ Metier names are defined by the column 'metier' in 'metiertable', and does not have to reflect the information actually used for annotation.
+ For example, metiers of the type "OTB_DEF", indicating both gear and target assemblage, can be configured based only on gear codes.
+
+ For the metier-defining variables 'gearcode', 'target' and 'selectivityDevice' (see \code{\link[RstoxFDA]{MetierTable}}), missing values are matches with missing values.
  That is, a metier that is defined with a missing value for 'target'
  will be annotated to otherwise matching data which has a missing value in the 'targetColumn'.
 }
@@ -61,7 +65,8 @@ For the metier-defining variables 'gearcode', 'target' and 'selectivityDevice' (
           "gearNS",
           metierColName = "metier5")
  annotatedShrimp <- annotated[annotated$targetFAO \%in\% c("PAN", "PRA"),]
- table(paste(annotatedShrimp$gearFAO, annotatedShrimp$targetFAO, sep="/"), annotatedShrimp$metier5)
+ table(paste(annotatedShrimp$gearFAO, annotatedShrimp$targetFAO, sep="/"),
+      annotatedShrimp$metier5)
 
  data(metier6table)
  # annotate metier lvl 6 on COD-catches based on gear and mesh size, and compare with lvl 5 annotations from last example
