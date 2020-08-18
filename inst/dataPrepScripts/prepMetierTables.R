@@ -46,7 +46,7 @@ prepMetier6 <- function(){
 prepMetier6()
 
 prepGearGroupFdir <- function(){
-  GearGroupFdirTable <- data.table(metier=as.character( c("MIS", rep("NOT",6), rep("GARN",3), rep("KROK",6), rep("BUR",6), rep("TR\u00c5L",10), "SNURREVAD", rep("ANNET", 20), "OPPDRETT", "MIS")),
+  GearGroupFdirTable <- data.table(metier=as.character( c("MIS", rep("SEINE",6), rep("GILLNET",3), rep("HOOKS",6), rep("TRAPS",6), rep("TRAWL",10), "D.SEINE", rep("OTHER", 20), "AQUACULTURE", "MIS")),
                              gearcode=as.character(c(NA,         10:15,       20:22,         30:35,          40:45,        50:59,               61,        70:89,              90,       99)),
                              target=as.character(NA),
                              meshedGear=as.logical(NA),
