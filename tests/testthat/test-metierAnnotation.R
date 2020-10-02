@@ -13,6 +13,11 @@ expect_true(!any(is.na(metiertable$metier)))
 expect_true(!any(is.na(metiertable$gearcode)))
 expect_equal(sum(is.na(metiertable[1,])), 8)
 
+commafile <- system.file("testresources","metiermapping_example_commanot.txt", package="RstoxFDA")
+metiertable <- readMetierTable(commafile)
+expect_equal(nrow(metiertable), 2)
+
+
 errorfile <- system.file("testresources","metiermapping_example_error.txt", package="RstoxFDA")
 expect_error(readMetierTable(errorfile), "Some column names are not recognized: area")
 
