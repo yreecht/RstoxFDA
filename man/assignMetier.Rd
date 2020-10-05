@@ -59,7 +59,8 @@ Annotates data with metier, given a metier definition (\code{\link[RstoxFDA]{Met
  table(annotated$metier4)
 
  data(metier5table)
- # annotate metier lvl 5 on COD-catches based on only gear, and compare with declarations for shrimp fisheries
+ # annotate metier lvl 5 on COD-catches based on only gear,
+ # and compare with declarations for shrimp fisheries
  annotated <- assignMetier(activityCensus[activityCensus$species=="COD"],
           metier5table,
           "gearNS",
@@ -69,7 +70,8 @@ Annotates data with metier, given a metier definition (\code{\link[RstoxFDA]{Met
       annotatedShrimp$metier5)
 
  data(metier6table)
- # annotate metier lvl 6 on COD-catches based on gear and mesh size, and compare with lvl 5 annotations from last example
+ # annotate metier lvl 6 on COD-catches based on gear and mesh size,
+ # and compare with lvl 5 annotations from last example
  annotated <- assignMetier(activityCensus[activityCensus$species=="COD"],
           metier6table,
           "gearNS",

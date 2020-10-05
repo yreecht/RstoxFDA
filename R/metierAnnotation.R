@@ -195,6 +195,11 @@ is.MetierTable <- function(table, throwError=F){
 #' @description Reads a table of metier definitions.
 #' @details
 #'  The file identified by 'filename' must be a tab-separated file, and must provided headers which must match column names in \code{\link[RstoxFDA]{MetierTable}}
+#'
+#'  gearnotation:
+#'  The file format allows a shorthand notation for metiers that are defined the same way for different unmeshed gearcodes or targets.
+#'  These may be written on one line, with the different gear codes separated by commas or different targets separated by commas.
+#'
 #'  Optional columns may be omitted. They will be interpreted as NA.
 #'  Comments may be provided on lines with a leading '#'.
 #'  Logical values ('meshedGear' and 'meshedSelectivityDevice') should be encoded with 'T' for true and 'F' for false.
@@ -205,7 +210,7 @@ is.MetierTable <- function(table, throwError=F){
 readMetierTable <- function(filename, encoding="UTF8"){
   loc <- readr::locale()
   loc$encoding <- encoding
-  suppressMessages(mettab <- readr::read_delim(filename, delim="\t", comment = "#", locale = loc, trim_ws = T, skip_empty_rows = T, na = c("")))
+  suppressWarnings(suppressMessages(mettab <- readr::read_delim(filename, delim="\t", comment = "#", locale = loc, trim_ws = T, skip_empty_rows = T, na = c(""), col_types = "cccccccccccccccccccccccccccccccc")))
 
   columns <- c("metier", "gearcode", "target", "meshedGear", "lowerMeshSize", "upperMeshSize", "selectivityDevice", "meshedSelectivityDevice", "selDevLowerMeshSize", "selDevUpperMeshSize")
   for (co in columns){
@@ -231,6 +236,40 @@ readMetierTable <- function(filename, encoding="UTF8"){
     stop(paste("Some column names are not recognized:", paste(nonmapped, collapse=",")))
   }
 
+  #comma separated notation for gears
+  for (g in unique(mettab_dt$gearcode)){
+    codes <- strsplit(g, ",")[[1]]
+    if (length(codes) > 1){
+      newcodes <- codes
+      expandRows <- mettab_dt[mettab_dt$gearcode == g,]
+      for (i in 1:nrow(expandRows)){
+        for (nc in newcodes){
+          row <- expandRows[i,]
+          row$gearcode <- nc
+          mettab_dt <- rbind(mettab_dt, row)
+        }
+      }
+      mettab_dt <- mettab_dt[mettab_dt$gearcode != g,]
+    }
+  }
+
+  #comma separated notation for target
+  for (g in unique(mettab_dt$target)){
+    codes <- strsplit(g, ",")[[1]]
+    if (length(codes) > 1){
+      newcodes <- codes
+      expandRows <- mettab_dt[mettab_dt$target == g,]
+      for (i in 1:nrow(expandRows)){
+        for (nc in newcodes){
+          row <- expandRows[i,]
+          row$target <- nc
+          mettab_dt <- rbind(mettab_dt, row)
+        }
+      }
+      mettab_dt <- mettab_dt[mettab_dt$target != g,]
+    }
+  }
+
   is.MetierTable(mettab_dt)
   return(mettab_dt)
 
@@ -248,23 +287,23 @@ checkMetierTable <- function(metiertable, target=F, meshSize=F, selDev=F, selDev
   #duplicatecheck
   metstring <- metiertable$gearcode
   if (target){
-    metstring <- paste(metstring, metiertable$target, sep="_")
+    metstring <- paste(metstring, metiertable$target, sep=":")
   }
   if (meshSize){
-    metstring <- paste(metstring, metiertable$meshedGear, metiertable$lowerMeshSize, metiertable$upperMeshSize, sep="_")
+    metstring <- paste(metstring, metiertable$meshedGear, metiertable$lowerMeshSize, metiertable$upperMeshSize, sep=":")
   }
   if (selDev){
-    metstring <- paste(metstring, metiertable$selectivityDevice, sep="_")
+    metstring <- paste(metstring, metiertable$selectivityDevice, sep=":")
   }
   if (selDevMeshSize){
-    metstring <- paste(metstring, metiertable$meshedSelectivityDevice, metiertable$selDevLowerMeshSize, metiertable$selDevUpperMeshSize, sep="_")
+    metstring <- paste(metstring, metiertable$meshedSelectivityDevice, metiertable$selDevLowerMeshSize, metiertable$selDevUpperMeshSize, sep=":")
   }
 
   dupliactedDef <- duplicated(metstring)
   dupliactedMetDef <- duplicated(paste(metiertable$metier, metstring, sep="_"))
 
   if (any(dupliactedDef & !dupliactedMetDef)){
-    badMets <- metiertable$metier[dupliactedDef & !dupliactedMetDef]
+    badMets <- metstring[dupliactedDef & !dupliactedMetDef]
     stop(paste("The provided metier table cannot be used with this selection of data columns. Some metiers have conflicting definitions:", paste(badMets, collapse=",")))
   }
 
@@ -367,7 +406,7 @@ checkGear <- function(gearVector, metiertable){
 checkTarget <- function(targetVector, metiertable){
   missing <- targetVector[!is.na(targetVector) & !(targetVector %in% metiertable$target)]
   if (length(missing) > 0){
-    stop(paste("Metier is not defined for all targets. Missing: ", paste(missing, collapse=",")))
+    stop(paste("Metier is not defined for all targets. Missing: ", paste(unique(missing), collapse=",")))
   }
 }
 
@@ -411,7 +450,8 @@ checkSelectivityDevice <- function(selectivityDeviceVector, metiertable){
 #'  table(annotated$metier4)
 #'
 #'  data(metier5table)
-#'  # annotate metier lvl 5 on COD-catches based on only gear, and compare with declarations for shrimp fisheries
+#'  # annotate metier lvl 5 on COD-catches based on only gear,
+#'  # and compare with declarations for shrimp fisheries
 #'  annotated <- assignMetier(activityCensus[activityCensus$species=="COD"],
 #'           metier5table,
 #'           "gearNS",
@@ -421,7 +461,8 @@ checkSelectivityDevice <- function(selectivityDeviceVector, metiertable){
 #'       annotatedShrimp$metier5)
 #'
 #'  data(metier6table)
-#'  # annotate metier lvl 6 on COD-catches based on gear and mesh size, and compare with lvl 5 annotations from last example
+#'  # annotate metier lvl 6 on COD-catches based on gear and mesh size,
+#'  # and compare with lvl 5 annotations from last example
 #'  annotated <- assignMetier(activityCensus[activityCensus$species=="COD"],
 #'           metier6table,
 #'           "gearNS",

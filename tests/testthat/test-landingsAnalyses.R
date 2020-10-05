@@ -1,0 +1,6 @@
+context("Test tabulate Fisheries")
+data(landings)
+ss <- tabulateFisheries(landings, cellCols = c("Area"))
+expect_equal(nrow(ss), 15)
+ss <- tabulateFisheries(landings)
+expect_equal(nrow(ss), 193)
