@@ -16,7 +16,10 @@ Example of metier table for assigning gear groups in NS9400 / Norwegian Director
 \examples{
 data(GearGroupFdirTable)
 data(activityCensus)
-annotated <- assignMetier(activityCensus, GearGroupFdirTable, "gearNS", metierColName = "Hovedgruppe Redskap")
+annotated <- assignMetier(activityCensus,
+                          GearGroupFdirTable,
+                          "gearNS",
+                          metierColName = "Hovedgruppe Redskap")
 table(annotated$gearFAO, annotated$"Hovedgruppe Redskap")
 }
 \keyword{datasets}

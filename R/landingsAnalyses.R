@@ -27,7 +27,7 @@ tabulateFisheries <- function(data, weightCol="LiveWeightKG", cellCols=c("Metier
     aggVars[[v]] <- data[[v]]
   }
 
-  tab <- aggregate(list(weight=data[[weightCol]]), by=aggVars, FUN=function(x){sum(x)}, drop=!complete)
+  tab <- stats::aggregate(list(weight=data[[weightCol]]), by=aggVars, FUN=function(x){sum(x)}, drop=!complete)
   tab$weight[is.na(tab$weight)] <- 0
   tab <- tab[order(tab$weight, decreasing = T),]
   tab$frac <- tab$weight / sum(tab$weight)

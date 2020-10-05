@@ -13,6 +13,9 @@
 #' @examples
 #' data(GearGroupFdirTable)
 #' data(activityCensus)
-#' annotated <- assignMetier(activityCensus, GearGroupFdirTable, "gearNS", metierColName = "Hovedgruppe Redskap")
+#' annotated <- assignMetier(activityCensus,
+#'                           GearGroupFdirTable,
+#'                           "gearNS",
+#'                           metierColName = "Hovedgruppe Redskap")
 #' table(annotated$gearFAO, annotated$"Hovedgruppe Redskap")
 "GearGroupFdirTable"

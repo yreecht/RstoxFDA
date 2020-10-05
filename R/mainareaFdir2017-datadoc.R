@@ -15,5 +15,5 @@
 #' data(mainareaFdir2017)
 #' data(mainareaFdir2018)
 #' sp::plot(mainareaFdir2017)
-#' sp::plot(mainareaFdir2018, border=blue, add=T)
+#' sp::plot(mainareaFdir2018, border="blue", add=TRUE)
 "mainareaFdir2017"
