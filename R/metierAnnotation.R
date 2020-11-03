@@ -541,12 +541,26 @@ assignMetier <- function(data, metiertable, gearColumn, targetColumn=NULL, meshS
         selection <- selection & !is.na(data[[selectivityDeviceColumn]]) & data[[selectivityDeviceColumn]] == metiertable$selectivityDevice[i]
       }
     }
-    if (!is.null(meshSizeColumn) & !is.na(metiertable$gearcode[i]) & metiertable$meshedGear[i]){
-      selection <- selection & !is.na(data[[meshSizeColumn]]) & (data[[meshSizeColumn]] <= metiertable$upperMeshSize[i]) & (data[[meshSizeColumn]] >= metiertable$lowerMeshSize[i])
+    if (!is.null(meshSizeColumn) & !is.na(metiertable$gearcode[i]) & metiertable$meshedGear[i])
+    {
+        ## Needs explicit conversion of meshSizeColumn to numeric (here without altering data;
+        ##    imported as character, at least for logbook data with readErsFile(...)).
+        ## ...conversion to character first in case of factor.
+        suppressWarnings(selection <- selection & !is.na(data[[meshSizeColumn]]) &
+                             (as.numeric(as.character(data[[meshSizeColumn]])) <= metiertable$upperMeshSize[i]) &
+                             (as.numeric(as.character(data[[meshSizeColumn]])) >= metiertable$lowerMeshSize[i]))
     }
-    if (!is.null(selectivityDeviceMeshSizeColumn) & !is.na(metiertable$gearcode[i]) & !is.na(metiertable$selectivityDevice[i]) & metiertable$meshedSelectivityDevice[i]){
+    if (!is.null(selectivityDeviceMeshSizeColumn) & !is.na(metiertable$gearcode[i]) &
+        !is.na(metiertable$selectivityDevice[i]) & metiertable$meshedSelectivityDevice[i])
+    {
       selection[is.na(data[[selectivityDeviceMeshSizeColumn]])] <- F
-      selection[!is.na(data[[selectivityDeviceMeshSizeColumn]])] <- selection[!is.na(data[[selectivityDeviceMeshSizeColumn]])] & (data[[selectivityDeviceMeshSizeColumn]][!is.na(data[[selectivityDeviceMeshSizeColumn]])] <= metiertable$selDevUpperMeshSize[i]) & (data[[selectivityDeviceMeshSizeColumn]][!is.na(data[[selectivityDeviceMeshSizeColumn]])] >= metiertable$selDevLowerMeshSize[i])
+      ## Explicit conversion to numeric, on the fly, of the field selectivityDeviceMeshSizeColumn too:
+      suppressWarnings(selection[!is.na(data[[selectivityDeviceMeshSizeColumn]])] <-
+                           selection[!is.na(data[[selectivityDeviceMeshSizeColumn]])] &
+                           (as.numeric(as.character(data[[selectivityDeviceMeshSizeColumn]][!is.na(data[[selectivityDeviceMeshSizeColumn]])])) <=
+                            metiertable$selDevUpperMeshSize[i]) &
+                           (as.numeric(as.character(data[[selectivityDeviceMeshSizeColumn]][!is.na(data[[selectivityDeviceMeshSizeColumn]])])) >=
+                            metiertable$selDevLowerMeshSize[i]))
     }
 
     data[selection, metierColName] <- metiertable$metier[i]
